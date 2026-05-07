@@ -13,6 +13,6 @@ public class PingCommand implements CommandHandler {
 
     @Override
     public String execute(Update update) {
-        return "pong";
+        return "pong CI/CD works";
     }
 }
