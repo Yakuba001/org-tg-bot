@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: org-tg-bot
+
+telegram:
+  bot:
+    username: ${TELEGRAM_BOT_USERNAME}
+    token: ${TELEGRAM_BOT_TOKEN}
+
+logging:
+  level:
+    root: INFO
+    com.orgtgbot: DEBUG
