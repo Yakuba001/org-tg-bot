@@ -20,9 +20,11 @@ public class UpdateDispatcher {
             return;
         String text = update.getMessage().getText();
         Long chatId = update.getMessage().getChatId();
-        log.debug("chat={} text={}", chatId, text);
 
         CommandHandler handler = registry.resolve(text);
-        sender.sendText(chatId, handler.execute(update));
+        String response = handler.execute(update);
+        if (response != null && !response.isBlank()) {
+            sender.sendText(chatId, response);
+        }
     }
 }

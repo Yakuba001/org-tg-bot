@@ -4,9 +4,13 @@ import com.orgtgbot.config.TelegramBotProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+
+import java.io.ByteArrayInputStream;
 
 @Slf4j
 @Component
@@ -24,6 +28,17 @@ public class TelegramSender {
                     .chatId(chatId).text(text).build());
         } catch (TelegramApiException e) {
             log.error("Не удалось отправить сообщение в чат {}", chatId, e);
+        }
+    }
+
+    public void sendDocument(Long chatId, byte[] bytes, String fileName) {
+        try {
+            client.execute(SendDocument.builder()
+                    .chatId(chatId)
+                    .document(new InputFile(new ByteArrayInputStream(bytes), fileName))
+                    .build());
+        } catch (TelegramApiException e) {
+            log.error("Ошибка отправки файла chat={}", chatId, e);
         }
     }
 }

@@ -2,6 +2,16 @@ spring:
   application:
     name: org-tg-bot
 
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
 telegram:
   bot:
     username: ${TELEGRAM_BOT_USERNAME}
