@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -28,10 +29,12 @@ public class MondayCommand implements CommandHandler {
             return "укажите кол-во км например 12";
         } else {
             try {
-                List<Integer> result = Arrays.stream(parts).map(Integer::parseInt).toList();
-                probegService.changeMonday(result);
-                return "Monday:" + parts[1] + " km." + "\n" + probegService.getAll().stream()
-                        .map(e -> e.getRowNumber() + ": " + e.getKilometers() + " km.").toList();
+                int kilometers = Integer.parseInt(parts[1]);
+                probegService.changeMonday(List.of(kilometers));
+                String listReport = probegService.getAll().stream()
+                        .map(e -> e.getRowNumber() + ": " + e.getKilometers() + " km.")
+                        .collect(Collectors.joining("\n"));
+                return "Monday: " + kilometers + " km.\n" + listReport;
             } catch (NumberFormatException e) {
                 return "Ошибка: только целые числа. Например: /monday 12";
             }
