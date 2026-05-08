@@ -16,13 +16,21 @@ public class ProbegService {
 
     @Transactional
     public void saveMileage(List<Integer> kilometers) {
-        repository.deleteAll();
+        List<ReportEntry> entries = getAll();
         for (int i = 0; i < kilometers.size(); i++) {
-            repository.save(ReportEntry.builder()
-                    .rowNumber(i + 1)
-                    .kilometers(kilometers.get(i))
-                    .build());
+            if (i < entries.size())
+                entries.get(i).setKilometers(kilometers.get(i));
+            else
+                repository.save(ReportEntry.builder()
+                        .rowNumber(i + 1)
+                        .kilometers(kilometers.get(i))
+                        .build());
         }
+    }
+
+    @Transactional
+    public void changeMonday(List<Integer> kilometers) {
+        getAll().get(0).setKilometers(kilometers.get(0));
     }
 
     public List<ReportEntry> getAll() {
