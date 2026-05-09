@@ -1,5 +1,6 @@
 package com.orgtgbot.bot.callback;
 
+import com.orgtgbot.bot.command.registry.CommandRegistry;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,22 +13,30 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ProbegMenuCallBack implements CallbackHandler {
+public class ProbegMondayCallback implements CallbackHandler {
 
-    private final TelegramClient telegramClient;
+    private final TelegramClient client;
+
+    private final CommandRegistry registry;
 
     @Override
-    public String callbackData() { return KeyboardFactory.PROBEG_MENU; }
+    public String callbackData() {
+        return KeyboardFactory.PROBEG_MONDAY;
+    }
 
     @Override
     public void handle(CallbackQuery callbackQuery) {
         try {
-            telegramClient.execute(EditMessageText.builder()
+            client.execute(EditMessageText.builder()
                     .chatId(callbackQuery.getMessage().getChatId())
                     .messageId(callbackQuery.getMessage().getMessageId())
-                    .text(" Меню пробега:")
-                    .replyMarkup(KeyboardFactory.probegMenu())
-                    .build());
+                    .text(" Понедельник:")
+                    .replyMarkup(KeyboardFactory.probegMonday())
+                    .build()
+            );
+
+            registry.resolve("/monday 12");
+
         } catch (TelegramApiException e) {
             log.error("Ошибка отображения меню пробега", e);
         }
