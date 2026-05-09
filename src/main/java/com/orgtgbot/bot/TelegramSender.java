@@ -1,6 +1,7 @@
 package com.orgtgbot.bot;
 
 import com.orgtgbot.config.TelegramBotProperties;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
@@ -14,13 +15,10 @@ import java.io.ByteArrayInputStream;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class TelegramSender {
 
     private final TelegramClient client;
-
-    public TelegramSender(TelegramBotProperties props) {
-        this.client = new OkHttpTelegramClient(props.token());
-    }
 
     public void sendText(Long chatId, String text) {
         try {

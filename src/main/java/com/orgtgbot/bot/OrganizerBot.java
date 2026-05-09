@@ -16,8 +16,13 @@ public class OrganizerBot implements SpringLongPollingBot, LongPollingSingleThre
     private final TelegramBotProperties props;
     private final UpdateDispatcher dispatcher;
 
-    @Override public String getBotToken() { return props.token(); }
-    @Override public LongPollingSingleThreadUpdateConsumer getUpdatesConsumer() { return this; }
+    @Override public String getBotToken() {
+        return props.token();
+    }
+
+    @Override public LongPollingSingleThreadUpdateConsumer getUpdatesConsumer() {
+        return this;
+    }
 
     @Override
     public void consume(Update update) {
