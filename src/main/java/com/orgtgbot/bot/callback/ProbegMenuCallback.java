@@ -1,5 +1,6 @@
 package com.orgtgbot.bot.callback;
 
+import com.orgtgbot.bot.keyboard.Buttons;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,7 @@ public class ProbegMenuCallback implements CallbackHandler {
 
     @Override
     public String callbackData() {
-        return KeyboardFactory.PROBEG_MENU;
+        return Buttons.PROBEG_MENU.name();
     }
 
     @Override

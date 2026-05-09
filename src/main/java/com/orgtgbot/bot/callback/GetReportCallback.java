@@ -1,7 +1,7 @@
 package com.orgtgbot.bot.callback;
 
 import com.orgtgbot.bot.TelegramSender;
-import com.orgtgbot.bot.keyboard.KeyboardFactory;
+import com.orgtgbot.bot.keyboard.Buttons;
 import com.orgtgbot.service.ExcelService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,9 @@ public class GetReportCallback implements CallbackHandler {
     private final TelegramSender sender;
 
     @Override
-    public String callbackData() { return KeyboardFactory.GET_REPORT; }
+    public String callbackData() {
+        return Buttons.GET_REPORT.name();
+    }
 
     @Override
     public void handle(CallbackQuery callbackQuery) {

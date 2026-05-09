@@ -1,6 +1,7 @@
 package com.orgtgbot.bot.callback;
 
 import com.orgtgbot.bot.command.registry.CommandRegistry;
+import com.orgtgbot.bot.keyboard.Buttons;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,7 @@ public class ProbegMondayCallback implements CallbackHandler {
 
     @Override
     public String callbackData() {
-        return KeyboardFactory.PROBEG_MONDAY;
+        return Buttons.PROBEG_MONDAY.name();
     }
 
     @Override

@@ -4,50 +4,36 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 
-import java.util.List;
+import java.util.Arrays;
+
+import static com.orgtgbot.bot.keyboard.Buttons.*;
 
 public class KeyboardFactory {
 
-    public static final String MAIN_MENU       = "main_menu";
-    public static final String PROBEG_MENU     = "probeg_menu";
-    public static final String GET_REPORT      = "get_report";
-
-    public static final String PROBEG_MONDAY  = "probeg_monday";
-
     public static InlineKeyboardMarkup mainMenu() {
-        return InlineKeyboardMarkup.builder()
-                .keyboard(List.of(
-                        new InlineKeyboardRow(
-                                button(" Пробег", PROBEG_MENU)
-                        )
-                ))
-                .build();
+        return keyboard(row(button(" Пробег", PROBEG_MENU.name())));
     }
 
     public static InlineKeyboardMarkup probegMenu() {
-        return InlineKeyboardMarkup.builder()
-                .keyboard(List.of(
-                        new InlineKeyboardRow(
-                                button(" Понедельник", PROBEG_MONDAY)
-                        ),
-                        new InlineKeyboardRow(
-                                button(" Получить отчёт", GET_REPORT)
-                        ),
-                        new InlineKeyboardRow(
-                                button("◀ Назад", MAIN_MENU)
-                        )
-                ))
-                .build();
+        return keyboard(row(
+                button(" Понедельник", PROBEG_MONDAY.name()),
+                button(" Получить отчёт", GET_REPORT.name()),
+                button(" Назад", MAIN_MENU.name())
+        ));
     }
 
     public static InlineKeyboardMarkup probegMonday() {
+        return keyboard(row(button(" Назад", PROBEG_MENU.name())));
+    }
+
+    private static InlineKeyboardMarkup keyboard(InlineKeyboardRow... rows) {
         return InlineKeyboardMarkup.builder()
-                .keyboard(List.of(
-                        new InlineKeyboardRow(
-                                button("◀ Назад", PROBEG_MENU)
-                        )
-                ))
+                .keyboard(Arrays.stream(rows).toList())
                 .build();
+    }
+
+    private static InlineKeyboardRow row(InlineKeyboardButton... buttons) {
+        return new InlineKeyboardRow(buttons);
     }
 
     private static InlineKeyboardButton button(String text, String callbackData) {
