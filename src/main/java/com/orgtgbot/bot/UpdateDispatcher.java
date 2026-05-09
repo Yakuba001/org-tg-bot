@@ -18,15 +18,16 @@ public class UpdateDispatcher {
     private final TelegramSender sender;
 
     public void dispatch(Update update) {
-        if (!update.hasMessage() || !update.getMessage().hasText())
-            return;
-        String text = update.getMessage().getText();
-        Long chatId = update.getMessage().getChatId();
+        if (update.hasMessage() && update.getMessage().hasText()) {
+            String text = update.getMessage().getText();
+            Long chatId = update.getMessage().getChatId();
+            log.debug("chat={} text={}", chatId, text);
 
-        CommandHandler handler = registry.resolve(text);
-        String response = handler.execute(update);
-        if (response != null && !response.isBlank()) {
-            sender.sendText(chatId, response);
+            CommandHandler handler = registry.resolve(text);
+            String response = handler.execute(update);
+            if (response != null && !response.isBlank()) {
+                sender.sendText(chatId, response);
+            }
         }
 
         if (update.hasCallbackQuery()) {
