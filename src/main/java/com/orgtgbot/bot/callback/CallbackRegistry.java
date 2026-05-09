@@ -2,7 +2,10 @@ package com.orgtgbot.bot.callback;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.util.List;
 import java.util.Map;
@@ -13,14 +16,18 @@ import java.util.stream.Collectors;
 public class CallbackRegistry {
 
     private final Map<String, CallbackHandler> handlers;
+    private final TelegramClient telegramClient;
 
-    public CallbackRegistry(List<CallbackHandler> all) {
+    public CallbackRegistry(List<CallbackHandler> all, TelegramClient telegramClient) {
+        this.telegramClient = telegramClient;
         this.handlers = all.stream()
                 .collect(Collectors.toUnmodifiableMap(
                         CallbackHandler::callbackData, h -> h));
     }
 
     public void dispatch(CallbackQuery callbackQuery) {
+        answerCallback(callbackQuery.getId());
+
         String data = callbackQuery.getData();
         CallbackHandler handler = handlers.get(data);
 
@@ -29,5 +36,15 @@ public class CallbackRegistry {
             return;
         }
         handler.handle(callbackQuery);
+    }
+
+    private void answerCallback(String callbackQueryId) {
+        try {
+            telegramClient.execute(AnswerCallbackQuery.builder()
+                    .callbackQueryId(callbackQueryId)
+                    .build());
+        } catch (TelegramApiException e) {
+            log.error("Ошибка ответа на callback", e);
+        }
     }
 }
