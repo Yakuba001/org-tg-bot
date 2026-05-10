@@ -37,10 +37,10 @@ public class UpdateDispatcher {
                             "Пожалуйста, введите пробег целым числом (например, 12).",
                             KeyboardFactory.probegMenu());
                     userStateService.removeState(chatId);
-                    sender.deleteMessage(chatId, update.getMessage().getMessageId());
                     return;
                 }
                 handleStatefulUpdate(chatId, firstPart, state);
+                sender.deleteMessage(chatId, update.getMessage().getMessageId());
                 return;
             }
 
