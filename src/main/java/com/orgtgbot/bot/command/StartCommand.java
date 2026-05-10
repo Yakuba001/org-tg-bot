@@ -22,6 +22,7 @@ public class StartCommand implements CommandHandler {
         try {
             telegramClient.execute(SendMessage.builder()
                     .chatId(update.getMessage().getChatId())
+                    .text("")
                     .replyMarkup(KeyboardFactory.mainMenu())
                     .build());
         } catch (TelegramApiException e) {
