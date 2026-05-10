@@ -1,5 +1,6 @@
-package com.orgtgbot.bot.callback;
+package com.orgtgbot.bot.callback.registry;
 
+import com.orgtgbot.bot.callback.CallbackHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
