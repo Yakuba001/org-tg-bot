@@ -37,14 +37,15 @@ public class UpdateDispatcher {
 
 
             if (!state.isEmpty()) {
+                Integer botMenuId = userStateService.getMessageId(chatId);
                 if (!text.matches("\\d+")) {
                     sender.editMarkup(
                             chatId,
-                            messageId,
+                            botMenuId,
                             "Пожалуйста, введите целое число (например, 12).",
                             KeyboardFactory.probegMenu());
                     userStateService.removeState(chatId);
-//                    sender.deleteMessage(chatId, update.getMessage().getMessageId());
+                    sender.deleteMessage(chatId, update.getMessage().getMessageId());
                     return;
                 }
                 handleStatefulUpdate(chatId, text, state);
