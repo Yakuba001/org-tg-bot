@@ -19,39 +19,40 @@ public class UpdateDispatcher {
     private final CommandRegistry registry;
     private final CallbackRegistry callbackRegistry;
     private final TelegramSender sender;
-
     private final UserStateService userStateService;
     private final ProbegService probegService;
 
     public void dispatch(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String text = update.getMessage().getText();
-            String firstPart = text.trim().split("\\s+", 2)[0];
             Long chatId = update.getMessage().getChatId();
             String state = userStateService.getState(chatId);
-
             if (text.equals("/start")) {
                 sender.deleteMessage(chatId, update.getMessage().getMessageId());
-                sender.sendText(chatId,
-                        "—".repeat(40) + "\nДобро пожаловать в Органайзер!",
-                        KeyboardFactory.mainMenu());
+                sender.sendText(chatId, "Добро пожаловать в Органайзер!", KeyboardFactory.mainMenu());
                 return;
             }
 
+
+
             if (!state.isEmpty()) {
-                if (!firstPart.matches("\\d+")) {
+                if (!text.matches("\\d+")) {
                     sender.sendText(
                             chatId,
                             "Пожалуйста, введите пробег целым числом (например, 12).",
                             KeyboardFactory.probegMenu());
                     userStateService.removeState(chatId);
+                    sender.deleteMessage(chatId, update.getMessage().getMessageId());
                     return;
                 }
-                handleStatefulUpdate(chatId, firstPart, state);
+                handleStatefulUpdate(chatId, text, state);
                 userStateService.removeState(chatId);
                 sender.deleteMessage(chatId, update.getMessage().getMessageId());
                 return;
             }
+
+
+
 
             CommandHandler handler = registry.resolve(text);
             String response = handler.execute(update);
@@ -64,9 +65,9 @@ public class UpdateDispatcher {
         }
     }
 
-    private void handleStatefulUpdate(Long chatId, String firstPart, String state) {
+    private void handleStatefulUpdate(Long chatId, String text, String state) {
         if ("WAITING_PROBEG_MONDAY".equals(state)) {
-            String report = probegService.changeMonday(List.of(Integer.parseInt(firstPart.trim())));
+            String report = probegService.changeMonday(List.of(Integer.parseInt(text.trim())));
             Integer messageId = userStateService.getMessageId(chatId);
             sender.editMarkup(chatId, messageId, "Данные приняты!\n" + report, KeyboardFactory.probegMenu());
         }

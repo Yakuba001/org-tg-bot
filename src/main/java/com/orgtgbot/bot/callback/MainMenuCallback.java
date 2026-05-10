@@ -28,7 +28,7 @@ public class MainMenuCallback implements CallbackHandler {
             telegramClient.execute(EditMessageText.builder()
                     .chatId(callbackQuery.getMessage().getChatId())
                     .messageId(callbackQuery.getMessage().getMessageId())
-                    .text("—".repeat(40) + "\nГлавное меню")
+                    .text("Главное меню:")
                     .replyMarkup(KeyboardFactory.mainMenu())
                     .build());
         } catch (TelegramApiException e) {
