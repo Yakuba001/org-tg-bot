@@ -35,9 +35,6 @@ public class ProbegMondayCallback implements CallbackHandler {
                     .replyMarkup(KeyboardFactory.probegMonday())
                     .build()
             );
-
-            registry.resolve("/monday 12");
-
         } catch (TelegramApiException e) {
             log.error("Ошибка отображения меню пробега", e);
         }
