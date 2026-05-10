@@ -33,14 +33,28 @@ public class UpdateDispatcher {
                 sender.sendText(chatId, "Добро пожаловать в Органайзер!", KeyboardFactory.mainMenu());
                 return;
             }
+
+
+
             if (!state.isEmpty()) {
                 if (!text.matches("\\d+")) {
-                    checkInteger(chatId, messageId);
+                    sender.editMarkup(
+                            chatId,
+                            messageId,
+                            "Пожалуйста, введите целое число (например, 12).",
+                            KeyboardFactory.probegMenu());
+                    userStateService.removeState(chatId);
+                    sender.deleteMessage(chatId, update.getMessage().getMessageId());
                     return;
                 }
                 handleStatefulUpdate(chatId, text, state);
+                userStateService.removeState(chatId);
+                sender.deleteMessage(chatId, update.getMessage().getMessageId());
                 return;
             }
+
+
+
 
             CommandHandler handler = registry.resolve(text);
             String response = handler.execute(update);
@@ -58,18 +72,6 @@ public class UpdateDispatcher {
             String report = probegService.changeMonday(List.of(Integer.parseInt(text.trim())));
             Integer messageId = userStateService.getMessageId(chatId);
             sender.editMarkup(chatId, messageId, "Данные приняты!\n" + report, KeyboardFactory.probegMenu());
-            userStateService.removeState(chatId);
-            sender.deleteMessage(chatId, messageId);
         }
-    }
-
-    private void checkInteger(Long chatId, Integer messageId) {
-        sender.editMarkup(
-                chatId,
-                messageId,
-                "Пожалуйста, введите целое число (например, 12).",
-                KeyboardFactory.probegMenu());
-        userStateService.removeState(chatId);
-        sender.deleteMessage(chatId, messageId);
     }
 }
