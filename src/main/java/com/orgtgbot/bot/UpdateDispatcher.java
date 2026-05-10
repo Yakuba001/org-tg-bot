@@ -30,6 +30,14 @@ public class UpdateDispatcher {
             Long chatId = update.getMessage().getChatId();
             String state = userStateService.getState(chatId);
 
+            if (text.equals("/start")) {
+                sender.deleteMessage(chatId, update.getMessage().getMessageId());
+                sender.sendText(chatId,
+                        "—".repeat(40) + "\nДобро пожаловать в Органайзер!",
+                        KeyboardFactory.mainMenu());
+                return;
+            }
+
             if (!state.isEmpty()) {
                 if (!firstPart.matches("\\d+")) {
                     sender.sendText(
@@ -40,6 +48,7 @@ public class UpdateDispatcher {
                     return;
                 }
                 handleStatefulUpdate(chatId, firstPart, state);
+                userStateService.removeState(chatId);
                 sender.deleteMessage(chatId, update.getMessage().getMessageId());
                 return;
             }
@@ -60,8 +69,6 @@ public class UpdateDispatcher {
             String report = probegService.changeMonday(List.of(Integer.parseInt(firstPart.trim())));
             Integer messageId = userStateService.getMessageId(chatId);
             sender.editMarkup(chatId, messageId, "Данные приняты!\n" + report, KeyboardFactory.probegMenu());
-
-            userStateService.removeState(chatId);
         }
     }
 }
