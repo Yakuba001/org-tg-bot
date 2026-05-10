@@ -22,7 +22,7 @@ public class StartCommand implements CommandHandler {
         try {
             telegramClient.execute(SendMessage.builder()
                     .chatId(update.getMessage().getChatId())
-                    .text("")
+                    .text("Привет! Выбери раздел:")
                     .replyMarkup(KeyboardFactory.mainMenu())
                     .build());
         } catch (TelegramApiException e) {
