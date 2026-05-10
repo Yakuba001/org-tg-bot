@@ -2,6 +2,7 @@ package com.orgtgbot.bot.callback;
 
 import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.keyboard.Buttons;
+import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import com.orgtgbot.service.ExcelService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ public class GetReportCallback implements CallbackHandler {
             sender.sendDocument(chatId, file, "probeg.xlsx");
         } catch (Exception e) {
             log.error("Ошибка генерации отчёта через кнопку", e);
-            sender.sendText(chatId, "❌ Ошибка генерации файла.");
+            sender.sendText(chatId, "❌ Ошибка генерации файла.", KeyboardFactory.mainMenu());
         }
     }
 }
