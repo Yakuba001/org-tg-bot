@@ -4,7 +4,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.orgtgbot.bot.keyboard.Buttons.*;
@@ -12,38 +12,33 @@ import static com.orgtgbot.bot.keyboard.Buttons.*;
 public class KeyboardFactory {
 
     public static InlineKeyboardMarkup mainMenu() {
-        return verticalKeyboard(
-                button(" Пробег", PROBEG_MENU.name())
-        );
+        return create(" Пробег", PROBEG_MENU.name());
     }
 
     public static InlineKeyboardMarkup probegMenu() {
-        return verticalKeyboard(
-                button(" Понедельник", PROBEG_MONDAY.name()),
-                button(" Получить отчёт", GET_REPORT.name()),
-                button(" Назад", MAIN_MENU.name())
+        return create(
+                " Понедельник", PROBEG_MONDAY.name(),
+                " Получить отчёт", GET_REPORT.name(),
+                " Назад", MAIN_MENU.name()
         );
     }
 
     public static InlineKeyboardMarkup probegMonday() {
-        return verticalKeyboard(
-                button(" Назад", PROBEG_MENU.name())
-        );
+        return create(" Назад", PROBEG_MENU.name());
     }
 
-    private static InlineKeyboardMarkup verticalKeyboard(InlineKeyboardButton... buttons) {
-        List<InlineKeyboardRow> rows = Arrays.stream(buttons)
-                .map(InlineKeyboardRow::new)
-                .toList();
+    public static InlineKeyboardMarkup create(String... data) {
+        List<InlineKeyboardRow> rows = new ArrayList<>();
+        for (int i = 0; i < data.length; i += 2) {
+            rows.add(new InlineKeyboardRow(
+                    InlineKeyboardButton.builder()
+                            .text(data[i])
+                            .callbackData(data[i + 1])
+                            .build()
+            ));
+        }
         return InlineKeyboardMarkup.builder()
                 .keyboard(rows)
-                .build();
-    }
-
-    private static InlineKeyboardButton button(String text, String callbackData) {
-        return InlineKeyboardButton.builder()
-                .text(text)
-                .callbackData(callbackData)
                 .build();
     }
 }
