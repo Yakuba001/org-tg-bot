@@ -36,6 +36,7 @@ public class ProbegMondayCallback implements CallbackHandler {
                     .build()
             );
             userStateService.setState(chatId, "WAITING_PROBEG_MONDAY");
+            userStateService.setMessageId(chatId, callbackQuery.getMessage().getMessageId());
         } catch (TelegramApiException e) {
             log.error("Ошибка отображения меню пробега", e);
         }

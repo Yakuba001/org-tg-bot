@@ -37,6 +37,7 @@ public class UpdateDispatcher {
                             "Пожалуйста, введите пробег целым числом (например, 12).",
                             KeyboardFactory.probegMenu());
                     userStateService.removeState(chatId);
+                    sender.deleteMessage(chatId, update.getMessage().getMessageId());
                     return;
                 }
                 handleStatefulUpdate(chatId, firstPart, state);
@@ -57,7 +58,9 @@ public class UpdateDispatcher {
     private void handleStatefulUpdate(Long chatId, String firstPart, String state) {
         if ("WAITING_PROBEG_MONDAY".equals(state)) {
             String report = probegService.changeMonday(List.of(Integer.parseInt(firstPart.trim())));
-            sender.sendText(chatId, "Данные приняты!\n" + report, KeyboardFactory.probegMenu());
+            Integer messageId = userStateService.getMessageId(chatId);
+            sender.editMarkup(chatId, messageId, "Данные приняты!\n" + report, KeyboardFactory.probegMenu());
+
             userStateService.removeState(chatId);
         }
     }
