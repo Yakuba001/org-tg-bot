@@ -32,7 +32,7 @@ public class ProbegMondayCallback implements CallbackHandler {
             client.execute(EditMessageText.builder()
                     .chatId(callbackQuery.getMessage().getChatId())
                     .messageId(callbackQuery.getMessage().getMessageId())
-                    .text(" Понедельник:")
+                    .text(Buttons.PROBEG_MONDAY.getName())
                     .replyMarkup(KeyboardFactory.probegMonday())
                     .build()
             );

@@ -28,7 +28,7 @@ public class ProbegMenuCallback implements CallbackHandler {
             telegramClient.execute(EditMessageText.builder()
                     .chatId(callbackQuery.getMessage().getChatId())
                     .messageId(callbackQuery.getMessage().getMessageId())
-                    .text(" Меню пробега:")
+                    .text(Buttons.PROBEG_MENU.getName())
                     .replyMarkup(KeyboardFactory.probegMenu())
                     .build());
         } catch (TelegramApiException e) {

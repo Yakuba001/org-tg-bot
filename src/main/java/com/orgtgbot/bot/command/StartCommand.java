@@ -15,16 +15,15 @@ public class StartCommand {
 
     private final TelegramClient telegramClient;
 
-    public String execute(Update update) {
+    public void execute(Update update) {
         try {
             telegramClient.execute(SendMessage.builder()
                     .chatId(update.getMessage().getChatId())
                     .text(Buttons.MAIN_MENU.getName())
                     .replyMarkup(KeyboardFactory.mainMenu())
                     .build());
-        } catch (TelegramApiException e) {
-            return "Ошибка отображения меню.";
+        } catch (TelegramApiException ignored) {
+
         }
-        return "";
     }
 }

@@ -1,10 +1,7 @@
 package com.orgtgbot.bot;
 
 import com.orgtgbot.bot.callback.registry.CallbackRegistry;
-import com.orgtgbot.bot.command.CommandHandler;
 import com.orgtgbot.bot.command.StartCommand;
-import com.orgtgbot.bot.command.registry.CommandRegistry;
-import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import com.orgtgbot.bot.state.UserState;
 import com.orgtgbot.bot.state.UserStateService;
 import com.orgtgbot.bot.state.registry.StateRegistry;
@@ -16,7 +13,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @RequiredArgsConstructor
 public class UpdateDispatcher {
 
-    private final CommandRegistry commandRegistry;
     private final StartCommand startCommand;
     private final CallbackRegistry callbackRegistry;
     private final StateRegistry stateRegistry;
