@@ -37,6 +37,7 @@ public class UpdateDispatcher {
 
         if (currentState != UserState.NONE) {
             stateRegistry.handle(currentState, update);
+            return;
         }
         if (text.startsWith("/")) {
             commandRegistry.resolve(text);
