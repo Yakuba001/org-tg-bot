@@ -1,6 +1,7 @@
 package com.orgtgbot.bot;
 
 import com.orgtgbot.bot.callback.registry.CallbackRegistry;
+import com.orgtgbot.bot.command.registry.CommandRegistry;
 import com.orgtgbot.bot.state.UserState;
 import com.orgtgbot.bot.state.UserStateService;
 import com.orgtgbot.bot.state.registry.StateRegistry;
@@ -13,6 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @RequiredArgsConstructor
 public class UpdateDispatcher {
 
+    private final CommandRegistry commandRegistry;
     private final CallbackRegistry callbackRegistry;
     private final StateRegistry stateRegistry;
     private final UserStateService userStateService;
@@ -29,11 +31,15 @@ public class UpdateDispatcher {
 
     private void processTextMessage(Update update) {
         Long chatId = update.getMessage().getChatId();
+        String text = update.getMessage().getText();
 
         UserState currentState = userStateService.getState(chatId);
 
         if (currentState != UserState.NONE) {
             stateRegistry.handle(currentState, update);
+        }
+        if (text.startsWith("/")) {
+            commandRegistry.resolve(text);
         }
     }
 }
