@@ -1,6 +1,7 @@
 package com.orgtgbot.bot.callback;
 
-import com.orgtgbot.bot.callback.state.UserStateService;
+import com.orgtgbot.bot.state.UserState;
+import com.orgtgbot.bot.state.UserStateService;
 import com.orgtgbot.bot.keyboard.Buttons;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,7 @@ public class ProbegMondayCallback implements CallbackHandler {
                     .replyMarkup(KeyboardFactory.probegMonday())
                     .build()
             );
-            userStateService.setState(chatId, "WAITING_PROBEG_MONDAY");
+            userStateService.setState(chatId, UserState.PROBEG_MONDAY);
             userStateService.setMessageId(chatId, callbackQuery.getMessage().getMessageId());
         } catch (TelegramApiException e) {
             log.error("Ошибка отображения меню пробега", e);
