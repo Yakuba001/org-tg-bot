@@ -49,7 +49,7 @@ public class UpdateDispatcher {
                     sender.sendText(chatId, response, KeyboardFactory.mainMenu());
                 }
             } else {
-                System.out.println("Error: Unknown command: " + text);
+                sender.deleteMessage(chatId, update.getMessage().getMessageId());
             }
         }
     }
