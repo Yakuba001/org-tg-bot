@@ -43,7 +43,7 @@ public class UpdateDispatcher {
         }
         if (text.startsWith("/")) {
             CommandHandler handler = commandRegistry.resolve(text);
-            if (handler != null) {
+            if (handler != null && handler.name() != null) {
                 String response = handler.execute(update);
                 if (response != null && !response.isBlank()) {
                     sender.sendText(chatId, response, KeyboardFactory.mainMenu());
