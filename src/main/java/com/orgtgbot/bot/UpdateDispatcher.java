@@ -8,6 +8,7 @@ import com.orgtgbot.bot.state.registry.StateRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Component
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class UpdateDispatcher {
     private final UserStateService userStateService;
     private final TelegramSender sender;
 
-    public void dispatch(Update update) {
+    public void dispatch(Update update) throws Exception {
         if (update.hasCallbackQuery()) {
             callbackRegistry.dispatch(update.getCallbackQuery());
             return;
@@ -29,7 +30,7 @@ public class UpdateDispatcher {
         }
     }
 
-    private void processTextMessage(Update update) {
+    private void processTextMessage(Update update) throws TelegramApiException {
         Long chatId = update.getMessage().getChatId();
         String text = update.getMessage().getText();
 

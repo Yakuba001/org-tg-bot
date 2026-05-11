@@ -2,7 +2,6 @@ package com.orgtgbot.bot.callback;
 
 import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.keyboard.Buttons;
-import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import com.orgtgbot.service.ExcelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,13 +20,9 @@ public class GetReportCallback implements CallbackHandler {
     }
 
     @Override
-    public void handle(CallbackQuery callbackQuery) {
+    public void handle(CallbackQuery callbackQuery) throws Exception {
         Long chatId = callbackQuery.getMessage().getChatId();
-        try {
-            byte[] file = excelService.generateReport();
-            sender.sendDocument(chatId, file, "probeg.xlsx");
-        } catch (Exception e) {
-            sender.sendText(chatId, "Ошибка генерации файла.", KeyboardFactory.probegMenu());
-        }
+        byte[] file = excelService.generateReport();
+        sender.sendDocument(chatId, file, "probeg.xlsx");
     }
 }

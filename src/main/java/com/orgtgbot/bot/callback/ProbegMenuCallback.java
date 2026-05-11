@@ -23,16 +23,12 @@ public class ProbegMenuCallback implements CallbackHandler {
     }
 
     @Override
-    public void handle(CallbackQuery callbackQuery) {
-        try {
-            telegramClient.execute(EditMessageText.builder()
-                    .chatId(callbackQuery.getMessage().getChatId())
-                    .messageId(callbackQuery.getMessage().getMessageId())
-                    .text(Buttons.PROBEG_MENU.getName())
-                    .replyMarkup(KeyboardFactory.probegMenu())
-                    .build());
-        } catch (TelegramApiException e) {
-            log.error("Ошибка отображения меню пробега", e);
-        }
+    public void handle(CallbackQuery callbackQuery) throws TelegramApiException {
+        telegramClient.execute(EditMessageText.builder()
+                .chatId(callbackQuery.getMessage().getChatId())
+                .messageId(callbackQuery.getMessage().getMessageId())
+                .text(Buttons.PROBEG_MENU.getName())
+                .replyMarkup(KeyboardFactory.probegMenu())
+                .build());
     }
 }

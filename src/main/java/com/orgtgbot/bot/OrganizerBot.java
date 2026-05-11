@@ -29,7 +29,7 @@ public class OrganizerBot implements SpringLongPollingBot, LongPollingSingleThre
         try {
             dispatcher.dispatch(update);
         } catch (Exception e) {
-            log.error("Ошибка обработки update={}", update.getUpdateId(), e);
+            e.printStackTrace();
         }
     }
 }

@@ -15,15 +15,11 @@ public class StartCommand {
 
     private final TelegramClient telegramClient;
 
-    public void execute(Update update) {
-        try {
-            telegramClient.execute(SendMessage.builder()
-                    .chatId(update.getMessage().getChatId())
-                    .text(Buttons.MAIN_MENU.getName())
-                    .replyMarkup(KeyboardFactory.mainMenu())
-                    .build());
-        } catch (TelegramApiException ignored) {
-
-        }
+    public void execute(Update update) throws TelegramApiException {
+        telegramClient.execute(SendMessage.builder()
+                .chatId(update.getMessage().getChatId())
+                .text(Buttons.MAIN_MENU.getName())
+                .replyMarkup(KeyboardFactory.mainMenu())
+                .build());
     }
 }

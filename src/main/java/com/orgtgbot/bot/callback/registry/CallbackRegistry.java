@@ -26,7 +26,7 @@ public class CallbackRegistry {
                         CallbackHandler::callbackData, h -> h));
     }
 
-    public void dispatch(CallbackQuery callbackQuery) {
+    public void dispatch(CallbackQuery callbackQuery) throws Exception {
         answerCallback(callbackQuery.getId());
 
         String data = callbackQuery.getData();
@@ -39,13 +39,9 @@ public class CallbackRegistry {
         handler.handle(callbackQuery);
     }
 
-    private void answerCallback(String callbackQueryId) {
-        try {
-            telegramClient.execute(AnswerCallbackQuery.builder()
-                    .callbackQueryId(callbackQueryId)
-                    .build());
-        } catch (TelegramApiException e) {
-            log.error("Ошибка ответа на callback", e);
-        }
+    private void answerCallback(String callbackQueryId) throws TelegramApiException {
+        telegramClient.execute(AnswerCallbackQuery.builder()
+                .callbackQueryId(callbackQueryId)
+                .build());
     }
 }

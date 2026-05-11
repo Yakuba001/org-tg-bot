@@ -26,20 +26,15 @@ public class ProbegMondayCallback implements CallbackHandler {
     }
 
     @Override
-    public void handle(CallbackQuery callbackQuery) {
+    public void handle(CallbackQuery callbackQuery) throws TelegramApiException {
         Long chatId = callbackQuery.getMessage().getChatId();
-        try {
-            client.execute(EditMessageText.builder()
-                    .chatId(callbackQuery.getMessage().getChatId())
-                    .messageId(callbackQuery.getMessage().getMessageId())
-                    .text(Buttons.PROBEG_MONDAY.getName())
-                    .replyMarkup(KeyboardFactory.probegMonday())
-                    .build()
-            );
-            userStateService.setState(chatId, UserState.PROBEG_MONDAY);
-            userStateService.setMessageId(chatId, callbackQuery.getMessage().getMessageId());
-        } catch (TelegramApiException e) {
-            log.error("Ошибка отображения меню пробега", e);
-        }
+        client.execute(EditMessageText.builder()
+                .chatId(callbackQuery.getMessage().getChatId())
+                .messageId(callbackQuery.getMessage().getMessageId())
+                .text(Buttons.PROBEG_MONDAY.getName())
+                .replyMarkup(KeyboardFactory.probegMonday())
+                .build());
+        userStateService.setState(chatId, UserState.PROBEG_MONDAY);
+        userStateService.setMessageId(chatId, callbackQuery.getMessage().getMessageId());
     }
 }

@@ -21,16 +21,12 @@ public class MainMenuCallback implements CallbackHandler {
     }
 
     @Override
-    public void handle(CallbackQuery callbackQuery) {
-        try {
-            telegramClient.execute(EditMessageText.builder()
-                    .chatId(callbackQuery.getMessage().getChatId())
-                    .messageId(callbackQuery.getMessage().getMessageId())
-                    .text(Buttons.MAIN_MENU.getName())
-                    .replyMarkup(KeyboardFactory.mainMenu())
-                    .build());
-        } catch (TelegramApiException ignored) {
-
-        }
+    public void handle(CallbackQuery callbackQuery) throws TelegramApiException {
+        telegramClient.execute(EditMessageText.builder()
+                .chatId(callbackQuery.getMessage().getChatId())
+                .messageId(callbackQuery.getMessage().getMessageId())
+                .text(Buttons.MAIN_MENU.getName())
+                .replyMarkup(KeyboardFactory.mainMenu())
+                .build());
     }
 }
