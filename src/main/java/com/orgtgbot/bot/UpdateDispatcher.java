@@ -2,6 +2,7 @@ package com.orgtgbot.bot;
 
 import com.orgtgbot.bot.callback.registry.CallbackRegistry;
 import com.orgtgbot.bot.command.CommandHandler;
+import com.orgtgbot.bot.command.StartCommand;
 import com.orgtgbot.bot.command.registry.CommandRegistry;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import com.orgtgbot.bot.state.UserState;
@@ -16,6 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class UpdateDispatcher {
 
     private final CommandRegistry commandRegistry;
+    private final StartCommand startCommand;
     private final CallbackRegistry callbackRegistry;
     private final StateRegistry stateRegistry;
     private final UserStateService userStateService;
@@ -41,16 +43,11 @@ public class UpdateDispatcher {
             stateRegistry.handle(currentState, update);
             return;
         }
-        if (text.startsWith("/")) {
-            CommandHandler handler = commandRegistry.resolve(text);
-            if (handler != null && handler.name() != null) {
-                String response = handler.execute(update);
-                if (response != null && !response.isBlank()) {
-                    sender.sendText(chatId, response, KeyboardFactory.mainMenu());
-                }
-            } else {
-                sender.deleteMessage(chatId, update.getMessage().getMessageId());
-            }
+        if (text.startsWith("/start")) {
+            startCommand.execute(update);
+            sender.deleteMessage(chatId, update.getMessage().getMessageId());
+        } else {
+            sender.deleteMessage(chatId, update.getMessage().getMessageId());
         }
     }
 }
