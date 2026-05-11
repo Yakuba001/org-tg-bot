@@ -1,14 +1,15 @@
 package com.orgtgbot.bot;
 
 import com.orgtgbot.bot.callback.registry.CallbackRegistry;
+import com.orgtgbot.bot.command.CommandHandler;
 import com.orgtgbot.bot.command.registry.CommandRegistry;
+import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import com.orgtgbot.bot.state.UserState;
 import com.orgtgbot.bot.state.UserStateService;
 import com.orgtgbot.bot.state.registry.StateRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
-
 
 @Component
 @RequiredArgsConstructor
@@ -18,12 +19,13 @@ public class UpdateDispatcher {
     private final CallbackRegistry callbackRegistry;
     private final StateRegistry stateRegistry;
     private final UserStateService userStateService;
+    private final TelegramSender sender;
 
     public void dispatch(Update update) {
-//        if (update.hasCallbackQuery()) {
-//            callbackRegistry.dispatch(update.getCallbackQuery());
-//            return;
-//        }
+        if (update.hasCallbackQuery()) {
+            callbackRegistry.dispatch(update.getCallbackQuery());
+            return;
+        }
         if (update.hasMessage() && update.getMessage().hasText()) {
             processTextMessage(update);
         }
@@ -40,7 +42,15 @@ public class UpdateDispatcher {
             return;
         }
         if (text.startsWith("/")) {
-            commandRegistry.resolve(text);
+            CommandHandler handler = commandRegistry.resolve(text);
+            if (handler != null) {
+                String response = handler.execute(update);
+                if (response != null && !response.isBlank()) {
+                    sender.sendText(chatId, response, KeyboardFactory.mainMenu());
+                }
+            } else {
+                System.out.println("Error: Unknown command: " + text);
+            }
         }
     }
 }
