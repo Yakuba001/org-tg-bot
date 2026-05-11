@@ -20,10 +20,10 @@ public class UpdateDispatcher {
     private final UserStateService userStateService;
 
     public void dispatch(Update update) {
-        if (update.hasCallbackQuery()) {
-            callbackRegistry.dispatch(update.getCallbackQuery());
-            return;
-        }
+//        if (update.hasCallbackQuery()) {
+//            callbackRegistry.dispatch(update.getCallbackQuery());
+//            return;
+//        }
         if (update.hasMessage() && update.getMessage().hasText()) {
             processTextMessage(update);
         }
