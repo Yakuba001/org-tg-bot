@@ -36,15 +36,15 @@ public class UpdateDispatcher {
 
         UserState currentState = userStateService.getState(chatId);
 
+        if (text.startsWith("/start")) {
+            startCommand.execute(update);
+            sender.deleteMessage(chatId, update.getMessage().getMessageId());
+            return;
+        }
         if (currentState != UserState.NONE) {
             stateRegistry.handle(currentState, update);
             return;
         }
-        if (text.startsWith("/start")) {
-            startCommand.execute(update);
-            sender.deleteMessage(chatId, update.getMessage().getMessageId());
-        } else {
-            sender.deleteMessage(chatId, update.getMessage().getMessageId());
-        }
+        sender.deleteMessage(chatId, update.getMessage().getMessageId());
     }
 }
