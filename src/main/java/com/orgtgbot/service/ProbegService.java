@@ -17,13 +17,12 @@ public class ProbegService {
 
     @Transactional
     public String changeMonday(List<Integer> kilometers) {
-//        int km1 = kilometers.getFirst();
-//        getAll().getFirst().setKilometers(km1);
-//        String listReport = getAll().stream()
-//                .map(e -> e.getId() + "id/row: " + e.getRowNumber() + ": " + e.getKilometers() + " km.")
-//                .collect(Collectors.joining("\n"));
-//        return "Monday: " + km1 + " km.\n" + listReport;
-        return "MONDAY";
+        int km1 = kilometers.getFirst();
+        getAll().getFirst().setTotalKm(km1);
+        String listReport = getAll().stream()
+                .map(e -> e.getId() + "id/row: " + e.getDayNumber())
+                .collect(Collectors.joining("\n"));
+        return "Monday: " + km1 + " km.\n" + listReport;
     }
 
     public List<ReportEntry> getAll() {
