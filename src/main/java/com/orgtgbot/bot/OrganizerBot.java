@@ -15,11 +15,13 @@ public class OrganizerBot implements SpringLongPollingBot, LongPollingSingleThre
     private final TelegramBotProperties props;
     private final UpdateDispatcher dispatcher;
 
-    @Override public String getBotToken() {
+    @Override
+    public String getBotToken() {
         return props.token();
     }
 
-    @Override public LongPollingSingleThreadUpdateConsumer getUpdatesConsumer() {
+    @Override
+    public LongPollingSingleThreadUpdateConsumer getUpdatesConsumer() {
         return this;
     }
 
@@ -27,10 +29,8 @@ public class OrganizerBot implements SpringLongPollingBot, LongPollingSingleThre
     public void consume(Update update) {
         try {
             dispatcher.dispatch(update);
-        } catch (TelegramApiException e) {
-            System.out.println("TG Exception:" + e.getMessage());
         } catch (Exception e) {
-            System.out.println("Exception:" + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
