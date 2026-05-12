@@ -29,7 +29,7 @@ public class MainMenuCallback implements CallbackHandler {
         telegramClient.execute(EditMessageText.builder()
                 .chatId(callbackQuery.getMessage().getChatId())
                 .messageId(callbackQuery.getMessage().getMessageId())
-                .text(Buttons.MAIN_MENU.getName())
+                .text("Главное меню")
                 .replyMarkup(KeyboardFactory.probegMenu())
                 .build());
     }
