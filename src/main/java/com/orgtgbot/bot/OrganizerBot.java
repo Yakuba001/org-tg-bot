@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 @Component
 @RequiredArgsConstructor
@@ -26,8 +27,10 @@ public class OrganizerBot implements SpringLongPollingBot, LongPollingSingleThre
     public void consume(Update update) {
         try {
             dispatcher.dispatch(update);
+        } catch (TelegramApiException e) {
+            System.out.println("TG Exception:" + e.getMessage());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Exception:" + e.getMessage());
         }
     }
 }

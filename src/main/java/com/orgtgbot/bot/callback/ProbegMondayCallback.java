@@ -27,6 +27,7 @@ public class ProbegMondayCallback implements CallbackHandler {
 
     @Override
     public void handle(CallbackQuery callbackQuery) throws TelegramApiException {
+        userStateService.removeState(callbackQuery.getMessage().getChatId());
         Long chatId = callbackQuery.getMessage().getChatId();
         client.execute(EditMessageText.builder()
                 .chatId(callbackQuery.getMessage().getChatId())

@@ -12,22 +12,26 @@ import static com.orgtgbot.bot.keyboard.Buttons.*;
 public class KeyboardFactory {
 
     public static InlineKeyboardMarkup mainMenu() {
-        return create(" Пробег", PROBEG_MENU.name());
+        return create(PROBEG_MENU.getName(), PROBEG_MENU.name());
     }
 
     public static InlineKeyboardMarkup probegMenu() {
         return create(
-                " Понедельник", PROBEG_MONDAY.name(),
-                " Получить отчёт", GET_REPORT.name(),
-                " Назад", MAIN_MENU.name()
+                PROBEG_MONDAY.getName(), PROBEG_MONDAY.name(),
+                GET_REPORT.getName(), GET_REPORT.name(),
+                BACK.getName(), MAIN_MENU.name()
         );
     }
 
     public static InlineKeyboardMarkup probegMonday() {
-        return create(" Назад", PROBEG_MENU.name());
+        return create(
+                SET_MORNING_KM.getName(), SET_MORNING_KM.name(),
+                SET_EVENING_KM.getName(), SET_EVENING_KM.name(),
+                BACK.getName(), PROBEG_MENU.name()
+        );
     }
 
-    public static InlineKeyboardMarkup create(String... data) {
+    private static InlineKeyboardMarkup create(String... data) {
         List<InlineKeyboardRow> rows = new ArrayList<>();
         for (int i = 0; i < data.length; i += 2) {
             rows.add(new InlineKeyboardRow(

@@ -16,9 +16,12 @@ public class ReportEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "row_number", nullable = false)
-    private Integer rowNumber;
+    @Column(name = "day_number", nullable = false)
+    private Integer dayNumber;
 
-    @Column(nullable = false)
-    private Integer kilometers;
+    @Column(name = "morning_km", nullable = false)
+    private Integer morningKm;
+
+    @Column(name = "evening_km", nullable = false)
+    private Integer eveningKm;
 }
