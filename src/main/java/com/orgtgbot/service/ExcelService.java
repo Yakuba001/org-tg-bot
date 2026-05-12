@@ -35,13 +35,13 @@ public class ExcelService {
             Sheet sheet = workbook.getSheetAt(0);
 
             for (ReportEntry entry : entries) {
-                int rowIndex = ROW_INDEXES[entry.getRowNumber() - 1];
-                Row row = sheet.getRow(rowIndex);
-                if (row == null) row = sheet.createRow(rowIndex);
-
-                Cell cell = row.getCell(KM_COLUMN);
-                if (cell == null) cell = row.createCell(KM_COLUMN);
-                cell.setCellValue(entry.getKilometers());
+//                int rowIndex = ROW_INDEXES[entry.getRowNumber() - 1];
+//                Row row = sheet.getRow(rowIndex);
+//                if (row == null) row = sheet.createRow(rowIndex);
+//
+//                Cell cell = row.getCell(KM_COLUMN);
+//                if (cell == null) cell = row.createCell(KM_COLUMN);
+//                cell.setCellValue(entry.getKilometers());
             }
 
             workbook.write(out);
