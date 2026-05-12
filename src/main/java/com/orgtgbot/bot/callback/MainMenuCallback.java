@@ -30,7 +30,7 @@ public class MainMenuCallback implements CallbackHandler {
                 .chatId(callbackQuery.getMessage().getChatId())
                 .messageId(callbackQuery.getMessage().getMessageId())
                 .text(Buttons.MAIN_MENU.getName())
-                .replyMarkup(KeyboardFactory.probegMenu())
+                .replyMarkup(KeyboardFactory.mainMenu())
                 .build());
     }
 }

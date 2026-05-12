@@ -31,6 +31,19 @@ public class ProbegService {
     }
 
     @Transactional
+    public String changeMorningKm(List<Integer> kilometers) {
+        int km1 = kilometers.getFirst();
+
+
+
+        getAll().getFirst().setMorningKm(km1);
+        String listReport = getAll().stream()
+                .map(e -> e.getId() + "id/row: " + e.getDayNumber())
+                .collect(Collectors.joining("\n"));
+        return "Morning: " + km1 + " km.\n" + listReport;
+    }
+
+    @Transactional
     public String changeMonday(List<Integer> kilometers) {
         int km1 = kilometers.getFirst();
         getAll().getFirst().setTotalKm(km1);
