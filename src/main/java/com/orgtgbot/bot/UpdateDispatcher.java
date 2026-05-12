@@ -36,7 +36,7 @@ public class UpdateDispatcher {
 
         UserState currentState = userStateService.getState(chatId);
 
-        if (currentState != UserState.NONE && currentState != null) {
+        if (currentState != UserState.NONE) {
             stateRegistry.handle(currentState, update);
             return;
         }
