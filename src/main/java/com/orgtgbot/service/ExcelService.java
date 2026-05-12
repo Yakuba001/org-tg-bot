@@ -19,7 +19,7 @@ import java.util.List;
 public class ExcelService {
 
     private final ProbegService probegService;
-    private static final int[] DAY_INDEXES = {10, 12, 14, 16, 18};
+    private static final int[] ROW_INDEXES = {10, 12, 14, 16, 18};
 
     private static final int KM_COLUMN = 9;
 
@@ -35,13 +35,13 @@ public class ExcelService {
             Sheet sheet = workbook.getSheetAt(0);
 
             for (ReportEntry entry : entries) {
-                int rowIndex = DAY_INDEXES[entry.getDayNumber() - 1];
+                int rowIndex = ROW_INDEXES[entry.getRowNumber() - 1];
                 Row row = sheet.getRow(rowIndex);
                 if (row == null) row = sheet.createRow(rowIndex);
 
                 Cell cell = row.getCell(KM_COLUMN);
                 if (cell == null) cell = row.createCell(KM_COLUMN);
-                cell.setCellValue(entry.getEveningKm() - entry.getMorningKm());
+                cell.setCellValue(entry.getKilometers());
             }
 
             workbook.write(out);
