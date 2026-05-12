@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ReportEntryRepository extends JpaRepository<ReportEntry, Long> {
 
-    List<ReportEntry> findAllByOrderByRowNumberAsc();
+    List<ReportEntry> findAllByOrderByDayNumberAsc();
 }

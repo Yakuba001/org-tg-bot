@@ -27,6 +27,6 @@ public class ProbegService {
     }
 
     public List<ReportEntry> getAll() {
-        return repository.findAllByOrderByRowNumberAsc();
+        return repository.findAllByOrderByDayNumberAsc();
     }
 }
