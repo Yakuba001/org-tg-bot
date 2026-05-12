@@ -12,7 +12,7 @@ import static com.orgtgbot.bot.keyboard.Buttons.*;
 public class KeyboardFactory {
 
     public static InlineKeyboardMarkup mainMenu() {
-        return create(MAIN_MENU.getName(), MAIN_MENU.name());
+        return create(PROBEG_MENU.getName(), MAIN_MENU.name());
     }
 
     public static InlineKeyboardMarkup probegMenu() {

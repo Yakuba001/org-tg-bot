@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum Buttons {
-    MAIN_MENU("Пробег"),
+    MAIN_MENU("Главное меню"),
     PROBEG_MENU("Меню пробега"),
     PROBEG_MONDAY("Понедельник"),
     GET_REPORT("Получить отчёт"),
