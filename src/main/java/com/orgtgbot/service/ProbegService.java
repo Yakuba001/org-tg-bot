@@ -16,6 +16,19 @@ public class ProbegService {
     private final ReportEntryRepository repository;
 
     @Transactional
+    public void firstStart() {
+        for (int i = 0; i < 5; i++) {
+            repository.save(ReportEntry.builder()
+                    .dayNumber(i + 1)
+                    .route(" ")
+                    .morningKm(0)
+                    .eveningKm(0)
+                    .totalKm(0)
+                    .build());
+        }
+    }
+
+    @Transactional
     public String changeMonday(List<Integer> kilometers) {
         int km1 = kilometers.getFirst();
         getAll().getFirst().setTotalKm(km1);
