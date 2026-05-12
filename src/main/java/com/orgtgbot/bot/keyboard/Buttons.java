@@ -10,6 +10,7 @@ public enum Buttons {
     GET_REPORT("Получить отчёт"),
     SET_MORNING_KM("Утро"),
     SET_EVENING_KM("Вечер"),
+    SET_TOTAL_KM("Тотал"),
     BACK("Назад");
 
     private final String name;

@@ -27,7 +27,14 @@ public class KeyboardFactory {
         return create(
                 SET_MORNING_KM.getName(), SET_MORNING_KM.name(),
                 SET_EVENING_KM.getName(), SET_EVENING_KM.name(),
+                SET_TOTAL_KM.getName(), SET_TOTAL_KM.name(),
                 BACK.getName(), PROBEG_MENU.name()
+        );
+    }
+
+    public static InlineKeyboardMarkup probegMondaySet() {
+        return create(
+                BACK.getName(), PROBEG_MONDAY.name()
         );
     }
 

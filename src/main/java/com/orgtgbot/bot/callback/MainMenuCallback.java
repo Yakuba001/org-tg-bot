@@ -2,6 +2,7 @@ package com.orgtgbot.bot.callback;
 
 import com.orgtgbot.bot.keyboard.Buttons;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
+import com.orgtgbot.bot.state.UserStateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -14,6 +15,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 public class MainMenuCallback implements CallbackHandler {
 
     private final TelegramClient telegramClient;
+    private final UserStateService userStateService;
 
     @Override
     public String callbackData() {
@@ -22,6 +24,8 @@ public class MainMenuCallback implements CallbackHandler {
 
     @Override
     public void handle(CallbackQuery callbackQuery) throws TelegramApiException {
+        userStateService.removeState(callbackQuery.getMessage().getChatId());
+
         telegramClient.execute(EditMessageText.builder()
                 .chatId(callbackQuery.getMessage().getChatId())
                 .messageId(callbackQuery.getMessage().getMessageId())

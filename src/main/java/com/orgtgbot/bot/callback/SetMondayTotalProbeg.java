@@ -1,42 +1,35 @@
 package com.orgtgbot.bot.callback;
 
-import com.orgtgbot.bot.state.UserState;
-import com.orgtgbot.bot.state.UserStateService;
 import com.orgtgbot.bot.keyboard.Buttons;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
+import com.orgtgbot.bot.state.UserStateService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
-public class ProbegMondayCallback implements CallbackHandler {
+public class SetMondayTotalProbeg implements CallbackHandler {
 
-    private final TelegramClient client;
+    private final TelegramClient telegramClient;
     private final UserStateService userStateService;
 
     @Override
     public String callbackData() {
-        return Buttons.PROBEG_MONDAY.name();
+        return Buttons.SET_TOTAL_KM.name();
     }
 
     @Override
-    public void handle(CallbackQuery callbackQuery) throws TelegramApiException {
+    public void handle(CallbackQuery callbackQuery) throws Exception {
         userStateService.removeState(callbackQuery.getMessage().getChatId());
 
-        Long chatId = callbackQuery.getMessage().getChatId();
-        client.execute(EditMessageText.builder()
+        telegramClient.execute(EditMessageText.builder()
                 .chatId(callbackQuery.getMessage().getChatId())
                 .messageId(callbackQuery.getMessage().getMessageId())
-                .text(Buttons.PROBEG_MONDAY.getName())
-                .replyMarkup(KeyboardFactory.probegMonday())
+                .text(Buttons.SET_TOTAL_KM.getName())
+                .replyMarkup(KeyboardFactory.probegMondaySet())
                 .build());
-        userStateService.setState(chatId, UserState.PROBEG_MONDAY);
-        userStateService.setMessageId(chatId, callbackQuery.getMessage().getMessageId());
     }
 }

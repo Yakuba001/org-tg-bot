@@ -17,14 +17,16 @@ public class ProbegService {
 
     @Transactional
     public void firstStart() {
-        for (int i = 0; i < 5; i++) {
-            repository.save(ReportEntry.builder()
-                    .dayNumber(i + 1)
-                    .route(" ")
-                    .morningKm(0)
-                    .eveningKm(0)
-                    .totalKm(0)
-                    .build());
+        if (getAll() != null && getAll().size() < 5) {
+            for (int i = 0; i < 5; i++) {
+                repository.save(ReportEntry.builder()
+                        .dayNumber(i + 1)
+                        .route(" ")
+                        .morningKm(0)
+                        .eveningKm(0)
+                        .totalKm(0)
+                        .build());
+            }
         }
     }
 
