@@ -2,12 +2,14 @@ package com.orgtgbot.bot;
 
 import com.orgtgbot.config.TelegramBotProperties;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class OrganizerBot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
@@ -30,7 +32,7 @@ public class OrganizerBot implements SpringLongPollingBot, LongPollingSingleThre
         try {
             dispatcher.dispatch(update);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("CRITICAL ERROR: ", e);
         }
     }
 }
