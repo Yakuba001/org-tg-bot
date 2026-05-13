@@ -1,6 +1,5 @@
 package com.orgtgbot.bot.callback;
 
-import com.orgtgbot.bot.state.UserState;
 import com.orgtgbot.bot.state.UserStateService;
 import com.orgtgbot.bot.keyboard.Buttons;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
@@ -29,14 +28,11 @@ public class ProbegMondayCallback implements CallbackHandler {
     public void handle(CallbackQuery callbackQuery) throws TelegramApiException {
         userStateService.removeState(callbackQuery.getMessage().getChatId());
 
-        Long chatId = callbackQuery.getMessage().getChatId();
         client.execute(EditMessageText.builder()
                 .chatId(callbackQuery.getMessage().getChatId())
                 .messageId(callbackQuery.getMessage().getMessageId())
                 .text(Buttons.PROBEG_MONDAY.getName())
                 .replyMarkup(KeyboardFactory.probegMonday())
                 .build());
-        userStateService.setState(chatId, UserState.PROBEG_MONDAY);
-        userStateService.setMessageId(chatId, callbackQuery.getMessage().getMessageId());
     }
 }
