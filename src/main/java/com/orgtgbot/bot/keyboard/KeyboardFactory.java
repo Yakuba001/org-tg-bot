@@ -28,6 +28,7 @@ public class KeyboardFactory {
                 SET_MORNING_KM.getName(), SET_MORNING_KM.name(),
                 SET_EVENING_KM.getName(), SET_EVENING_KM.name(),
                 SET_TOTAL_KM.getName(), SET_TOTAL_KM.name(),
+                SET_ROUTE.getName(), SET_ROUTE.name(),
                 BACK.getName(), PROBEG_MENU.name()
         );
     }

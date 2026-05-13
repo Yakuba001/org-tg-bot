@@ -11,6 +11,7 @@ public enum Buttons {
     SET_MORNING_KM("Утро"),
     SET_EVENING_KM("Вечер"),
     SET_TOTAL_KM("Тотал"),
+    SET_ROUTE("Маршрут"),
     BACK("Назад");
 
     private final String name;
