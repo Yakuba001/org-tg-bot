@@ -1,22 +1,18 @@
 package com.orgtgbot.bot.callback;
 
+import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.keyboard.Buttons;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
-import com.orgtgbot.bot.state.UserState;
-import com.orgtgbot.bot.state.UserStateService;
 import com.orgtgbot.service.ProbegService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 @Component
 @RequiredArgsConstructor
 public class SetMondayEveningProbeg implements CallbackHandler {
 
-    private final TelegramClient telegramClient;
-    private final UserStateService userStateService;
+    private final TelegramSender sender;
     private final ProbegService probegService;
 
     @Override
@@ -26,20 +22,15 @@ public class SetMondayEveningProbeg implements CallbackHandler {
 
     @Override
     public void handle(CallbackQuery callbackQuery) throws Exception {
-        userStateService.removeState(callbackQuery.getMessage().getChatId());
-        Long chatId = callbackQuery.getMessage().getChatId();
         String mondayEveningKm = String.valueOf(probegService.getAll()
                 .getFirst()
                 .getEveningKm());
 
-        telegramClient.execute(EditMessageText.builder()
-                .chatId(callbackQuery.getMessage().getChatId())
-                .messageId(callbackQuery.getMessage().getMessageId())
-                .text(Buttons.SET_EVENING_KM.getName() + ": " + mondayEveningKm + " km.")
-                .replyMarkup(KeyboardFactory.probegMondaySet())
-                .build());
-
-        userStateService.setState(chatId, UserState.PROBEG_MONDAY_EVENING);
-        userStateService.setMessageId(chatId, callbackQuery.getMessage().getMessageId());
+        sender.editMarkup(
+                callbackQuery.getMessage().getChatId(),
+                callbackQuery.getMessage().getMessageId(),
+                Buttons.SET_EVENING_KM.getName() + ": " + mondayEveningKm + " km.",
+                KeyboardFactory.probegMondaySet()
+        );
     }
 }

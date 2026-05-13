@@ -59,9 +59,15 @@ public class CallbackRegistry {
 
     private UserState stateSwitcher(Buttons button) {
         switch (button) {
-
-
-
+            case SET_MORNING_KM -> {
+                return UserState.PROBEG_MONDAY_MORNING;
+            }
+            case SET_EVENING_KM -> {
+                return UserState.PROBEG_MONDAY_EVENING;
+            }
+            case SET_TOTAL_KM -> {
+                return UserState.PROBEG_MONDAY_TOTAL;
+            }
             case SET_ROUTE -> {
                 return UserState.ROUTE_MONDAY;
             }

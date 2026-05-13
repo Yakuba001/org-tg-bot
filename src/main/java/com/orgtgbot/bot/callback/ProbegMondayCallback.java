@@ -1,23 +1,17 @@
 package com.orgtgbot.bot.callback;
 
-import com.orgtgbot.bot.state.UserStateService;
+import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.keyboard.Buttons;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ProbegMondayCallback implements CallbackHandler {
 
-    private final TelegramClient client;
-    private final UserStateService userStateService;
+    private final TelegramSender sender;
 
     @Override
     public String callbackData() {
@@ -25,14 +19,12 @@ public class ProbegMondayCallback implements CallbackHandler {
     }
 
     @Override
-    public void handle(CallbackQuery callbackQuery) throws TelegramApiException {
-        userStateService.removeState(callbackQuery.getMessage().getChatId());
-
-        client.execute(EditMessageText.builder()
-                .chatId(callbackQuery.getMessage().getChatId())
-                .messageId(callbackQuery.getMessage().getMessageId())
-                .text(Buttons.PROBEG_MONDAY.getName())
-                .replyMarkup(KeyboardFactory.probegMonday())
-                .build());
+    public void handle(CallbackQuery callbackQuery) throws Exception {
+        sender.editMarkup(
+                callbackQuery.getMessage().getChatId(),
+                callbackQuery.getMessage().getMessageId(),
+                Buttons.PROBEG_MONDAY.getName(),
+                KeyboardFactory.probegMonday()
+        );
     }
 }
