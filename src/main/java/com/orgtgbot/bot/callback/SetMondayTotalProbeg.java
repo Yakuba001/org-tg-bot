@@ -30,7 +30,7 @@ public class SetMondayTotalProbeg implements CallbackHandler {
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
                 Buttons.SET_TOTAL_KM.getName() + ": " + mondayTotalKm + " km.",
-                KeyboardFactory.probegMondaySet()
+                KeyboardFactory.probegBack()
         );
     }
 }

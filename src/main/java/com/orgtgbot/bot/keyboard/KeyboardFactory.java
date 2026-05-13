@@ -18,12 +18,16 @@ public class KeyboardFactory {
     public static InlineKeyboardMarkup probegMenu() {
         return create(
                 PROBEG_MONDAY.getName(), PROBEG_MONDAY.name(),
+                PROBEG_TUESDAY.getName(), PROBEG_TUESDAY.name(),
+                PROBEG_WEDNESDAY.getName(), PROBEG_WEDNESDAY.name(),
+                PROBEG_THURSDAY.getName(), PROBEG_THURSDAY.name(),
+                PROBEG_FRIDAY.getName(), PROBEG_FRIDAY.name(),
                 GET_REPORT.getName(), GET_REPORT.name(),
                 BACK.getName(), MAIN_MENU.name()
         );
     }
 
-    public static InlineKeyboardMarkup probegMonday() {
+    public static InlineKeyboardMarkup probegDayMenu() {
         return create(
                 SET_MORNING_KM.getName(), SET_MORNING_KM.name(),
                 SET_EVENING_KM.getName(), SET_EVENING_KM.name(),
@@ -33,7 +37,7 @@ public class KeyboardFactory {
         );
     }
 
-    public static InlineKeyboardMarkup probegMondaySet() {
+    public static InlineKeyboardMarkup probegBack() {
         return create(
                 BACK.getName(), PROBEG_MONDAY.name()
         );

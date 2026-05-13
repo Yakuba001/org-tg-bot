@@ -30,7 +30,7 @@ public class SetMondayRoute implements CallbackHandler {
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
                 Buttons.SET_ROUTE.getName() + ": " + routeMonday,
-                KeyboardFactory.probegMondaySet()
+                KeyboardFactory.probegBack()
                 );
     }
 }

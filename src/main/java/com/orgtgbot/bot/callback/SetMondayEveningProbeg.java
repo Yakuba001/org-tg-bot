@@ -30,7 +30,7 @@ public class SetMondayEveningProbeg implements CallbackHandler {
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
                 Buttons.SET_EVENING_KM.getName() + ": " + mondayEveningKm + " km.",
-                KeyboardFactory.probegMondaySet()
+                KeyboardFactory.probegBack()
         );
     }
 }
