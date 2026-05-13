@@ -29,39 +29,19 @@ public class KeyboardFactory {
 
     public static InlineKeyboardMarkup probegDayMenu() {
         return create(
-                SET_MORNING_KM.getName(), SET_MORNING_KM.name(),
-                SET_EVENING_KM.getName(), SET_EVENING_KM.name(),
-                SET_TOTAL_KM.getName(), SET_TOTAL_KM.name(),
-                SET_ROUTE.getName(), SET_ROUTE.name(),
+                SET_MORNING_MONDAY_KM.getName(), SET_MORNING_MONDAY_KM.name(),
+                SET_EVENING_MONDAY_KM.getName(), SET_EVENING_MONDAY_KM.name(),
+                SET_TOTAL_MONDAY_KM.getName(), SET_TOTAL_MONDAY_KM.name(),
+                SET_MONDAY_ROUTE.getName(), SET_MONDAY_ROUTE.name(),
                 BACK.getName(), PROBEG_MENU.name()
         );
     }
 
     public static InlineKeyboardMarkup probegBack(Buttons button) {
         switch (button) {
-            case PROBEG_MONDAY -> {
+            case SET_MORNING_MONDAY_KM, SET_EVENING_MONDAY_KM, SET_TOTAL_MONDAY_KM, SET_MONDAY_ROUTE -> {
                 return create(
                         BACK.getName(), PROBEG_MONDAY.name()
-                );
-            }
-            case PROBEG_TUESDAY -> {
-                return create(
-                        BACK.getName(), PROBEG_TUESDAY.name()
-                );
-            }
-            case PROBEG_WEDNESDAY -> {
-                return create(
-                        BACK.getName(), PROBEG_WEDNESDAY.name()
-                );
-            }
-            case PROBEG_THURSDAY -> {
-                return create(
-                        BACK.getName(), PROBEG_THURSDAY.name()
-                );
-            }
-            case PROBEG_FRIDAY -> {
-                return create(
-                        BACK.getName(), PROBEG_FRIDAY.name()
                 );
             }
             default -> {

@@ -45,7 +45,7 @@ public class CallbackRegistry {
             return;
         }
 
-        handler.handle(callbackQuery, data);
+        handler.handle(callbackQuery);
 
         userStateService.setState(chatId, stateSwitcher(data));
         userStateService.setMessageId(chatId, callbackQuery.getMessage().getMessageId());
@@ -59,16 +59,16 @@ public class CallbackRegistry {
 
     private UserState stateSwitcher(Buttons button) {
         switch (button) {
-            case SET_MORNING_KM -> {
+            case SET_MORNING_MONDAY_KM -> {
                 return UserState.PROBEG_MORNING;
             }
-            case SET_EVENING_KM -> {
+            case SET_EVENING_MONDAY_KM -> {
                 return UserState.PROBEG_EVENING;
             }
-            case SET_TOTAL_KM -> {
+            case SET_TOTAL_MONDAY_KM -> {
                 return UserState.PROBEG_TOTAL;
             }
-            case SET_ROUTE -> {
+            case SET_MONDAY_ROUTE -> {
                 return UserState.ROUTE_MONDAY;
             }
             default -> {

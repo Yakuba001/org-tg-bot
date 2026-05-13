@@ -1,6 +1,7 @@
-package com.orgtgbot.bot.callback;
+package com.orgtgbot.bot.callback.days.monday;
 
 import com.orgtgbot.bot.TelegramSender;
+import com.orgtgbot.bot.callback.CallbackHandler;
 import com.orgtgbot.bot.keyboard.Buttons;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import com.orgtgbot.service.ProbegService;
@@ -10,27 +11,27 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 @Component
 @RequiredArgsConstructor
-public class SetMondayMorningProbeg implements CallbackHandler {
+public class SetMondayTotalProbeg implements CallbackHandler {
 
     private final TelegramSender sender;
     private final ProbegService probegService;
 
     @Override
     public String callbackData() {
-        return Buttons.SET_MORNING_KM.name();
+        return Buttons.SET_TOTAL_MONDAY_KM.name();
     }
 
     @Override
-    public void handle(CallbackQuery callbackQuery, Buttons button) throws Exception {
-        String mondayMorningKm = String.valueOf(probegService.getAll()
+    public void handle(CallbackQuery callbackQuery) throws Exception {
+        String mondayTotalKm = String.valueOf(probegService.getAll()
                 .getFirst()
-                .getMorningKm());
+                .getTotalKm());
 
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                Buttons.SET_MORNING_KM.getName() + ": " + mondayMorningKm + " km.",
-                KeyboardFactory.probegBack(button)
+                Buttons.SET_TOTAL_MONDAY_KM.getName() + ": " + mondayTotalKm + " km.",
+                KeyboardFactory.probegBack(Buttons.SET_TOTAL_MONDAY_KM)
         );
     }
 }

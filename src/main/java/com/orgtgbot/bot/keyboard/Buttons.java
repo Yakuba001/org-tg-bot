@@ -12,10 +12,10 @@ public enum Buttons {
     PROBEG_THURSDAY("Четверг"),
     PROBEG_FRIDAY("Пятница"),
     GET_REPORT("Получить отчёт"),
-    SET_MORNING_KM("Утро"),
-    SET_EVENING_KM("Вечер"),
-    SET_TOTAL_KM("Тотал"),
-    SET_ROUTE("Маршрут"),
+    SET_MORNING_MONDAY_KM("Утро"),
+    SET_EVENING_MONDAY_KM("Вечер"),
+    SET_TOTAL_MONDAY_KM("Тотал"),
+    SET_MONDAY_ROUTE("Маршрут"),
     BACK("Назад");
 
     private final String name;

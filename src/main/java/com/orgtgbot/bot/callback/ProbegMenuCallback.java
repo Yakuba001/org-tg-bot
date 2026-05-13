@@ -19,7 +19,7 @@ public class ProbegMenuCallback implements CallbackHandler {
     }
 
     @Override
-    public void handle(CallbackQuery callbackQuery, Buttons button) throws Exception {
+    public void handle(CallbackQuery callbackQuery) throws Exception {
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),

@@ -1,6 +1,7 @@
-package com.orgtgbot.bot.callback;
+package com.orgtgbot.bot.callback.days.monday;
 
 import com.orgtgbot.bot.TelegramSender;
+import com.orgtgbot.bot.callback.CallbackHandler;
 import com.orgtgbot.bot.keyboard.Buttons;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import com.orgtgbot.service.ProbegService;
@@ -17,11 +18,11 @@ public class SetMondayEveningProbeg implements CallbackHandler {
 
     @Override
     public String callbackData() {
-        return Buttons.SET_EVENING_KM.name();
+        return Buttons.SET_EVENING_MONDAY_KM.name();
     }
 
     @Override
-    public void handle(CallbackQuery callbackQuery, Buttons button) throws Exception {
+    public void handle(CallbackQuery callbackQuery) throws Exception {
         String mondayEveningKm = String.valueOf(probegService.getAll()
                 .getFirst()
                 .getEveningKm());
@@ -29,8 +30,8 @@ public class SetMondayEveningProbeg implements CallbackHandler {
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                Buttons.SET_EVENING_KM.getName() + ": " + mondayEveningKm + " km.",
-                KeyboardFactory.probegBack(button)
+                Buttons.SET_EVENING_MONDAY_KM.getName() + ": " + mondayEveningKm + " km.",
+                KeyboardFactory.probegBack(Buttons.SET_EVENING_MONDAY_KM)
         );
     }
 }

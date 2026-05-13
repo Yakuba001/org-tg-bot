@@ -1,6 +1,7 @@
-package com.orgtgbot.bot.callback;
+package com.orgtgbot.bot.callback.days.wednesday;
 
 import com.orgtgbot.bot.TelegramSender;
+import com.orgtgbot.bot.callback.CallbackHandler;
 import com.orgtgbot.bot.keyboard.Buttons;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import lombok.RequiredArgsConstructor;
@@ -9,21 +10,21 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 @Component
 @RequiredArgsConstructor
-public class ProbegTuesdayCallback implements CallbackHandler {
+public class ProbegWednesdayCallback implements CallbackHandler {
 
     private final TelegramSender sender;
 
     @Override
     public String callbackData() {
-        return Buttons.PROBEG_TUESDAY.name();
+        return Buttons.PROBEG_WEDNESDAY.name();
     }
 
     @Override
-    public void handle(CallbackQuery callbackQuery, Buttons button) throws Exception {
+    public void handle(CallbackQuery callbackQuery) throws Exception {
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                Buttons.PROBEG_TUESDAY.getName(),
+                Buttons.PROBEG_WEDNESDAY.getName(),
                 KeyboardFactory.probegDayMenu()
         );
     }
