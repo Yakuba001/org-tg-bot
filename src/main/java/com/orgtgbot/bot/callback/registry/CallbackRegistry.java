@@ -60,16 +60,64 @@ public class CallbackRegistry {
     private UserState stateSwitcher(Buttons button) {
         switch (button) {
             case SET_MORNING_MONDAY_KM -> {
-                return UserState.PROBEG_MORNING;
+                return UserState.PROBEG_MORNING_MONDAY;
             }
             case SET_EVENING_MONDAY_KM -> {
-                return UserState.PROBEG_EVENING;
+                return UserState.PROBEG_EVENING_MONDAY;
             }
             case SET_TOTAL_MONDAY_KM -> {
-                return UserState.PROBEG_TOTAL;
+                return UserState.PROBEG_TOTAL_MONDAY;
             }
             case SET_MONDAY_ROUTE -> {
                 return UserState.ROUTE_MONDAY;
+            }
+            case SET_MORNING_TUESDAY_KM -> {
+                return UserState.PROBEG_MORNING_TUESDAY;
+            }
+            case SET_EVENING_TUESDAY_KM -> {
+                return UserState.PROBEG_EVENING_TUESDAY;
+            }
+            case SET_TOTAL_TUESDAY_KM -> {
+                return UserState.PROBEG_TOTAL_TUESDAY;
+            }
+            case SET_TUESDAY_ROUTE -> {
+                return UserState.ROUTE_TUESDAY;
+            }
+            case SET_MORNING_WEDNESDAY_KM -> {
+                return UserState.PROBEG_MORNING_WEDNESDAY;
+            }
+            case SET_EVENING_WEDNESDAY_KM -> {
+                return UserState.PROBEG_EVENING_WEDNESDAY;
+            }
+            case SET_TOTAL_WEDNESDAY_KM -> {
+                return UserState.PROBEG_TOTAL_WEDNESDAY;
+            }
+            case SET_WEDNESDAY_ROUTE -> {
+                return UserState.ROUTE_WEDNESDAY;
+            }
+            case SET_MORNING_THURSDAY_KM -> {
+                return UserState.PROBEG_MORNING_THURSDAY;
+            }
+            case SET_EVENING_THURSDAY_KM -> {
+                return UserState.PROBEG_EVENING_THURSDAY;
+            }
+            case SET_TOTAL_THURSDAY_KM -> {
+                return UserState.PROBEG_TOTAL_THURSDAY;
+            }
+            case SET_THURSDAY_ROUTE -> {
+                return UserState.ROUTE_THURSDAY;
+            }
+            case SET_MORNING_FRIDAY_KM -> {
+                return UserState.PROBEG_MORNING_FRIDAY;
+            }
+            case SET_EVENING_FRIDAY_KM -> {
+                return UserState.PROBEG_EVENING_FRIDAY;
+            }
+            case SET_TOTAL_FRIDAY_KM -> {
+                return UserState.PROBEG_TOTAL_FRIDAY;
+            }
+            case SET_FRIDAY_ROUTE -> {
+                return UserState.ROUTE_FRIDAY;
             }
             default -> {
                 return UserState.NONE;
