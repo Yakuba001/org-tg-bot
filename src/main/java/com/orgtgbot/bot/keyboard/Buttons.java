@@ -16,6 +16,23 @@ public enum Buttons {
     SET_EVENING_MONDAY_KM("Вечер"),
     SET_TOTAL_MONDAY_KM("Тотал"),
     SET_MONDAY_ROUTE("Маршрут"),
+    SET_MORNING_TUESDAY_KM("Утро"),
+    SET_EVENING_TUESDAY_KM("Вечер"),
+    SET_TOTAL_TUESDAY_KM("Тотал"),
+    SET_TUESDAY_ROUTE("Маршрут"),
+    SET_MORNING_WEDNESDAY_KM("Утро"),
+    SET_EVENING_WEDNESDAY_KM("Вечер"),
+    SET_TOTAL_WEDNESDAY_KM("Тотал"),
+    SET_WEDNESDAY_ROUTE("Маршрут"),
+    SET_MORNING_THURSDAY_KM("Утро"),
+    SET_EVENING_THURSDAY_KM("Вечер"),
+    SET_TOTAL_THURSDAY_KM("Тотал"),
+    SET_THURSDAY_ROUTE("Маршрут"),
+    SET_MORNING_FRIDAY_KM("Утро"),
+    SET_EVENING_FRIDAY_KM("Вечер"),
+    SET_TOTAL_FRIDAY_KM("Тотал"),
+    SET_FRIDAY_ROUTE("Маршрут"),
+
     BACK("Назад");
 
     private final String name;

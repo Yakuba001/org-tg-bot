@@ -25,7 +25,7 @@ public class ProbegWednesdayCallback implements CallbackHandler {
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
                 Buttons.PROBEG_WEDNESDAY.getName(),
-                KeyboardFactory.probegDayMenu()
+                KeyboardFactory.probegWednesdayMenu()
         );
     }
 }

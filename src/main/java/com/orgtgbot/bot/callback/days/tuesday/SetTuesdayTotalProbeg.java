@@ -4,19 +4,21 @@ import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.CallbackHandler;
 import com.orgtgbot.bot.keyboard.Buttons;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
+import com.orgtgbot.service.ProbegService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 @Component
 @RequiredArgsConstructor
-public class ProbegTuesdayCallback implements CallbackHandler {
+public class SetTuesdayTotalProbeg implements CallbackHandler {
 
     private final TelegramSender sender;
+    private final ProbegService probegService;
 
     @Override
     public String callbackData() {
-        return Buttons.PROBEG_TUESDAY.name();
+        return Buttons.SET_TOTAL_TUESDAY_KM.name();
     }
 
     @Override
@@ -24,8 +26,8 @@ public class ProbegTuesdayCallback implements CallbackHandler {
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                Buttons.PROBEG_TUESDAY.getName(),
-                KeyboardFactory.probegTuesdayMenu()
+                Buttons.SET_TOTAL_TUESDAY_KM.getName() + " km.",
+                KeyboardFactory.probegBack(Buttons.SET_TOTAL_TUESDAY_KM)
         );
     }
 }
