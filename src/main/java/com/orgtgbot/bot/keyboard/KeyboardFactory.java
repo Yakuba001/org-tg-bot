@@ -37,10 +37,39 @@ public class KeyboardFactory {
         );
     }
 
-    public static InlineKeyboardMarkup probegBack() {
-        return create(
-                BACK.getName(), PROBEG_MONDAY.name()
-        );
+    public static InlineKeyboardMarkup probegBack(Buttons button) {
+        switch (button) {
+            case PROBEG_MONDAY -> {
+                return create(
+                        BACK.getName(), PROBEG_MONDAY.name()
+                );
+            }
+            case PROBEG_TUESDAY -> {
+                return create(
+                        BACK.getName(), PROBEG_TUESDAY.name()
+                );
+            }
+            case PROBEG_WEDNESDAY -> {
+                return create(
+                        BACK.getName(), PROBEG_WEDNESDAY.name()
+                );
+            }
+            case PROBEG_THURSDAY -> {
+                return create(
+                        BACK.getName(), PROBEG_THURSDAY.name()
+                );
+            }
+            case PROBEG_FRIDAY -> {
+                return create(
+                        BACK.getName(), PROBEG_FRIDAY.name()
+                );
+            }
+            default -> {
+                return create(
+                        BACK.getName(), PROBEG_MENU.name()
+                );
+            }
+        }
     }
 
     private static InlineKeyboardMarkup create(String... data) {

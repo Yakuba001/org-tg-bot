@@ -45,7 +45,7 @@ public class CallbackRegistry {
             return;
         }
 
-        handler.handle(callbackQuery);
+        handler.handle(callbackQuery, data);
 
         userStateService.setState(chatId, stateSwitcher(data));
         userStateService.setMessageId(chatId, callbackQuery.getMessage().getMessageId());

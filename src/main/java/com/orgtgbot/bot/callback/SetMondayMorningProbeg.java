@@ -21,7 +21,7 @@ public class SetMondayMorningProbeg implements CallbackHandler {
     }
 
     @Override
-    public void handle(CallbackQuery callbackQuery) throws Exception {
+    public void handle(CallbackQuery callbackQuery, Buttons button) throws Exception {
         String mondayMorningKm = String.valueOf(probegService.getAll()
                 .getFirst()
                 .getMorningKm());
@@ -30,7 +30,7 @@ public class SetMondayMorningProbeg implements CallbackHandler {
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
                 Buttons.SET_MORNING_KM.getName() + ": " + mondayMorningKm + " km.",
-                KeyboardFactory.probegBack()
+                KeyboardFactory.probegBack(button)
         );
     }
 }

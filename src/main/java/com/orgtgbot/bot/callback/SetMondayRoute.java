@@ -21,7 +21,7 @@ public class SetMondayRoute implements CallbackHandler {
     }
 
     @Override
-    public void handle(CallbackQuery callbackQuery) throws Exception {
+    public void handle(CallbackQuery callbackQuery, Buttons button) throws Exception {
         String routeMonday = String.valueOf(probegService.getAll()
                 .getFirst()
                 .getRoute());
@@ -30,7 +30,7 @@ public class SetMondayRoute implements CallbackHandler {
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
                 Buttons.SET_ROUTE.getName() + ": " + routeMonday,
-                KeyboardFactory.probegBack()
+                KeyboardFactory.probegBack(button)
                 );
     }
 }
