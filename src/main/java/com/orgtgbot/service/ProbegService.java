@@ -14,13 +14,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProbegService {
 
-    private final ReportEntryRepository repository;
+    private final ReportEntryRepository reportEntryRepository;
 
     @Transactional
     public void firstStart() {
         if (getAll() != null && getAll().size() < 5) {
             for (int i = 0; i < 5; i++) {
-                repository.save(ReportEntry.builder()
+                reportEntryRepository.save(ReportEntry.builder()
                         .dayNumber(i + 1)
                         .route(" ")
                         .morningKm(0)
@@ -191,7 +191,7 @@ public class ProbegService {
     }
 
     public List<ReportEntry> getAll() {
-        return repository.findAllByOrderByDayNumberAsc();
+        return reportEntryRepository.findAllByOrderByDayNumberAsc();
     }
 
     private void getTotal(List<ReportEntry> eveningKm, Integer index, Integer km) {

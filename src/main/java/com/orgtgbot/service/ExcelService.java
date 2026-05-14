@@ -1,5 +1,6 @@
 package com.orgtgbot.service;
 
+import com.orgtgbot.entity.DatesEntry;
 import com.orgtgbot.entity.ReportEntry;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
@@ -19,13 +20,18 @@ import java.util.List;
 public class ExcelService {
 
     private final ProbegService probegService;
+    private final DateService dateService;
 
     private static final int[] ROW_KM = {11, 12, 13, 14, 15}; // ROW INDEXES
     private static final int KM_COLUMN = 9; // J
     private static final int ROUTE_COLUMN = 3; // D
+    private static final int DATE_COLUMN = 2; // C
 
     public byte[] generateReport() throws Exception {
         List<ReportEntry> entries = probegService.getAll();
+        List<DatesEntry> dates = dateService.getAll();
+        DatesEntry[] dataModule = {dates.getFirst(), dates.get(1), dates.get(2), dates.get(3), dates.get(4)};
+
         ClassPathResource resource = new ClassPathResource("probeg_template.xlsx");
 
         try (InputStream is = resource.getInputStream();
@@ -39,11 +45,14 @@ public class ExcelService {
                 Row row = sheet.getRow(rowIndex);
                 Cell kmCell = row.getCell(KM_COLUMN);
                 Cell routeCell = row.getCell(ROUTE_COLUMN);
+                Cell dateCell = row.getCell(DATE_COLUMN);
 
                 if (entry.getTotalKm() != 0)
                     kmCell.setCellValue(entry.getTotalKm()); // writes the value
                 if (!entry.getRoute().trim().isEmpty())
                     routeCell.setCellValue(entry.getRoute());
+                if (!dataModule[entry.getDayNumber() - 1].getDate().trim().isEmpty())
+                    dateCell.setCellValue(dataModule[entry.getDayNumber() - 1].getDate());
             }
 
             workbook.write(out);

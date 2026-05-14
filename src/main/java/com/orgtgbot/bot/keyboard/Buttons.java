@@ -32,11 +32,14 @@ public enum Buttons {
     SET_EVENING_FRIDAY_KM("Вечер"),
     SET_TOTAL_FRIDAY_KM("Тотал"),
     SET_FRIDAY_ROUTE("Маршрут"),
-
     CLEAR_ALL("Очистить"),
     ACCEPT_CLEAR("Да"),
     DECLINE_CLEAR("Нет"),
-
+    MONDAY_DATE("Дата"),
+    TUESDAY_DATE("Дата"),
+    WEDNESDAY_DATE("Дата"),
+    THURSDAY_DATE("Дата"),
+    FRIDAY_DATE("Дата"),
 
     BACK("Назад");
 

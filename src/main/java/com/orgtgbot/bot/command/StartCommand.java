@@ -2,6 +2,7 @@ package com.orgtgbot.bot.command;
 
 import com.orgtgbot.bot.keyboard.Buttons;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
+import com.orgtgbot.service.DateService;
 import com.orgtgbot.service.ProbegService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,9 +17,11 @@ public class StartCommand {
 
     private final TelegramClient telegramClient;
     private final ProbegService probegService;
+    private final DateService dateService;
 
     public void execute(Update update) throws TelegramApiException {
         probegService.firstStart();
+        dateService.firstStart();
         telegramClient.execute(SendMessage.builder()
                 .chatId(update.getMessage().getChatId())
                 .text(Buttons.MAIN_MENU.getName())

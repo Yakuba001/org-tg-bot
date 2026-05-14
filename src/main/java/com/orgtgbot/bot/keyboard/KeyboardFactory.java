@@ -37,6 +37,7 @@ public class KeyboardFactory {
                 SET_EVENING_MONDAY_KM.getName(), SET_EVENING_MONDAY_KM.name(),
                 SET_TOTAL_MONDAY_KM.getName(), SET_TOTAL_MONDAY_KM.name(),
                 SET_MONDAY_ROUTE.getName(), SET_MONDAY_ROUTE.name(),
+                MONDAY_DATE.getName(), MONDAY_DATE.name(),
                 BACK.getName(), PROBEG_MENU.name()
         );
     }
@@ -47,6 +48,7 @@ public class KeyboardFactory {
                 SET_EVENING_TUESDAY_KM.getName(), SET_EVENING_TUESDAY_KM.name(),
                 SET_TOTAL_TUESDAY_KM.getName(), SET_TOTAL_TUESDAY_KM.name(),
                 SET_TUESDAY_ROUTE.getName(), SET_TUESDAY_ROUTE.name(),
+                TUESDAY_DATE.getName(), TUESDAY_DATE.name(),
                 BACK.getName(), PROBEG_MENU.name()
         );
     }
@@ -57,6 +59,7 @@ public class KeyboardFactory {
                 SET_EVENING_WEDNESDAY_KM.getName(), SET_EVENING_WEDNESDAY_KM.name(),
                 SET_TOTAL_WEDNESDAY_KM.getName(), SET_TOTAL_WEDNESDAY_KM.name(),
                 SET_WEDNESDAY_ROUTE.getName(), SET_WEDNESDAY_ROUTE.name(),
+                WEDNESDAY_DATE.getName(), WEDNESDAY_DATE.name(),
                 BACK.getName(), PROBEG_MENU.name()
         );
     }
@@ -67,6 +70,7 @@ public class KeyboardFactory {
                 SET_EVENING_THURSDAY_KM.getName(), SET_EVENING_THURSDAY_KM.name(),
                 SET_TOTAL_THURSDAY_KM.getName(), SET_TOTAL_THURSDAY_KM.name(),
                 SET_THURSDAY_ROUTE.getName(), SET_THURSDAY_ROUTE.name(),
+                THURSDAY_DATE.getName(), THURSDAY_DATE.name(),
                 BACK.getName(), PROBEG_MENU.name()
         );
     }
@@ -77,6 +81,7 @@ public class KeyboardFactory {
                 SET_EVENING_FRIDAY_KM.getName(), SET_EVENING_FRIDAY_KM.name(),
                 SET_TOTAL_FRIDAY_KM.getName(), SET_TOTAL_FRIDAY_KM.name(),
                 SET_FRIDAY_ROUTE.getName(), SET_FRIDAY_ROUTE.name(),
+                FRIDAY_DATE.getName(), FRIDAY_DATE.name(),
                 BACK.getName(), PROBEG_MENU.name()
         );
     }
@@ -90,27 +95,27 @@ public class KeyboardFactory {
 
     public static InlineKeyboardMarkup probegBack(Buttons button) {
         switch (button) {
-            case SET_MORNING_MONDAY_KM, SET_EVENING_MONDAY_KM, SET_TOTAL_MONDAY_KM, SET_MONDAY_ROUTE -> {
+            case SET_MORNING_MONDAY_KM, SET_EVENING_MONDAY_KM, SET_TOTAL_MONDAY_KM, SET_MONDAY_ROUTE, MONDAY_DATE -> {
                 return create(
                         BACK.getName(), PROBEG_MONDAY.name()
                 );
             }
-            case SET_MORNING_TUESDAY_KM, SET_EVENING_TUESDAY_KM, SET_TOTAL_TUESDAY_KM, SET_TUESDAY_ROUTE -> {
+            case SET_MORNING_TUESDAY_KM, SET_EVENING_TUESDAY_KM, SET_TOTAL_TUESDAY_KM, SET_TUESDAY_ROUTE, TUESDAY_DATE -> {
                 return create(
                         BACK.getName(), PROBEG_TUESDAY.name()
                 );
             }
-            case SET_MORNING_WEDNESDAY_KM, SET_EVENING_WEDNESDAY_KM, SET_TOTAL_WEDNESDAY_KM, SET_WEDNESDAY_ROUTE -> {
+            case SET_MORNING_WEDNESDAY_KM, SET_EVENING_WEDNESDAY_KM, SET_TOTAL_WEDNESDAY_KM, SET_WEDNESDAY_ROUTE, WEDNESDAY_DATE -> {
                 return create(
                         BACK.getName(), PROBEG_WEDNESDAY.name()
                 );
             }
-            case SET_MORNING_THURSDAY_KM, SET_EVENING_THURSDAY_KM, SET_TOTAL_THURSDAY_KM, SET_THURSDAY_ROUTE -> {
+            case SET_MORNING_THURSDAY_KM, SET_EVENING_THURSDAY_KM, SET_TOTAL_THURSDAY_KM, SET_THURSDAY_ROUTE, THURSDAY_DATE -> {
                 return create(
                         BACK.getName(), PROBEG_THURSDAY.name()
                 );
             }
-            case SET_MORNING_FRIDAY_KM, SET_EVENING_FRIDAY_KM, SET_TOTAL_FRIDAY_KM, SET_FRIDAY_ROUTE -> {
+            case SET_MORNING_FRIDAY_KM, SET_EVENING_FRIDAY_KM, SET_TOTAL_FRIDAY_KM, SET_FRIDAY_ROUTE, FRIDAY_DATE -> {
                 return create(
                         BACK.getName(), PROBEG_FRIDAY.name()
                 );
