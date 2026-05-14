@@ -25,7 +25,7 @@ public class ExcelService {
     private final GeneralService generalService;
 
     private static final int[] ROW_KM = {11, 12, 13, 14, 15}; // ROW INDEXES
-    private static final int[] GENERAL_ROW = {4, 6, 8, 22, 24};
+    private static final int[] GENERAL_ROW = {5, 7, 9, 23, 25};
 
     private static final int START_BALANCE_LITRES_COLUMN = 11; // L
     private static final int DATE_GENERAL_COLUMN = 10; // K
