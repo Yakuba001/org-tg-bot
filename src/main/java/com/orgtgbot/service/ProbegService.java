@@ -80,6 +80,7 @@ public class ProbegService {
     @Transactional
     public void setRoute(UserState state, String route) {
         List<ReportEntry> routeList = getAll();
+        if (route.equals("-")) route = " ";
         switch (state) {
             case ROUTE_MONDAY -> routeList.getFirst().setRoute(route);
             case ROUTE_TUESDAY -> routeList.get(1).setRoute(route);
@@ -195,16 +196,10 @@ public class ProbegService {
 
     private void getTotal(List<ReportEntry> eveningKm, Integer index, Integer km) {
         eveningKm.get(index).setEveningKm(km);
-
         int range = 1000;
         int evening = eveningKm.get(index).getEveningKm();
         int morning = eveningKm.get(index).getMorningKm();
-
-
         int result = (evening - morning + range) % range;
-
-
-
         eveningKm.get(index).setTotalKm(result);
     }
 }
