@@ -20,7 +20,7 @@ public class ExcelService {
 
     private final ProbegService probegService;
 
-    private static final int[] ROW_KM = {12, 13, 14, 15, 16}; // ROW INDEXES
+    private static final int[] ROW_KM = {11, 12, 13, 14, 15}; // ROW INDEXES
     private static final int KM_COLUMN = 9; // J
 
     public byte[] generateReport() throws Exception {
