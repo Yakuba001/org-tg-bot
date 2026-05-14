@@ -32,6 +32,17 @@ public class ProbegService {
     }
 
     @Transactional
+    public void clearAll() {
+        List<ReportEntry> reportEntries = getAll();
+        reportEntries.forEach(reportEntry -> {
+            reportEntry.setMorningKm(0);
+            reportEntry.setEveningKm(0);
+            reportEntry.setTotalKm(0);
+            reportEntry.setRoute(" ");
+        });
+    }
+
+    @Transactional
     public void setMorningKm(UserState state, Integer km) {
         List<ReportEntry> morningKm = getAll();
         switch (state) {

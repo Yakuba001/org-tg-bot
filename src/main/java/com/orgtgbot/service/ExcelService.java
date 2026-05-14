@@ -38,13 +38,12 @@ public class ExcelService {
                 int rowIndex = ROW_KM[entry.getDayNumber() - 1];
                 Row row = sheet.getRow(rowIndex);
                 Cell kmCell = row.getCell(KM_COLUMN);
-
-                kmCell.setCellValue(entry.getTotalKm()); // writes the value
-
-
-
                 Cell routeCell = row.getCell(ROUTE_COLUMN);
-                routeCell.setCellValue(entry.getRoute());
+
+                if (entry.getTotalKm() != 0)
+                    kmCell.setCellValue(entry.getTotalKm()); // writes the value
+                if (!entry.getRoute().trim().isEmpty())
+                    routeCell.setCellValue(entry.getRoute());
             }
 
             workbook.write(out);

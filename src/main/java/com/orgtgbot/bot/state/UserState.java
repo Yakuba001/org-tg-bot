@@ -5,7 +5,6 @@ import lombok.Getter;
 @Getter
 public enum UserState {
     NONE,
-    PROBEG_MONDAY,
 
     PROBEG_MORNING_MONDAY,
     PROBEG_EVENING_MONDAY,

@@ -26,6 +26,7 @@ public class KeyboardFactory {
                 PROBEG_THURSDAY.getName(), PROBEG_THURSDAY.name(),
                 PROBEG_FRIDAY.getName(), PROBEG_FRIDAY.name(),
                 GET_REPORT.getName(), GET_REPORT.name(),
+                CLEAR_ALL.getName(), CLEAR_ALL.name(),
                 BACK.getName(), MAIN_MENU.name()
         );
     }
@@ -77,6 +78,13 @@ public class KeyboardFactory {
                 SET_TOTAL_FRIDAY_KM.getName(), SET_TOTAL_FRIDAY_KM.name(),
                 SET_FRIDAY_ROUTE.getName(), SET_FRIDAY_ROUTE.name(),
                 BACK.getName(), PROBEG_MENU.name()
+        );
+    }
+
+    public static InlineKeyboardMarkup clearAllMenu() {
+        return create(
+                ACCEPT_CLEAR.getName(), ACCEPT_CLEAR.name(),
+                DECLINE_CLEAR.getName(), DECLINE_CLEAR.name()
         );
     }
 

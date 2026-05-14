@@ -33,6 +33,11 @@ public enum Buttons {
     SET_TOTAL_FRIDAY_KM("Тотал"),
     SET_FRIDAY_ROUTE("Маршрут"),
 
+    CLEAR_ALL("Очистить"),
+    ACCEPT_CLEAR("Да"),
+    DECLINE_CLEAR("Нет"),
+
+
     BACK("Назад");
 
     private final String name;
