@@ -22,6 +22,7 @@ public class ExcelService {
 
     private static final int[] ROW_KM = {11, 12, 13, 14, 15}; // ROW INDEXES
     private static final int KM_COLUMN = 9; // J
+    private static final int ROUTE_COLUMN = 3; // D
 
     public byte[] generateReport() throws Exception {
         List<ReportEntry> entries = probegService.getAll();
@@ -36,9 +37,14 @@ public class ExcelService {
             for (ReportEntry entry : entries) {
                 int rowIndex = ROW_KM[entry.getDayNumber() - 1];
                 Row row = sheet.getRow(rowIndex);
+                Cell kmCell = row.getCell(KM_COLUMN);
 
-                Cell cell = row.getCell(KM_COLUMN);
-                cell.setCellValue(entry.getTotalKm());
+                kmCell.setCellValue(entry.getTotalKm()); // writes the value
+
+
+
+                Cell routeCell = row.getCell(ROUTE_COLUMN);
+                routeCell.setCellValue(entry.getRoute());
             }
 
             workbook.write(out);
