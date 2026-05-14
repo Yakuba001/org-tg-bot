@@ -1,4 +1,4 @@
-package com.orgtgbot.bot.state.days.monday;
+package com.orgtgbot.bot.state.days.wednesday;
 
 import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
@@ -10,22 +10,22 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class InputMondayMorningProbeg implements StateHandler {
+public class InputWednesdayRoute implements StateHandler {
 
     private final ProbegService probegService;
 
     @Override
     public UserState getSupportedHandle() {
-        return UserState.PROBEG_MORNING_MONDAY;
+        return UserState.ROUTE_WEDNESDAY;
     }
 
     @Override
     public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
         if (!text.matches("\\d+")) {
-            sender.editMarkup(chatId, botMenuId, "Ошибка! Введите число.", KeyboardFactory.probegMondayMenu());
+            sender.editMarkup(chatId, botMenuId, "Ошибка! Введите число.", KeyboardFactory.probegWednesdayMenu());
         } else {
 //            String report = probegService.changeMonday(List.of(Integer.parseInt(text.trim())));
-            sender.editMarkup(chatId, botMenuId, "Данные приняты!\n", KeyboardFactory.probegMondayMenu());
+            sender.editMarkup(chatId, botMenuId, "Данные приняты!\n", KeyboardFactory.probegWednesdayMenu());
         }
     }
 }

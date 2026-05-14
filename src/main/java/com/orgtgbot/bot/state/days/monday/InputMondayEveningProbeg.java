@@ -10,13 +10,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class InputMondayMorningProbeg implements StateHandler {
+public class InputMondayEveningProbeg implements StateHandler {
 
     private final ProbegService probegService;
 
     @Override
     public UserState getSupportedHandle() {
-        return UserState.PROBEG_MORNING_MONDAY;
+        return UserState.PROBEG_EVENING_MONDAY;
     }
 
     @Override

@@ -1,9 +1,9 @@
 package com.orgtgbot.bot.state;
 
-import org.telegram.telegrambots.meta.api.objects.Update;
+import com.orgtgbot.bot.TelegramSender;
 
 public interface StateHandler {
 
     UserState getSupportedHandle();
-    void handle(Update update);
+    void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender);
 }
