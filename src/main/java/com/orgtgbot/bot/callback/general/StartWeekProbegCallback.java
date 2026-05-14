@@ -29,7 +29,7 @@ public class StartWeekProbegCallback implements CallbackHandler {
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
                 callbackData().getName() + ": " + result,
-                KeyboardFactory.probegMenu()
+                KeyboardFactory.generalMenu()
         );
     }
 }
