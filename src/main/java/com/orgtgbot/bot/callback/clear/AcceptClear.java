@@ -29,7 +29,7 @@ public class AcceptClear implements CallbackHandler {
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
                 Buttons.CLEAR_ALL.getName(),
-                KeyboardFactory.probegBack(callbackData())
+                KeyboardFactory.probegMenu()
         );
     }
 }
