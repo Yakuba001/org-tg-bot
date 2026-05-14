@@ -66,6 +66,6 @@ public class DateService {
     }
 
     public List<DatesEntry> getAll() {
-        return dateEntryRepository.findAll();
+        return dateEntryRepository.findAllByOrderByIdAsc();
     }
 }
