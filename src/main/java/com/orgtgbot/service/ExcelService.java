@@ -19,13 +19,12 @@ import java.util.List;
 public class ExcelService {
 
     private final ProbegService probegService;
-    private static final int[] ROW_INDEXES = {10, 12, 14, 16, 18};
 
-    private static final int KM_COLUMN = 9;
+    private static final int[] ROW_KM = {12, 13, 14, 15, 16}; // ROW INDEXES
+    private static final int KM_COLUMN = 9; // J
 
     public byte[] generateReport() throws Exception {
         List<ReportEntry> entries = probegService.getAll();
-
         ClassPathResource resource = new ClassPathResource("probeg_template.xlsx");
 
         try (InputStream is = resource.getInputStream();
@@ -35,13 +34,11 @@ public class ExcelService {
             Sheet sheet = workbook.getSheetAt(0);
 
             for (ReportEntry entry : entries) {
-//                int rowIndex = ROW_INDEXES[entry.getRowNumber() - 1];
-//                Row row = sheet.getRow(rowIndex);
-//                if (row == null) row = sheet.createRow(rowIndex);
-//
-//                Cell cell = row.getCell(KM_COLUMN);
-//                if (cell == null) cell = row.createCell(KM_COLUMN);
-//                cell.setCellValue(entry.getKilometers());
+                int rowIndex = ROW_KM[entry.getDayNumber() - 1];
+                Row row = sheet.getRow(rowIndex);
+
+                Cell cell = row.getCell(KM_COLUMN);
+                cell.setCellValue(entry.getTotalKm());
             }
 
             workbook.write(out);
