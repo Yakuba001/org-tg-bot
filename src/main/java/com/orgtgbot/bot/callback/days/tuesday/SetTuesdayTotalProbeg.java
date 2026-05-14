@@ -28,7 +28,7 @@ public class SetTuesdayTotalProbeg implements CallbackHandler {
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                Buttons.SET_TOTAL_TUESDAY_KM.getName() + result + " km.",
+                Buttons.SET_TOTAL_TUESDAY_KM.getName() + ": " + result + " км.",
                 KeyboardFactory.probegBack(Buttons.SET_TOTAL_TUESDAY_KM)
         );
     }

@@ -28,7 +28,7 @@ public class SetTuesdayEveningProbeg implements CallbackHandler {
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                Buttons.SET_EVENING_TUESDAY_KM.getName() + result + " km.",
+                Buttons.SET_EVENING_TUESDAY_KM.getName() + ": " + result + " км.",
                 KeyboardFactory.probegBack(Buttons.SET_EVENING_TUESDAY_KM)
         );
     }

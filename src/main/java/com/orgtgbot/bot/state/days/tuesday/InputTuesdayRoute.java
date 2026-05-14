@@ -21,11 +21,7 @@ public class InputTuesdayRoute implements StateHandler {
 
     @Override
     public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
-        if (!text.matches("\\d+")) {
-            sender.editMarkup(chatId, botMenuId, "Ошибка! Введите число.", KeyboardFactory.probegTuesdayMenu());
-        } else {
-            probegService.setRoute(getSupportedHandle(), text.trim());
-            sender.editMarkup(chatId, botMenuId, "Данные приняты!\n", KeyboardFactory.probegTuesdayMenu());
-        }
+        probegService.setRoute(getSupportedHandle(), text.trim());
+        sender.editMarkup(chatId, botMenuId, "Данные приняты!\n", KeyboardFactory.probegTuesdayMenu());
     }
 }
