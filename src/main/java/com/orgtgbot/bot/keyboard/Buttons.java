@@ -40,6 +40,19 @@ public enum Buttons {
     WEDNESDAY_DATE("Дата"),
     THURSDAY_DATE("Дата"),
     FRIDAY_DATE("Дата"),
+    GENERAL("Основное"),
+    DRIVER("Водитель"),
+    DATA("Дата"),
+    MODEL_AUTO("Марка авто"),
+    NUMBER_AUTO("Гос.номер"),
+    START_WEEK_PROBEG("Показания до раб.дня"),
+    END_WEEK_PROBEG("Показания после раб.дня"),
+    START_BALANCE_LITRES("Остаток литров 'Начало'"),
+    END_BALANCE_LITRES("Остаток литров 'Конец'"),
+    TOTAL_WEEK_KM("Пройдено за неделю"),
+    FUEL_NORM("Норма расхода"),
+    LITRES_SPEND("Расход литров"),
+    FUELING("Заправлено литров"),
 
     BACK("Назад");
 

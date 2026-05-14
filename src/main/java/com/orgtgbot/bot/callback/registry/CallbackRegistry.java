@@ -134,6 +134,42 @@ public class CallbackRegistry {
             case FRIDAY_DATE -> {
                 return UserState.DATE_FRIDAY;
             }
+            case DRIVER -> {
+                return UserState.DRIVER;
+            }
+            case DATA -> {
+                return UserState.DATE;
+            }
+            case MODEL_AUTO -> {
+                return UserState.MODEL_AUTO;
+            }
+            case NUMBER_AUTO -> {
+                return UserState.NUMBER_AUTO;
+            }
+            case START_WEEK_PROBEG -> {
+                return UserState.START_WEEK_PROBEG;
+            }
+            case END_WEEK_PROBEG -> {
+                return UserState.END_WEEK_PROBEG;
+            }
+            case START_BALANCE_LITRES -> {
+                return UserState.START_BALANCE_LITRES;
+            }
+            case END_BALANCE_LITRES -> {
+                return UserState.END_BALANCE_LITRES;
+            }
+            case TOTAL_WEEK_KM -> {
+                return UserState.TOTAL_WEEK_KM;
+            }
+            case FUEL_NORM -> {
+                return UserState.FUEL_NORM;
+            }
+            case LITRES_SPEND -> {
+                return UserState.LITRES_SPEND;
+            }
+            case FUELING -> {
+                return UserState.FUELING;
+            }
             default -> {
                 return UserState.NONE;
             }

@@ -25,6 +25,7 @@ public class KeyboardFactory {
                 PROBEG_WEDNESDAY.getName(), PROBEG_WEDNESDAY.name(),
                 PROBEG_THURSDAY.getName(), PROBEG_THURSDAY.name(),
                 PROBEG_FRIDAY.getName(), PROBEG_FRIDAY.name(),
+                GENERAL.getName(), GENERAL.name(),
                 GET_REPORT.getName(), GET_REPORT.name(),
                 CLEAR_ALL.getName(), CLEAR_ALL.name(),
                 BACK.getName(), MAIN_MENU.name()
@@ -90,6 +91,24 @@ public class KeyboardFactory {
         return create(
                 ACCEPT_CLEAR.getName(), ACCEPT_CLEAR.name(),
                 DECLINE_CLEAR.getName(), DECLINE_CLEAR.name()
+        );
+    }
+
+    public static InlineKeyboardMarkup generalMenu() {
+        return create(
+                DRIVER.getName(), DRIVER.name(),
+                DATA.getName(), DATA.name(),
+                MODEL_AUTO.getName(), MODEL_AUTO.name(),
+                NUMBER_AUTO.getName(), NUMBER_AUTO.name(),
+                START_WEEK_PROBEG.getName(), START_WEEK_PROBEG.name(),
+                END_WEEK_PROBEG.getName(), END_WEEK_PROBEG.name(),
+                START_BALANCE_LITRES.getName(), START_BALANCE_LITRES.name(),
+                END_BALANCE_LITRES.getName(), END_BALANCE_LITRES.name(),
+                TOTAL_WEEK_KM.getName(), TOTAL_WEEK_KM.name(),
+                FUEL_NORM.getName(), FUEL_NORM.name(),
+                LITRES_SPEND.getName(), LITRES_SPEND.name(),
+                FUELING.getName(), FUELING.name(),
+                BACK.getName(), PROBEG_MENU.name()
         );
     }
 
