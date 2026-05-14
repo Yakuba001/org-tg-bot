@@ -28,7 +28,7 @@ public class AcceptClear implements CallbackHandler {
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                Buttons.CLEAR_ALL.getName(),
+                Buttons.PROBEG_MENU.getName(),
                 KeyboardFactory.probegMenu()
         );
     }
