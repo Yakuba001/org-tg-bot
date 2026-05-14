@@ -42,7 +42,7 @@ public class ExcelService {
 
                 if (entry.getTotalKm() != 0)
                     kmCell.setCellValue(entry.getTotalKm()); // writes the value
-                if (!entry.getRoute().trim().isEmpty())
+                if (!entry.getRoute().trim().isEmpty() || !entry.getRoute().trim().equals("-"))
                     routeCell.setCellValue(entry.getRoute());
             }
 

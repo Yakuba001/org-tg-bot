@@ -38,7 +38,6 @@ public class ProbegService {
             reportEntry.setMorningKm(0);
             reportEntry.setEveningKm(0);
             reportEntry.setTotalKm(0);
-            reportEntry.setRoute(" ");
         });
     }
 
@@ -196,7 +195,16 @@ public class ProbegService {
 
     private void getTotal(List<ReportEntry> eveningKm, Integer index, Integer km) {
         eveningKm.get(index).setEveningKm(km);
-        int result = eveningKm.get(index).getEveningKm() - eveningKm.get(index).getMorningKm();
+
+        int range = 1000;
+        int evening = eveningKm.get(index).getEveningKm();
+        int morning = eveningKm.get(index).getMorningKm();
+
+
+        int result = (evening - morning + range) % range;
+
+
+
         eveningKm.get(index).setTotalKm(result);
     }
 }
