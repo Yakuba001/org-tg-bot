@@ -14,8 +14,8 @@ public class MainMenuCallback implements CallbackHandler {
     private final TelegramSender sender;
 
     @Override
-    public String callbackData() {
-        return Buttons.MAIN_MENU.name();
+    public Buttons callbackData() {
+        return Buttons.MAIN_MENU;
     }
 
     @Override

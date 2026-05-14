@@ -14,8 +14,8 @@ public class ProbegMenuCallback implements CallbackHandler {
     private final TelegramSender sender;
 
     @Override
-    public String callbackData() {
-        return Buttons.PROBEG_MENU.name();
+    public Buttons callbackData() {
+        return Buttons.PROBEG_MENU;
     }
 
     @Override

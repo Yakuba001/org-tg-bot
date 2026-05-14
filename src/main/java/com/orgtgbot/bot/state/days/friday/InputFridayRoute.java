@@ -24,7 +24,7 @@ public class InputFridayRoute implements StateHandler {
         if (!text.matches("\\d+")) {
             sender.editMarkup(chatId, botMenuId, "Ошибка! Введите число.", KeyboardFactory.probeFridayMenu());
         } else {
-//            String report = probegService.changeMonday(List.of(Integer.parseInt(text.trim())));
+            probegService.setRoute(getSupportedHandle(), text.trim());
             sender.editMarkup(chatId, botMenuId, "Данные приняты!\n", KeyboardFactory.probeFridayMenu());
         }
     }

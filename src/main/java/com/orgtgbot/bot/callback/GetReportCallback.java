@@ -15,8 +15,8 @@ public class GetReportCallback implements CallbackHandler {
     private final TelegramSender sender;
 
     @Override
-    public String callbackData() {
-        return Buttons.GET_REPORT.name();
+    public Buttons callbackData() {
+        return Buttons.GET_REPORT;
     }
 
     @Override

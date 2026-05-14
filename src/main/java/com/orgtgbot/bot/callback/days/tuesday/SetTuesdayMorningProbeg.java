@@ -17,16 +17,18 @@ public class SetTuesdayMorningProbeg implements CallbackHandler {
     private final ProbegService probegService;
 
     @Override
-    public String callbackData() {
-        return Buttons.SET_MORNING_TUESDAY_KM.name();
+    public Buttons callbackData() {
+        return Buttons.SET_MORNING_TUESDAY_KM;
     }
 
     @Override
     public void handle(CallbackQuery callbackQuery) throws Exception {
+        String result = probegService.getMorningKm(callbackData());
+
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                Buttons.SET_MORNING_TUESDAY_KM.getName() + " km.",
+                Buttons.SET_MORNING_TUESDAY_KM.getName() + result + " km.",
                 KeyboardFactory.probegBack(Buttons.SET_MORNING_TUESDAY_KM)
         );
     }

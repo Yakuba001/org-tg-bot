@@ -15,8 +15,8 @@ public class ProbegFridayCallback implements CallbackHandler {
     private final TelegramSender sender;
 
     @Override
-    public String callbackData() {
-        return Buttons.PROBEG_FRIDAY.name();
+    public Buttons callbackData() {
+        return Buttons.PROBEG_FRIDAY;
     }
 
     @Override

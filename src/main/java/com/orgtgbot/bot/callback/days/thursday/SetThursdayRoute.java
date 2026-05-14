@@ -17,16 +17,18 @@ public class SetThursdayRoute implements CallbackHandler {
     private final ProbegService probegService;
 
     @Override
-    public String callbackData() {
-        return Buttons.SET_THURSDAY_ROUTE.name();
+    public Buttons callbackData() {
+        return Buttons.SET_THURSDAY_ROUTE;
     }
 
     @Override
     public void handle(CallbackQuery callbackQuery) throws Exception {
+        String result = probegService.getRoute(callbackData());
+
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                Buttons.SET_THURSDAY_ROUTE.getName() + " km.",
+                Buttons.SET_THURSDAY_ROUTE.getName() + ": " + result,
                 KeyboardFactory.probegBack(Buttons.SET_THURSDAY_ROUTE)
         );
     }

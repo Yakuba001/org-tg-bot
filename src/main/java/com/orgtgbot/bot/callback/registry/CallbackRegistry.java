@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Component
 public class CallbackRegistry {
 
-    private final Map<String, CallbackHandler> handlers;
+    private final Map<Buttons, CallbackHandler> handlers;
     private final TelegramClient telegramClient;
     private final UserStateService userStateService;
 
@@ -38,7 +38,7 @@ public class CallbackRegistry {
         answerCallback(callbackQuery.getId());
         Long chatId = callbackQuery.getMessage().getChatId();
         Buttons data = Buttons.valueOf(callbackQuery.getData());
-        CallbackHandler handler = handlers.get(data.name());
+        CallbackHandler handler = handlers.get(data);
 
         if (handler == null) {
             log.warn("Неизвестный callback: {}", data.name());

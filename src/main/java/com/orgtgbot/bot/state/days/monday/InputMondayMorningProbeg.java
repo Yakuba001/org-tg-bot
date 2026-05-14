@@ -24,7 +24,7 @@ public class InputMondayMorningProbeg implements StateHandler {
         if (!text.matches("\\d+")) {
             sender.editMarkup(chatId, botMenuId, "Ошибка! Введите число.", KeyboardFactory.probegMondayMenu());
         } else {
-//            String report = probegService.changeMonday(List.of(Integer.parseInt(text.trim())));
+            probegService.setMorningKm(getSupportedHandle(), Integer.parseInt(text.trim()));
             sender.editMarkup(chatId, botMenuId, "Данные приняты!\n", KeyboardFactory.probegMondayMenu());
         }
     }

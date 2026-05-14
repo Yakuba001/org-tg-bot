@@ -17,20 +17,18 @@ public class SetMondayTotalProbeg implements CallbackHandler {
     private final ProbegService probegService;
 
     @Override
-    public String callbackData() {
-        return Buttons.SET_TOTAL_MONDAY_KM.name();
+    public Buttons callbackData() {
+        return Buttons.SET_TOTAL_MONDAY_KM;
     }
 
     @Override
     public void handle(CallbackQuery callbackQuery) throws Exception {
-        String mondayTotalKm = String.valueOf(probegService.getAll()
-                .getFirst()
-                .getTotalKm());
+        String result = probegService.getTotalKm(callbackData());
 
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                Buttons.SET_TOTAL_MONDAY_KM.getName() + ": " + mondayTotalKm + " km.",
+                Buttons.SET_TOTAL_MONDAY_KM.getName() + ": " + result + " km.",
                 KeyboardFactory.probegBack(Buttons.SET_TOTAL_MONDAY_KM)
         );
     }
