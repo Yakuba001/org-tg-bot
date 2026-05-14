@@ -42,21 +42,22 @@ public class DateService {
 
     @Transactional
     public String getDate(Buttons button) {
+        List<DatesEntry> dates = getAll();
         switch (button) {
             case MONDAY_DATE -> {
-                return getAll().getFirst().getDate();
+                return dates.getFirst().getDate();
             }
             case TUESDAY_DATE -> {
-                return getAll().get(1).getDate();
+                return dates.get(1).getDate();
             }
             case WEDNESDAY_DATE -> {
-                return getAll().get(2).getDate();
+                return dates.get(2).getDate();
             }
             case THURSDAY_DATE -> {
-                return getAll().get(3).getDate();
+                return dates.get(3).getDate();
             }
             case FRIDAY_DATE -> {
-                return getAll().get(4).getDate();
+                return dates.get(4).getDate();
             }
             default -> {
                 return " ";

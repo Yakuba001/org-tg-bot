@@ -119,6 +119,21 @@ public class CallbackRegistry {
             case SET_FRIDAY_ROUTE -> {
                 return UserState.ROUTE_FRIDAY;
             }
+            case MONDAY_DATE -> {
+                return UserState.DATE_MONDAY;
+            }
+            case TUESDAY_DATE -> {
+                return UserState.DATE_TUESDAY;
+            }
+            case WEDNESDAY_DATE -> {
+                return UserState.DATE_WEDNESDAY;
+            }
+            case THURSDAY_DATE -> {
+                return UserState.DATE_THURSDAY;
+            }
+            case FRIDAY_DATE -> {
+                return UserState.DATE_FRIDAY;
+            }
             default -> {
                 return UserState.NONE;
             }
