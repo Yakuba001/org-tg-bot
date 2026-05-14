@@ -47,11 +47,11 @@ public class ProbegService {
     public void setEveningKm(UserState state, Integer km) {
         List<ReportEntry> eveningKm = getAll();
         switch (state) {
-            case PROBEG_EVENING_MONDAY -> eveningKm.getFirst().setEveningKm(km);
-            case PROBEG_EVENING_TUESDAY -> eveningKm.get(1).setEveningKm(km);
-            case PROBEG_EVENING_WEDNESDAY -> eveningKm.get(2).setEveningKm(km);
-            case PROBEG_EVENING_THURSDAY -> eveningKm.get(3).setEveningKm(km);
-            case PROBEG_EVENING_FRIDAY -> eveningKm.get(4).setEveningKm(km);
+            case PROBEG_EVENING_MONDAY -> getTotal(eveningKm, 0, km);
+            case PROBEG_EVENING_TUESDAY -> getTotal(eveningKm, 1, km);
+            case PROBEG_EVENING_WEDNESDAY -> getTotal(eveningKm, 2, km);
+            case PROBEG_EVENING_THURSDAY -> getTotal(eveningKm, 3, km);
+            case PROBEG_EVENING_FRIDAY -> getTotal(eveningKm, 4, km);
         }
     }
 
@@ -181,5 +181,11 @@ public class ProbegService {
 
     public List<ReportEntry> getAll() {
         return repository.findAllByOrderByDayNumberAsc();
+    }
+
+    private void getTotal(List<ReportEntry> eveningKm, Integer index, Integer km) {
+        eveningKm.get(index).setEveningKm(km);
+        int result = eveningKm.get(index).getEveningKm() - eveningKm.get(index).getMorningKm();
+        eveningKm.get(index).setTotalKm(result);
     }
 }
