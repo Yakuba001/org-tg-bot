@@ -81,8 +81,10 @@ public class ExcelService {
             Row row = sheet.getRow(GENERAL_ROW[i]);
             Cell driver = row.getCell(DRIVER_COLUMN);
             Cell date = row.getCell(DATE_GENERAL_COLUMN);
+
             Cell modelAuto = row.getCell(DRIVER_COLUMN);
-            Cell numberAuto = row.getCell(DRIVER_COLUMN);
+            Cell numberAuto = row.getCell(DATE_GENERAL_COLUMN);
+
             Cell totalWeekStart = row.getCell(TOTAL_START_COLUMN);
             Cell startBalanceLitres = row.getCell(START_BALANCE_LITRES_COLUMN);
             Cell totalKmForWeek = row.getCell(TOTAL_COLUMN);
