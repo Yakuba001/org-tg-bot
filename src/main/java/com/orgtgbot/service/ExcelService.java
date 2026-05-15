@@ -43,7 +43,7 @@ public class ExcelService {
         List<DatesEntry> dates = dateService.getAll();
         DatesEntry[] dataModule = {dates.getFirst(), dates.get(1), dates.get(2), dates.get(3), dates.get(4)};
 
-        ClassPathResource resource = new ClassPathResource("probeg_template.xlsx");
+        ClassPathResource resource = new ClassPathResource("probeg.xlsx");
 
         try (InputStream is = resource.getInputStream();
              Workbook workbook = new XSSFWorkbook(is);
