@@ -103,6 +103,6 @@ public class GeneralService {
     }
 
     public List<GeneralEntry> getAll() {
-        return generalEntryRepository.findAll();
+        return generalEntryRepository.findAllByOrderByIdAsc();
     }
 }
