@@ -16,6 +16,8 @@ telegram:
   bot:
     username: ${TELEGRAM_BOT_USERNAME}
     token: ${TELEGRAM_BOT_TOKEN}
+    allowed-users:
+      - 5227547972
 
 logging:
   level:
