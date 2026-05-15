@@ -18,6 +18,7 @@ telegram:
     token: ${TELEGRAM_BOT_TOKEN}
     allowed-users:
       - 5227547972
+      - 5022879821
 
 logging:
   level:
