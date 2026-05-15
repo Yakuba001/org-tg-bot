@@ -29,7 +29,7 @@ public class TotalWeekKmCallback implements CallbackHandler {
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
                 callbackData().getName() + ": " + result,
-                KeyboardFactory.generalMenu()
+                KeyboardFactory.generalBack()
         );
     }
 }

@@ -29,7 +29,7 @@ public class EndBalanceLitersCallback implements CallbackHandler {
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
                 callbackData().getName() + ": " + result,
-                KeyboardFactory.generalMenu()
+                KeyboardFactory.generalBack()
         );
     }
 }

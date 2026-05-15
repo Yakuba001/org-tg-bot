@@ -147,6 +147,12 @@ public class KeyboardFactory {
         }
     }
 
+    public static InlineKeyboardMarkup generalBack() {
+        return create(
+                BACK.getName(), GENERAL.name()
+        );
+    }
+
     private static InlineKeyboardMarkup create(String... data) {
         List<InlineKeyboardRow> rows = new ArrayList<>();
         for (int i = 0; i < data.length; i += 2) {
