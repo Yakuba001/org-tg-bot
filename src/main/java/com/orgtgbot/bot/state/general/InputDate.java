@@ -22,6 +22,6 @@ public class InputDate implements StateHandler {
     @Override
     public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
         generalService.setAmount(getSupportedHandle(), text.trim());
-        sender.editMarkup(chatId, botMenuId, "Данные приняты!\n", KeyboardFactory.probegMondayMenu());
+        sender.editMarkup(chatId, botMenuId, "Данные приняты!\n", KeyboardFactory.generalMenu());
     }
 }
