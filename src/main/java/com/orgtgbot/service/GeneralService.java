@@ -19,20 +19,22 @@ public class GeneralService {
 
     @Transactional
     public void firstStart() {
-        generalEntryRepository.save(GeneralEntry.builder()
-                .name(" ")
-                .date(" ")
-                .carModel(" ")
-                .carNumber(" ")
-                .startWeekProbeg(0)
-                .endWeekProbeg(0)
-                .startBalanceLitres(new BigDecimal("0.0"))
-                .endBalanceLitres(new BigDecimal("0.0"))
-                .totalWeekKm(0)
-                .fuelNorm(new BigDecimal("0.0"))
-                .litresSpend(new BigDecimal("0.0"))
-                .fueling(0)
-                .build());
+        if (getAll() == null || getAll().isEmpty()) {
+            generalEntryRepository.save(GeneralEntry.builder()
+                    .name(" ")
+                    .date(" ")
+                    .carModel(" ")
+                    .carNumber(" ")
+                    .startWeekProbeg(0)
+                    .endWeekProbeg(0)
+                    .startBalanceLitres(new BigDecimal("0.0"))
+                    .endBalanceLitres(new BigDecimal("0.0"))
+                    .totalWeekKm(0)
+                    .fuelNorm(new BigDecimal("0.0"))
+                    .litresSpend(new BigDecimal("0.0"))
+                    .fueling(0)
+                    .build());
+        }
     }
 
     @Transactional
