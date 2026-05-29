@@ -2,63 +2,71 @@ package com.orgtgbot.bot.keyboard;
 
 import lombok.Getter;
 
+import java.util.Optional;
+
 @Getter
 public enum Buttons {
-    MAIN_MENU("Главное меню"),
-    PROBEG_MENU("Меню пробега"),
-    PROBEG_MONDAY("Понедельник"),
-    PROBEG_TUESDAY("Вторник"),
-    PROBEG_WEDNESDAY("Среда"),
-    PROBEG_THURSDAY("Четверг"),
-    PROBEG_FRIDAY("Пятница"),
-    GET_REPORT("Получить отчёт"),
-    SET_MORNING_MONDAY_KM("Утро"),
-    SET_EVENING_MONDAY_KM("Вечер"),
-    SET_TOTAL_MONDAY_KM("Тотал"),
-    SET_MONDAY_ROUTE("Маршрут"),
-    SET_MORNING_TUESDAY_KM("Утро"),
-    SET_EVENING_TUESDAY_KM("Вечер"),
-    SET_TOTAL_TUESDAY_KM("Тотал"),
-    SET_TUESDAY_ROUTE("Маршрут"),
-    SET_MORNING_WEDNESDAY_KM("Утро"),
-    SET_EVENING_WEDNESDAY_KM("Вечер"),
-    SET_TOTAL_WEDNESDAY_KM("Тотал"),
-    SET_WEDNESDAY_ROUTE("Маршрут"),
-    SET_MORNING_THURSDAY_KM("Утро"),
-    SET_EVENING_THURSDAY_KM("Вечер"),
-    SET_TOTAL_THURSDAY_KM("Тотал"),
-    SET_THURSDAY_ROUTE("Маршрут"),
-    SET_MORNING_FRIDAY_KM("Утро"),
-    SET_EVENING_FRIDAY_KM("Вечер"),
-    SET_TOTAL_FRIDAY_KM("Тотал"),
-    SET_FRIDAY_ROUTE("Маршрут"),
-    CLEAR_ALL("Очистить"),
-    ACCEPT_CLEAR("Да"),
-    DECLINE_CLEAR("Нет"),
-    MONDAY_DATE("Дата"),
-    TUESDAY_DATE("Дата"),
-    WEDNESDAY_DATE("Дата"),
-    THURSDAY_DATE("Дата"),
-    FRIDAY_DATE("Дата"),
-    GENERAL("Основное"),
-    DRIVER("Водитель"),
-    DATA("Дата"),
-    MODEL_AUTO("Марка авто"),
-    NUMBER_AUTO("Гос.номер"),
-    START_WEEK_PROBEG("Показания до раб.дня"),
-    END_WEEK_PROBEG("Показания после раб.дня"),
-    START_BALANCE_LITRES("Остаток литров 'Начало'"),
-    END_BALANCE_LITRES("Остаток литров 'Конец'"),
-    TOTAL_WEEK_KM("Пройдено за неделю"),
-    FUEL_NORM("Норма расхода"),
-    LITRES_SPEND("Расход литров"),
-    FUELING("Заправлено литров"),
+    MAIN_MENU("Главное меню", null),
+    PROBEG_MENU("Меню пробега", null),
+    PROBEG_MONDAY("Понедельник", null),
+    PROBEG_TUESDAY("Вторник", null),
+    PROBEG_WEDNESDAY("Среда", null),
+    PROBEG_THURSDAY("Четверг", null),
+    PROBEG_FRIDAY("Пятница", null),
+    GET_REPORT("Получить отчёт", null),
+    SET_MORNING_MONDAY_KM("Утро", 1),
+    SET_EVENING_MONDAY_KM("Вечер", 1),
+    SET_TOTAL_MONDAY_KM("Тотал", 1),
+    SET_MONDAY_ROUTE("Маршрут", 1),
+    SET_MORNING_TUESDAY_KM("Утро", 2),
+    SET_EVENING_TUESDAY_KM("Вечер", 2),
+    SET_TOTAL_TUESDAY_KM("Тотал", 2),
+    SET_TUESDAY_ROUTE("Маршрут", 2),
+    SET_MORNING_WEDNESDAY_KM("Утро", 3),
+    SET_EVENING_WEDNESDAY_KM("Вечер", 3),
+    SET_TOTAL_WEDNESDAY_KM("Тотал", 3),
+    SET_WEDNESDAY_ROUTE("Маршрут", 3),
+    SET_MORNING_THURSDAY_KM("Утро", 4),
+    SET_EVENING_THURSDAY_KM("Вечер", 4),
+    SET_TOTAL_THURSDAY_KM("Тотал", 4),
+    SET_THURSDAY_ROUTE("Маршрут", 4),
+    SET_MORNING_FRIDAY_KM("Утро", 5),
+    SET_EVENING_FRIDAY_KM("Вечер", 5),
+    SET_TOTAL_FRIDAY_KM("Тотал", 5),
+    SET_FRIDAY_ROUTE("Маршрут", 5),
+    CLEAR_ALL("Очистить", null),
+    ACCEPT_CLEAR("Да", null),
+    DECLINE_CLEAR("Нет", null),
+    MONDAY_DATE("Дата", null),
+    TUESDAY_DATE("Дата", null),
+    WEDNESDAY_DATE("Дата", null),
+    THURSDAY_DATE("Дата", null),
+    FRIDAY_DATE("Дата", null),
+    GENERAL("Основное", null),
+    DRIVER("Водитель", null),
+    DATA("Дата", null),
+    MODEL_AUTO("Марка авто", null),
+    NUMBER_AUTO("Гос.номер", null),
+    START_WEEK_PROBEG("Показания до раб.дня", null),
+    END_WEEK_PROBEG("Показания после раб.дня", null),
+    START_BALANCE_LITRES("Остаток литров 'Начало'", null),
+    END_BALANCE_LITRES("Остаток литров 'Конец'", null),
+    TOTAL_WEEK_KM("Пройдено за неделю", null),
+    FUEL_NORM("Норма расхода", null),
+    LITRES_SPEND("Расход литров", null),
+    FUELING("Заправлено литров", null),
 
-    BACK("Назад");
+    BACK("Назад", null);
 
     private final String name;
+    private final Integer dayNumber;
 
-    Buttons(String name) {
+    Buttons(String name, Integer dayNumber) {
         this.name = name;
+        this.dayNumber = dayNumber;
+    }
+
+    public Optional<Integer> getDayNumber() {
+        return Optional.ofNullable(dayNumber);
     }
 }

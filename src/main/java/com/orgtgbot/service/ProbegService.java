@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,9 +19,10 @@ public class ProbegService {
 
     @Transactional
     public void firstStart() {
-        if (getAll() != null && getAll().size() < 5) {
+        if (getAll().isEmpty()) {
+            List<ReportEntry> result = new ArrayList<>();
             for (int i = 0; i < 5; i++) {
-                reportEntryRepository.save(ReportEntry.builder()
+                result.add(ReportEntry.builder()
                         .dayNumber(i + 1)
                         .route(" ")
                         .morningKm(0)
@@ -28,6 +30,7 @@ public class ProbegService {
                         .totalKm(0)
                         .build());
             }
+            reportEntryRepository.saveAll(result);
         }
     }
 
@@ -42,164 +45,57 @@ public class ProbegService {
     }
 
     @Transactional
-    public void setMorningKm(UserState state, Integer km) {
-        List<ReportEntry> morningKm = getAll();
-        switch (state) {
-            case PROBEG_MORNING_MONDAY -> morningKm.getFirst().setMorningKm(km);
-            case PROBEG_MORNING_TUESDAY -> morningKm.get(1).setMorningKm(km);
-            case PROBEG_MORNING_WEDNESDAY -> morningKm.get(2).setMorningKm(km);
-            case PROBEG_MORNING_THURSDAY -> morningKm.get(3).setMorningKm(km);
-            case PROBEG_MORNING_FRIDAY -> morningKm.get(4).setMorningKm(km);
+    public void setAmounts(UserState state, Integer km, String route) {
+        ReportEntry entry = getReportEntry(state);
+        if (state.name().contains("MORNING")) {
+            entry.setMorningKm(km);
+            recalculateTotalKm(entry);
         }
+        else if (state.name().contains("EVENING")) {
+            entry.setEveningKm(km);
+            recalculateTotalKm(entry);
+        }
+        else if (state.name().contains("TOTAL")) entry.setTotalKm(km);
+        else if (state.name().contains("ROUTE")) entry.setRoute(route != null && !route.equals("-") ? route : " ");
     }
 
-    @Transactional
-    public void setEveningKm(UserState state, Integer km) {
-        List<ReportEntry> eveningKm = getAll();
-        switch (state) {
-            case PROBEG_EVENING_MONDAY -> getTotal(eveningKm, 0, km);
-            case PROBEG_EVENING_TUESDAY -> getTotal(eveningKm, 1, km);
-            case PROBEG_EVENING_WEDNESDAY -> getTotal(eveningKm, 2, km);
-            case PROBEG_EVENING_THURSDAY -> getTotal(eveningKm, 3, km);
-            case PROBEG_EVENING_FRIDAY -> getTotal(eveningKm, 4, km);
-        }
-    }
-
-    @Transactional
-    public void setTotalKm(UserState state, Integer km) {
-        List<ReportEntry> totalKm = getAll();
-        switch (state) {
-            case PROBEG_TOTAL_MONDAY -> totalKm.getFirst().setTotalKm(km);
-            case PROBEG_TOTAL_TUESDAY -> totalKm.get(1).setTotalKm(km);
-            case PROBEG_TOTAL_WEDNESDAY -> totalKm.get(2).setTotalKm(km);
-            case PROBEG_TOTAL_THURSDAY -> totalKm.get(3).setTotalKm(km);
-            case PROBEG_TOTAL_FRIDAY -> totalKm.get(4).setTotalKm(km);
-        }
-    }
-
-    @Transactional
-    public void setRoute(UserState state, String route) {
-        List<ReportEntry> routeList = getAll();
-        if (route.equals("-")) route = " ";
-        switch (state) {
-            case ROUTE_MONDAY -> routeList.getFirst().setRoute(route);
-            case ROUTE_TUESDAY -> routeList.get(1).setRoute(route);
-            case ROUTE_WEDNESDAY -> routeList.get(2).setRoute(route);
-            case ROUTE_THURSDAY -> routeList.get(3).setRoute(route);
-            case ROUTE_FRIDAY -> routeList.get(4).setRoute(route);
-        }
-    }
-
-    @Transactional
-    public String getMorningKm(Buttons button) {
-        List<ReportEntry> morningKm = getAll();
-        switch (button) {
-            case SET_MORNING_MONDAY_KM -> {
-                return morningKm.getFirst().getMorningKm().toString();
-            }
-            case SET_MORNING_TUESDAY_KM -> {
-                return morningKm.get(1).getMorningKm().toString();
-            }
-            case SET_MORNING_WEDNESDAY_KM -> {
-                return morningKm.get(2).getMorningKm().toString();
-            }
-            case SET_MORNING_THURSDAY_KM -> {
-                return morningKm.get(3).getMorningKm().toString();
-            }
-            case SET_MORNING_FRIDAY_KM -> {
-                return morningKm.get(4).getMorningKm().toString();
-            }
-            default -> {
-                return "0";
-            }
-        }
-    }
-
-    @Transactional
-    public String getEveningKm(Buttons button) {
-        List<ReportEntry> eveningKm = getAll();
-        switch (button) {
-            case SET_EVENING_MONDAY_KM -> {
-                return eveningKm.getFirst().getEveningKm().toString();
-            }
-            case SET_EVENING_TUESDAY_KM -> {
-                return eveningKm.get(1).getEveningKm().toString();
-            }
-            case SET_EVENING_WEDNESDAY_KM -> {
-                return eveningKm.get(2).getEveningKm().toString();
-            }
-            case SET_EVENING_THURSDAY_KM -> {
-                return eveningKm.get(3).getEveningKm().toString();
-            }
-            case SET_EVENING_FRIDAY_KM -> {
-                return eveningKm.get(4).getEveningKm().toString();
-            }
-            default -> {
-                return "0";
-            }
-        }
-    }
-
-    @Transactional
-    public String getTotalKm(Buttons button) {
-        List<ReportEntry> totalKm = getAll();
-        switch (button) {
-            case SET_TOTAL_MONDAY_KM -> {
-                return totalKm.getFirst().getTotalKm().toString();
-            }
-            case SET_TOTAL_TUESDAY_KM -> {
-                return totalKm.get(1).getTotalKm().toString();
-            }
-            case SET_TOTAL_WEDNESDAY_KM -> {
-                return totalKm.get(2).getTotalKm().toString();
-            }
-            case SET_TOTAL_THURSDAY_KM -> {
-                return totalKm.get(3).getTotalKm().toString();
-            }
-            case SET_TOTAL_FRIDAY_KM -> {
-                return totalKm.get(4).getTotalKm().toString();
-            }
-            default -> {
-                return "0";
-            }
-        }
-    }
-
-    @Transactional
-    public String getRoute(Buttons button) {
-        List<ReportEntry> route = getAll();
-        switch (button) {
-            case SET_MONDAY_ROUTE -> {
-                return route.getFirst().getRoute();
-            }
-            case SET_TUESDAY_ROUTE -> {
-                return route.get(1).getRoute();
-            }
-            case SET_WEDNESDAY_ROUTE -> {
-                return route.get(2).getRoute();
-            }
-            case SET_THURSDAY_ROUTE -> {
-                return route.get(3).getRoute();
-            }
-            case SET_FRIDAY_ROUTE -> {
-                return route.get(4).getRoute();
-            }
-            default -> {
-                return " ";
-            }
-        }
+    @Transactional(readOnly = true)
+    public String getAmounts(Buttons button) {
+        ReportEntry entry = getReportEntry(button);
+        if (button.name().contains("MORNING")) return String.valueOf(entry.getMorningKm());
+        else if (button.name().contains("EVENING")) return String.valueOf(entry.getEveningKm());
+        else if (button.name().contains("TOTAL")) return String.valueOf(entry.getTotalKm());
+        else if (button.name().contains("ROUTE")) return entry.getRoute();
+        throw new IllegalArgumentException("Unexpected value: " + button);
     }
 
     public List<ReportEntry> getAll() {
         return reportEntryRepository.findAllByOrderByDayNumberAsc();
     }
 
-    private void getTotal(List<ReportEntry> eveningKm, Integer index, Integer km) {
-        eveningKm.get(index).setEveningKm(km);
-        int range = 1000;
-        int evening = eveningKm.get(index).getEveningKm();
-        int morning = eveningKm.get(index).getMorningKm();
-        int result = (evening - morning + range) % range;
-        eveningKm.get(index).setTotalKm(result);
+    private void recalculateTotalKm(ReportEntry entry) {
+        Integer morning = entry.getMorningKm();
+        Integer evening = entry.getEveningKm();
+        if (morning != null && morning != 0 && evening != null && evening != 0) {
+            int range = 1000;
+            int result = (evening - morning + range) % range;
+            entry.setTotalKm(result);
+        }
+    }
+
+    private ReportEntry getReportEntry(UserState state) {
+        return getReportEntry(state.getDayNumber().orElseThrow(() -> new IllegalStateException("Unexpected value")));
+    }
+
+    private ReportEntry getReportEntry(Buttons button) {
+        return getReportEntry(button.getDayNumber().orElseThrow(() -> new IllegalStateException("Unexpected value")));
+    }
+
+    private ReportEntry getReportEntry(int dayNumber) {
+        List<ReportEntry> reportEntries = getAll();
+        return reportEntries.stream()
+                .filter(e -> e.getDayNumber() == dayNumber)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("ReportEntry not found for dayNumber: " + dayNumber));
     }
 }

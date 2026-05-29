@@ -23,7 +23,7 @@ public class SetFridayMorningProbeg implements CallbackHandler {
 
     @Override
     public void handle(CallbackQuery callbackQuery) throws Exception {
-        String result = probegService.getMorningKm(callbackData());
+        String result = probegService.getAmounts(callbackData());
 
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),

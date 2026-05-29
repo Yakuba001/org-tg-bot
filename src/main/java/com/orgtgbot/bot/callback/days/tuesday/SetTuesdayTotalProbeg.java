@@ -23,7 +23,7 @@ public class SetTuesdayTotalProbeg implements CallbackHandler {
 
     @Override
     public void handle(CallbackQuery callbackQuery) throws Exception {
-        String result = probegService.getTotalKm(callbackData());
+        String result = probegService.getAmounts(callbackData());
 
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),

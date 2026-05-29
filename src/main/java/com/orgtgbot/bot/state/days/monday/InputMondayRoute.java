@@ -21,7 +21,7 @@ public class InputMondayRoute implements StateHandler {
 
     @Override
     public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
-        probegService.setRoute(getSupportedHandle(), text.trim());
+        probegService.setAmounts(getSupportedHandle(), null, text.trim());
         sender.editMarkup(chatId, botMenuId, "Данные приняты!\n", KeyboardFactory.probegMondayMenu());
     }
 }

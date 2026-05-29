@@ -2,45 +2,57 @@ package com.orgtgbot.bot.state;
 
 import lombok.Getter;
 
+import java.util.Optional;
+
 @Getter
 public enum UserState {
-    NONE,
+    NONE(null),
 
-    PROBEG_MORNING_MONDAY,
-    PROBEG_EVENING_MONDAY,
-    PROBEG_TOTAL_MONDAY,
-    ROUTE_MONDAY,
-    PROBEG_MORNING_TUESDAY,
-    PROBEG_EVENING_TUESDAY,
-    PROBEG_TOTAL_TUESDAY,
-    ROUTE_TUESDAY,
-    PROBEG_MORNING_WEDNESDAY,
-    PROBEG_EVENING_WEDNESDAY,
-    PROBEG_TOTAL_WEDNESDAY,
-    ROUTE_WEDNESDAY,
-    PROBEG_MORNING_THURSDAY,
-    PROBEG_EVENING_THURSDAY,
-    PROBEG_TOTAL_THURSDAY,
-    ROUTE_THURSDAY,
-    PROBEG_MORNING_FRIDAY,
-    PROBEG_EVENING_FRIDAY,
-    PROBEG_TOTAL_FRIDAY,
-    ROUTE_FRIDAY,
-    DATE_MONDAY,
-    DATE_TUESDAY,
-    DATE_WEDNESDAY,
-    DATE_THURSDAY,
-    DATE_FRIDAY,
-    DRIVER,
-    DATE,
-    MODEL_AUTO,
-    NUMBER_AUTO,
-    START_WEEK_PROBEG,
-    END_WEEK_PROBEG,
-    START_BALANCE_LITRES,
-    END_BALANCE_LITRES,
-    TOTAL_WEEK_KM,
-    FUEL_NORM,
-    LITRES_SPEND,
-    FUELING
+    PROBEG_MORNING_MONDAY(1),
+    PROBEG_EVENING_MONDAY(1),
+    PROBEG_TOTAL_MONDAY(1),
+    ROUTE_MONDAY(1),
+    PROBEG_MORNING_TUESDAY(2),
+    PROBEG_EVENING_TUESDAY(2),
+    PROBEG_TOTAL_TUESDAY(2),
+    ROUTE_TUESDAY(2),
+    PROBEG_MORNING_WEDNESDAY(3),
+    PROBEG_EVENING_WEDNESDAY(3),
+    PROBEG_TOTAL_WEDNESDAY(3),
+    ROUTE_WEDNESDAY(3),
+    PROBEG_MORNING_THURSDAY(4),
+    PROBEG_EVENING_THURSDAY(4),
+    PROBEG_TOTAL_THURSDAY(4),
+    ROUTE_THURSDAY(4),
+    PROBEG_MORNING_FRIDAY(5),
+    PROBEG_EVENING_FRIDAY(5),
+    PROBEG_TOTAL_FRIDAY(5),
+    ROUTE_FRIDAY(5),
+    DATE_MONDAY(null),
+    DATE_TUESDAY(null),
+    DATE_WEDNESDAY(null),
+    DATE_THURSDAY(null),
+    DATE_FRIDAY(null),
+    DRIVER(null),
+    DATE(null),
+    MODEL_AUTO(null),
+    NUMBER_AUTO(null),
+    START_WEEK_PROBEG(null),
+    END_WEEK_PROBEG(null),
+    START_BALANCE_LITRES(null),
+    END_BALANCE_LITRES(null),
+    TOTAL_WEEK_KM(null),
+    FUEL_NORM(null),
+    LITRES_SPEND(null),
+    FUELING(null);
+
+    private final Integer dayNumber;
+
+    UserState(Integer dayNumber) {
+        this.dayNumber = dayNumber;
+    }
+
+    public Optional<Integer> getDayNumber() {
+        return Optional.ofNullable(dayNumber);
+    }
 }
