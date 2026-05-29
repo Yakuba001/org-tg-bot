@@ -121,4 +121,13 @@ public class ProbegServiceTest {
         assertThat(probegService.getAmounts(SET_TOTAL_MONDAY_KM)).isEqualTo("300");
         assertThat(probegService.getAmounts(SET_MONDAY_ROUTE)).isEqualTo("route69");
     }
+
+    @Test
+    void getAll_returnCorrectResults() {
+        when(reportEntryRepository.findAllByOrderByDayNumberAsc()).thenReturn(reportEntries);
+
+        List<ReportEntry> res = probegService.getAll();
+
+        assertThat(res).isEqualTo(reportEntries);
+    }
 }

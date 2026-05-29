@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,54 +19,45 @@ public class DateService {
 
     @Transactional
     public void firstStart() {
-        if (getAll() != null && getAll().size() < 5) {
+        if (getAll().isEmpty()) {
+            List<DatesEntry> result = new ArrayList<>();
             for (int i = 0; i < 5; i++) {
-                dateEntryRepository.save(DatesEntry.builder()
+                result.add(DatesEntry.builder()
                         .date(" ")
                         .build());
             }
+            dateEntryRepository.saveAll(result);
         }
     }
 
     @Transactional
     public void setDate(UserState state, String date) {
-        List<DatesEntry> dates = getAll();
         if (date.equals("-")) date = " ";
-        switch (state) {
-            case DATE_MONDAY -> dates.getFirst().setDate(date);
-            case DATE_TUESDAY -> dates.get(1).setDate(date);
-            case DATE_WEDNESDAY -> dates.get(2).setDate(date);
-            case DATE_THURSDAY -> dates.get(3).setDate(date);
-            case DATE_FRIDAY -> dates.get(4).setDate(date);
-        }
+        getDatesEntry(state).setDate(date);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public String getDate(Buttons button) {
-        List<DatesEntry> dates = getAll();
-        switch (button) {
-            case MONDAY_DATE -> {
-                return dates.getFirst().getDate();
-            }
-            case TUESDAY_DATE -> {
-                return dates.get(1).getDate();
-            }
-            case WEDNESDAY_DATE -> {
-                return dates.get(2).getDate();
-            }
-            case THURSDAY_DATE -> {
-                return dates.get(3).getDate();
-            }
-            case FRIDAY_DATE -> {
-                return dates.get(4).getDate();
-            }
-            default -> {
-                return " ";
-            }
-        }
+        return getDatesEntry(button).getDate();
     }
 
     public List<DatesEntry> getAll() {
         return dateEntryRepository.findAllByOrderByIdAsc();
+    }
+
+    private DatesEntry getDatesEntry(UserState state) {
+        return getDatesEntry(state.getDayNumber().orElseThrow(() -> new IllegalStateException("Unexpected value")));
+    }
+
+    private DatesEntry getDatesEntry(Buttons button) {
+        return getDatesEntry(button.getDayNumber().orElseThrow(() -> new IllegalStateException("Unexpected value")));
+    }
+
+    private DatesEntry getDatesEntry(int dayNumber) {
+        List<DatesEntry> dates = getAll();
+        return dates.stream()
+                .filter(e -> e.getId() == dayNumber)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("DatesEntry not found for dayNumber: " + dayNumber));
     }
 }
