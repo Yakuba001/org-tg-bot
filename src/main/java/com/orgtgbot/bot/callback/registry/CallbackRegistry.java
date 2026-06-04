@@ -2,6 +2,7 @@ package com.orgtgbot.bot.callback.registry;
 
 import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.CallbackHandler;
+import com.orgtgbot.bot.callback.UserStateService;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import com.orgtgbot.bot.callback.GeneralFields;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +44,7 @@ public class CallbackRegistry {
             userStateService.setMessageId(chatId, callbackMessageId);
         } else {
             telegramSender.editMarkup(chatId, botMenuId, "Ошибка диспетчера!\n", KeyboardFactory.generalMenu());
-            userStateService.removeState(chatId);
+            userStateService.clearState(chatId);
         }
     }
 
@@ -54,7 +55,7 @@ public class CallbackRegistry {
         CallbackHandler handler = handlers.get(field);
         if (handler != null) {
             handler.handle(chatId, text, botMenuId, telegramSender);
-            userStateService.removeState(chatId);
+            userStateService.clearState(chatId);
         } else {
             log.warn("Неожиданный стейт: {}", field);
         }

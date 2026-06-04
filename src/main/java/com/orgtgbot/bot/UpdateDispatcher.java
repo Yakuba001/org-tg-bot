@@ -1,11 +1,13 @@
 package com.orgtgbot.bot;
 
+import com.orgtgbot.bot.callback.UserStateService;
 import com.orgtgbot.bot.callback.registry.CallbackRegistry;
 import com.orgtgbot.bot.command.StartCommand;
 import com.orgtgbot.bot.callback.GeneralFields;
 import com.orgtgbot.config.TelegramBotProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
@@ -22,26 +24,30 @@ public class UpdateDispatcher {
         Long chatId = extractChatId(update);
         if (chatId == null) return;
         if (!properties.allowedUsers().contains(chatId)) return;
-        GeneralFields field = userStateService.getState(chatId);
-        Integer botMenuId = userStateService.getMessageId(chatId);
         if (update.hasMessage() && update.getMessage().hasText()) {
             String text = update.getMessage().getText();
             Integer messageId = update.getMessage().getMessageId();
             if (text.startsWith("/start")) {
                 startCommand.execute(update);
+                userStateService.clearState(chatId);
                 sender.deleteMessage(chatId, update.getMessage().getMessageId());
             } else {
-                callbackRegistry.handle(field, chatId, text, botMenuId);
+                GeneralFields field = userStateService.getState(chatId);
+                callbackRegistry.handle(field, chatId, text, userStateService.getMessageId(chatId));
                 sender.deleteMessage(chatId, messageId);
             }
             return;
         }
-        if (field != GeneralFields.NONE && update.hasCallbackQuery()) {
+        if (update.hasCallbackQuery()) {
+            CallbackQuery callbackQuery = update.getCallbackQuery();
+            GeneralFields clickedField = GeneralFields.valueOf(callbackQuery.getData());
+            Integer callbackMessageId = callbackQuery.getMessage().getMessageId();
+            Integer botMenuId = userStateService.getMessageId(chatId);
             callbackRegistry.dispatch(
-                    field,
-                    update.getCallbackQuery(),
+                    clickedField,
+                    callbackQuery,
                     chatId,
-                    update.getCallbackQuery().getMessage().getMessageId(),
+                    callbackMessageId,
                     botMenuId);
         }
     }
