@@ -1,4 +1,4 @@
-package com.orgtgbot.service;
+package com.orgtgbot.service.services;
 
 import com.orgtgbot.entity.DatesEntry;
 import com.orgtgbot.entity.GeneralEntry;

@@ -2,9 +2,9 @@ package com.orgtgbot.bot.callback.clear;
 
 import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.CallbackHandler;
-import com.orgtgbot.bot.keyboard.Buttons;
+import com.orgtgbot.bot.callback.GeneralFields;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
-import com.orgtgbot.service.ProbegService;
+import com.orgtgbot.service.services.ProbegService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -17,8 +17,8 @@ public class AcceptClear implements CallbackHandler {
     private final ProbegService probegService;
 
     @Override
-    public Buttons callbackData() {
-        return Buttons.ACCEPT_CLEAR;
+    public GeneralFields callbackData() {
+        return GeneralFields.ACCEPT_CLEAR;
     }
 
     @Override
@@ -28,8 +28,13 @@ public class AcceptClear implements CallbackHandler {
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                Buttons.PROBEG_MENU.getName(),
+                callbackData().getDescription(),
                 KeyboardFactory.probegMenu()
         );
+    }
+
+    @Override
+    public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
+        sender.editMarkup(chatId, botMenuId, callbackData().getDescription(), KeyboardFactory.probegMenu());
     }
 }

@@ -2,7 +2,7 @@ package com.orgtgbot.bot.callback.days.wednesday;
 
 import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.CallbackHandler;
-import com.orgtgbot.bot.keyboard.Buttons;
+import com.orgtgbot.bot.callback.GeneralFields;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,8 +15,8 @@ public class ProbegWednesdayCallback implements CallbackHandler {
     private final TelegramSender sender;
 
     @Override
-    public Buttons callbackData() {
-        return Buttons.PROBEG_WEDNESDAY;
+    public GeneralFields callbackData() {
+        return GeneralFields.PROBEG_WEDNESDAY;
     }
 
     @Override
@@ -24,8 +24,13 @@ public class ProbegWednesdayCallback implements CallbackHandler {
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                Buttons.PROBEG_WEDNESDAY.getName(),
+                callbackData().getDescription(),
                 KeyboardFactory.probegWednesdayMenu()
         );
+    }
+
+    @Override
+    public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
+        sender.editMarkup(chatId, botMenuId, callbackData().getDescription(), KeyboardFactory.probegWednesdayMenu());
     }
 }

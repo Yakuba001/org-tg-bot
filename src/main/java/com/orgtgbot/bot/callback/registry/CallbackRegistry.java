@@ -1,15 +1,12 @@
 package com.orgtgbot.bot.callback.registry;
 
+import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.CallbackHandler;
-import com.orgtgbot.bot.keyboard.Buttons;
-import com.orgtgbot.bot.state.UserState;
-import com.orgtgbot.bot.state.UserStateService;
+import com.orgtgbot.bot.keyboard.KeyboardFactory;
+import com.orgtgbot.bot.callback.GeneralFields;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.util.List;
 import java.util.Map;
@@ -19,160 +16,47 @@ import java.util.stream.Collectors;
 @Component
 public class CallbackRegistry {
 
-    private final Map<Buttons, CallbackHandler> handlers;
-    private final TelegramClient telegramClient;
+    private final Map<GeneralFields, CallbackHandler> handlers;
+    private final TelegramSender telegramSender;
     private final UserStateService userStateService;
 
     public CallbackRegistry(List<CallbackHandler> all,
-                            TelegramClient telegramClient,
+                            TelegramSender telegramSender,
                             UserStateService userStateService) {
-        this.telegramClient = telegramClient;
+        this.telegramSender = telegramSender;
         this.handlers = all.stream()
                 .collect(Collectors.toUnmodifiableMap(
                         CallbackHandler::callbackData, h -> h));
         this.userStateService = userStateService;
     }
 
-    public void dispatch(CallbackQuery callbackQuery) throws Exception {
-        userStateService.removeState(callbackQuery.getMessage().getChatId());
-        answerCallback(callbackQuery.getId());
-        Long chatId = callbackQuery.getMessage().getChatId();
-        Buttons data = Buttons.valueOf(callbackQuery.getData());
-        CallbackHandler handler = handlers.get(data);
-
-        if (handler == null) {
-            log.warn("Неизвестный callback: {}", data.name());
-            return;
+    public void dispatch(GeneralFields field,
+                         CallbackQuery callbackQuery,
+                         Long chatId,
+                         Integer callbackMessageId,
+                         Integer botMenuId) throws Exception {
+        CallbackHandler handler = handlers.get(field);
+        telegramSender.answerCallback(callbackQuery.getId());
+        if (handler != null) {
+            handler.handle(callbackQuery);
+            userStateService.setState(chatId, field);
+            userStateService.setMessageId(chatId, callbackMessageId);
+        } else {
+            telegramSender.editMarkup(chatId, botMenuId, "Ошибка диспетчера!\n", KeyboardFactory.generalMenu());
+            userStateService.removeState(chatId);
         }
-
-        handler.handle(callbackQuery);
-
-        userStateService.setState(chatId, stateSwitcher(data));
-        userStateService.setMessageId(chatId, callbackQuery.getMessage().getMessageId());
     }
 
-    private void answerCallback(String callbackQueryId) throws TelegramApiException {
-        telegramClient.execute(AnswerCallbackQuery.builder()
-                .callbackQueryId(callbackQueryId)
-                .build());
-    }
-
-    private UserState stateSwitcher(Buttons button) {
-        switch (button) {
-            case SET_MORNING_MONDAY_KM -> {
-                return UserState.PROBEG_MORNING_MONDAY;
-            }
-            case SET_EVENING_MONDAY_KM -> {
-                return UserState.PROBEG_EVENING_MONDAY;
-            }
-            case SET_TOTAL_MONDAY_KM -> {
-                return UserState.PROBEG_TOTAL_MONDAY;
-            }
-            case SET_MONDAY_ROUTE -> {
-                return UserState.ROUTE_MONDAY;
-            }
-            case SET_MORNING_TUESDAY_KM -> {
-                return UserState.PROBEG_MORNING_TUESDAY;
-            }
-            case SET_EVENING_TUESDAY_KM -> {
-                return UserState.PROBEG_EVENING_TUESDAY;
-            }
-            case SET_TOTAL_TUESDAY_KM -> {
-                return UserState.PROBEG_TOTAL_TUESDAY;
-            }
-            case SET_TUESDAY_ROUTE -> {
-                return UserState.ROUTE_TUESDAY;
-            }
-            case SET_MORNING_WEDNESDAY_KM -> {
-                return UserState.PROBEG_MORNING_WEDNESDAY;
-            }
-            case SET_EVENING_WEDNESDAY_KM -> {
-                return UserState.PROBEG_EVENING_WEDNESDAY;
-            }
-            case SET_TOTAL_WEDNESDAY_KM -> {
-                return UserState.PROBEG_TOTAL_WEDNESDAY;
-            }
-            case SET_WEDNESDAY_ROUTE -> {
-                return UserState.ROUTE_WEDNESDAY;
-            }
-            case SET_MORNING_THURSDAY_KM -> {
-                return UserState.PROBEG_MORNING_THURSDAY;
-            }
-            case SET_EVENING_THURSDAY_KM -> {
-                return UserState.PROBEG_EVENING_THURSDAY;
-            }
-            case SET_TOTAL_THURSDAY_KM -> {
-                return UserState.PROBEG_TOTAL_THURSDAY;
-            }
-            case SET_THURSDAY_ROUTE -> {
-                return UserState.ROUTE_THURSDAY;
-            }
-            case SET_MORNING_FRIDAY_KM -> {
-                return UserState.PROBEG_MORNING_FRIDAY;
-            }
-            case SET_EVENING_FRIDAY_KM -> {
-                return UserState.PROBEG_EVENING_FRIDAY;
-            }
-            case SET_TOTAL_FRIDAY_KM -> {
-                return UserState.PROBEG_TOTAL_FRIDAY;
-            }
-            case SET_FRIDAY_ROUTE -> {
-                return UserState.ROUTE_FRIDAY;
-            }
-            case MONDAY_DATE -> {
-                return UserState.DATE_MONDAY;
-            }
-            case TUESDAY_DATE -> {
-                return UserState.DATE_TUESDAY;
-            }
-            case WEDNESDAY_DATE -> {
-                return UserState.DATE_WEDNESDAY;
-            }
-            case THURSDAY_DATE -> {
-                return UserState.DATE_THURSDAY;
-            }
-            case FRIDAY_DATE -> {
-                return UserState.DATE_FRIDAY;
-            }
-            case DRIVER -> {
-                return UserState.DRIVER;
-            }
-            case DATA -> {
-                return UserState.DATE;
-            }
-            case MODEL_AUTO -> {
-                return UserState.MODEL_AUTO;
-            }
-            case NUMBER_AUTO -> {
-                return UserState.NUMBER_AUTO;
-            }
-            case START_WEEK_PROBEG -> {
-                return UserState.START_WEEK_PROBEG;
-            }
-            case END_WEEK_PROBEG -> {
-                return UserState.END_WEEK_PROBEG;
-            }
-            case START_BALANCE_LITRES -> {
-                return UserState.START_BALANCE_LITRES;
-            }
-            case END_BALANCE_LITRES -> {
-                return UserState.END_BALANCE_LITRES;
-            }
-            case TOTAL_WEEK_KM -> {
-                return UserState.TOTAL_WEEK_KM;
-            }
-            case FUEL_NORM -> {
-                return UserState.FUEL_NORM;
-            }
-            case LITRES_SPEND -> {
-                return UserState.LITRES_SPEND;
-            }
-            case FUELING -> {
-                return UserState.FUELING;
-            }
-            default -> {
-                return UserState.NONE;
-            }
+    public void handle(GeneralFields field,
+                       Long chatId,
+                       String text,
+                       Integer botMenuId) throws Exception {
+        CallbackHandler handler = handlers.get(field);
+        if (handler != null) {
+            handler.handle(chatId, text, botMenuId, telegramSender);
+            userStateService.removeState(chatId);
+        } else {
+            log.warn("Неожиданный стейт: {}", field);
         }
     }
 }

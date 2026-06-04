@@ -2,9 +2,9 @@ package com.orgtgbot.bot.callback.days.thursday;
 
 import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.CallbackHandler;
-import com.orgtgbot.bot.keyboard.Buttons;
+import com.orgtgbot.bot.callback.GeneralFields;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
-import com.orgtgbot.service.ProbegService;
+import com.orgtgbot.service.BotFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -14,22 +14,32 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 public class SetThursdayEveningProbeg implements CallbackHandler {
 
     private final TelegramSender sender;
-    private final ProbegService probegService;
+    private final BotFacade botFacade;
 
     @Override
-    public Buttons callbackData() {
-        return Buttons.SET_EVENING_THURSDAY_KM;
+    public GeneralFields callbackData() {
+        return GeneralFields.SET_EVENING_THURSDAY_KM;
     }
 
     @Override
     public void handle(CallbackQuery callbackQuery) throws Exception {
-        String result = probegService.getAmounts(callbackData());
+        String result = botFacade.getAmount(callbackData());
 
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                Buttons.SET_EVENING_THURSDAY_KM.getName() + ": " + result + " км.",
-                KeyboardFactory.probegBack(Buttons.SET_EVENING_THURSDAY_KM)
+                callbackData().getDescription() + ": " + result + " км.",
+                KeyboardFactory.probegBack(callbackData())
         );
+    }
+
+    @Override
+    public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
+        if (!text.matches("\\d+")) {
+            sender.editMarkup(chatId, botMenuId, "Ошибка! Введите число.", KeyboardFactory.probegThursdayMenu());
+        } else {
+            botFacade.setAmount(callbackData(), text.trim());
+            sender.editMarkup(chatId, botMenuId, "Данные приняты!\n", KeyboardFactory.probegThursdayMenu());
+        }
     }
 }

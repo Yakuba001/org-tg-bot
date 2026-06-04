@@ -2,9 +2,9 @@ package com.orgtgbot.bot.callback.days.friday;
 
 import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.CallbackHandler;
-import com.orgtgbot.bot.keyboard.Buttons;
+import com.orgtgbot.bot.callback.GeneralFields;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
-import com.orgtgbot.service.ProbegService;
+import com.orgtgbot.service.BotFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -14,22 +14,28 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 public class SetFridayRoute implements CallbackHandler {
 
     private final TelegramSender sender;
-    private final ProbegService probegService;
+    private final BotFacade botFacade;
 
     @Override
-    public Buttons callbackData() {
-        return Buttons.SET_FRIDAY_ROUTE;
+    public GeneralFields callbackData() {
+        return GeneralFields.SET_FRIDAY_ROUTE;
     }
 
     @Override
     public void handle(CallbackQuery callbackQuery) throws Exception {
-        String result = probegService.getAmounts(callbackData());
+        String result = botFacade.getAmount(callbackData());
 
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                Buttons.SET_FRIDAY_ROUTE.getName() + ": " + result,
-                KeyboardFactory.probegBack(Buttons.SET_FRIDAY_ROUTE)
+                callbackData().getDescription()+ ": " + result,
+                KeyboardFactory.probegBack(callbackData())
         );
+    }
+
+    @Override
+    public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
+        botFacade.setAmount(callbackData(), text.trim());
+        sender.editMarkup(chatId, botMenuId, "Данные приняты!\n", KeyboardFactory.probeFridayMenu());
     }
 }

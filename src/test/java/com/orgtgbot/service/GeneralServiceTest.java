@@ -1,6 +1,6 @@
 package com.orgtgbot.service;
 
 
-public class DateServiceTest {
+public class GeneralServiceTest {
 
 }

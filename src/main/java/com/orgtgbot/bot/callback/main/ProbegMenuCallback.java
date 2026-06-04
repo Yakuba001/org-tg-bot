@@ -1,7 +1,8 @@
-package com.orgtgbot.bot.callback;
+package com.orgtgbot.bot.callback.main;
 
 import com.orgtgbot.bot.TelegramSender;
-import com.orgtgbot.bot.keyboard.Buttons;
+import com.orgtgbot.bot.callback.CallbackHandler;
+import com.orgtgbot.bot.callback.GeneralFields;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,8 +15,8 @@ public class ProbegMenuCallback implements CallbackHandler {
     private final TelegramSender sender;
 
     @Override
-    public Buttons callbackData() {
-        return Buttons.PROBEG_MENU;
+    public GeneralFields callbackData() {
+        return GeneralFields.PROBEG_MENU;
     }
 
     @Override
@@ -23,8 +24,13 @@ public class ProbegMenuCallback implements CallbackHandler {
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                Buttons.PROBEG_MENU.getName(),
+                callbackData().getDescription(),
                 KeyboardFactory.probegMenu()
         );
+    }
+
+    @Override
+    public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
+        sender.editMarkup(chatId, botMenuId, callbackData().getDescription(), KeyboardFactory.probegMenu());
     }
 }

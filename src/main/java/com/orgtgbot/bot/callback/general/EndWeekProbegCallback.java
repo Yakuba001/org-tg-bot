@@ -2,9 +2,9 @@ package com.orgtgbot.bot.callback.general;
 
 import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.CallbackHandler;
-import com.orgtgbot.bot.keyboard.Buttons;
+import com.orgtgbot.bot.callback.GeneralFields;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
-import com.orgtgbot.service.GeneralService;
+import com.orgtgbot.service.BotFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -14,22 +14,32 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 public class EndWeekProbegCallback implements CallbackHandler {
 
     private final TelegramSender sender;
-    private final GeneralService generalService;
+    private final BotFacade botFacade;
 
     @Override
-    public Buttons callbackData() {
-        return Buttons.END_WEEK_PROBEG;
+    public GeneralFields callbackData() {
+        return GeneralFields.END_WEEK_PROBEG;
     }
 
     @Override
     public void handle(CallbackQuery callbackQuery) throws Exception {
-        String result = generalService.getAmount(callbackData());
+        String result = botFacade.getAmount(callbackData());
 
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                callbackData().getName() + ": " + result,
+                callbackData().getDescription() + ": " + result,
                 KeyboardFactory.generalBack()
         );
+    }
+
+    @Override
+    public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
+        if (!text.matches("\\d+")) {
+            sender.editMarkup(chatId, botMenuId, "Ошибка! Введите число.", KeyboardFactory.generalMenu());
+        } else {
+            botFacade.setAmount(callbackData(), text.trim());
+            sender.editMarkup(chatId, botMenuId, "Данные приняты!\n", KeyboardFactory.generalMenu());
+        }
     }
 }

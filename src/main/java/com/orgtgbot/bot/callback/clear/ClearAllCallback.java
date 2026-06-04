@@ -2,7 +2,7 @@ package com.orgtgbot.bot.callback.clear;
 
 import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.CallbackHandler;
-import com.orgtgbot.bot.keyboard.Buttons;
+import com.orgtgbot.bot.callback.GeneralFields;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,8 +15,8 @@ public class ClearAllCallback implements CallbackHandler {
     private final TelegramSender sender;
 
     @Override
-    public Buttons callbackData() {
-        return Buttons.CLEAR_ALL;
+    public GeneralFields callbackData() {
+        return GeneralFields.CLEAR_ALL;
     }
 
     @Override
@@ -24,8 +24,13 @@ public class ClearAllCallback implements CallbackHandler {
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                Buttons.CLEAR_ALL.getName(),
+                callbackData().getDescription(),
                 KeyboardFactory.clearAllMenu()
         );
+    }
+
+    @Override
+    public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
+        sender.editMarkup(chatId, botMenuId, callbackData().getDescription(), KeyboardFactory.clearAllMenu());
     }
 }

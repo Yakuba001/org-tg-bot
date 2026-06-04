@@ -2,9 +2,9 @@ package com.orgtgbot.bot.callback.days.tuesday;
 
 import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.CallbackHandler;
-import com.orgtgbot.bot.keyboard.Buttons;
+import com.orgtgbot.bot.callback.GeneralFields;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
-import com.orgtgbot.service.DateService;
+import com.orgtgbot.service.BotFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -14,21 +14,27 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 public class SetTuesdayDate implements CallbackHandler {
 
     private final TelegramSender sender;
-    private final DateService dateService;
+    private final BotFacade botFacade;
 
     @Override
-    public Buttons callbackData() {
-        return Buttons.TUESDAY_DATE;
+    public GeneralFields callbackData() {
+        return GeneralFields.TUESDAY_DATE;
     }
 
     @Override
     public void handle(CallbackQuery callbackQuery) throws Exception {
-        String result = dateService.getDate(callbackData());
+        String result = botFacade.getAmount(callbackData());
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                callbackData().getName() + ": " + result,
+                callbackData().getDescription() + ": " + result,
                 KeyboardFactory.probegBack(callbackData())
         );
+    }
+
+    @Override
+    public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
+        botFacade.setAmount(callbackData(), text.trim());
+        sender.editMarkup(chatId, botMenuId, "Данные приняты!\n", KeyboardFactory.probegTuesdayMenu());
     }
 }
