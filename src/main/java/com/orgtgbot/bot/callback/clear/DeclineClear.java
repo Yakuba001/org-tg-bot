@@ -24,8 +24,8 @@ public class DeclineClear implements CallbackHandler {
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                callbackData().getDescription(),
-                KeyboardFactory.buildMenuForGroup(GeneralFields.CLEAR_ALL)
+                GeneralFields.PROBEG_MENU.getDescription(),
+                KeyboardFactory.buildMenuForGroup(GeneralFields.PROBEG_MENU)
         );
     }
 

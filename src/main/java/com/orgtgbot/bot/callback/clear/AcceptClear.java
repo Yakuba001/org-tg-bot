@@ -28,8 +28,8 @@ public class AcceptClear implements CallbackHandler {
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
-                callbackData().getDescription(),
-                KeyboardFactory.buildMenuForGroup(GeneralFields.CLEAR_ALL)
+                "Данные очищены!",
+                KeyboardFactory.buildMenuForGroup(GeneralFields.PROBEG_MENU)
         );
     }
 
