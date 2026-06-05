@@ -25,7 +25,7 @@ public class ClearAllCallback implements CallbackHandler {
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
                 callbackData().getDescription(),
-                KeyboardFactory.dynamicBack(callbackData())
+                KeyboardFactory.buildMenuForGroup(callbackData())
         );
     }
 
