@@ -15,7 +15,7 @@ public enum GeneralFields {
     BACK("Назад", null, null, null, null),
     MAIN_MENU("Главное меню", null, null, null, null),
 
-    PROBEG_MENU("Меню пробега", MAIN_MENU, null, null, null),
+    PROBEG_MENU("Меню пробега", MAIN_MENU, MAIN_MENU, null, null),
     GENERAL("Основное", PROBEG_MENU, null, null, null),
 
     PROBEG_MONDAY("Понедельник", PROBEG_MENU, null, null, null),
