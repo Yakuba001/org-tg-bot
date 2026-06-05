@@ -12,11 +12,11 @@ import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ProbegService {
 
     private final ReportEntryRepository reportEntryRepository;
 
-    @Transactional
     public void firstStart() {
         if (getAll().isEmpty()) {
             List<ReportEntry> result = new ArrayList<>();
@@ -33,7 +33,6 @@ public class ProbegService {
         }
     }
 
-    @Transactional
     public void clearAll() {
         getAll().forEach(entry -> {
             entry.setMorningKm(0);
@@ -43,26 +42,24 @@ public class ProbegService {
         });
     }
 
-    @Transactional
     public void updateMorningKm(int dayNumber, int km) {
         ReportEntry entry = getReportEntry(dayNumber);
         entry.setMorningKm(km);
         recalculateTotalKm(entry);
     }
 
-    @Transactional
     public void updateEveningKm(int dayNumber, int km) {
         ReportEntry entry = getReportEntry(dayNumber);
         entry.setEveningKm(km);
         recalculateTotalKm(entry);
     }
 
-    @Transactional
     public void updateFields(int dayNumber, Consumer<ReportEntry> updater) {
         ReportEntry entry = getReportEntry(dayNumber);
         updater.accept(entry);
     }
 
+    @Transactional(readOnly = true)
     public ReportEntry getReportEntry(int dayNumber) {
         return reportEntryRepository.findAllByOrderByDayNumberAsc().stream()
                 .filter(e -> e.getDayNumber() == dayNumber)
@@ -70,6 +67,7 @@ public class ProbegService {
                 .orElseThrow(() -> new IllegalStateException("Day not found: " + dayNumber));
     }
 
+    @Transactional(readOnly = true)
     public List<ReportEntry> getAll() {
         return reportEntryRepository.findAllByOrderByDayNumberAsc();
     }

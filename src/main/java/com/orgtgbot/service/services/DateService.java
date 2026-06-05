@@ -11,11 +11,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class DateService {
 
     private final DateEntryRepository dateEntryRepository;
 
-    @Transactional
     public void firstStart() {
         if (getAll().isEmpty()) {
             List<DatesEntry> result = new ArrayList<>();
@@ -33,10 +33,12 @@ public class DateService {
                 .ifPresent(entry -> entry.setDate(date));
     }
 
+    @Transactional(readOnly = true)
     public List<DatesEntry> getAll() {
         return dateEntryRepository.findAllByOrderByIdAsc();
     }
 
+    @Transactional(readOnly = true)
     public DatesEntry getDatesEntry(int dayNumber) {
         return dateEntryRepository.findById((long) dayNumber)
                 .orElseThrow(() -> new IllegalStateException("Day not found: " + dayNumber));

@@ -11,11 +11,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class GeneralService {
 
     private final GeneralEntryRepository generalEntryRepository;
 
-    @Transactional
     public void firstStart() {
         if (getAll().isEmpty()) {
             generalEntryRepository.save(GeneralEntry.builder()
@@ -35,10 +35,12 @@ public class GeneralService {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<GeneralEntry> getAll() {
         return generalEntryRepository.findAllByOrderByIdAsc();
     }
 
+    @Transactional(readOnly = true)
     public GeneralEntry getSingleEntry() {
         return getAll().getFirst();
     }

@@ -43,7 +43,8 @@ public class CallbackRegistry {
             userStateService.setState(chatId, field);
             userStateService.setMessageId(chatId, callbackMessageId);
         } else {
-            telegramSender.editMarkup(chatId, botMenuId, "Ошибка диспетчера!\n", KeyboardFactory.generalMenu());
+            telegramSender.editMarkup(chatId, botMenuId, "Ошибка диспетчера!\n",
+                    KeyboardFactory.buildMenuForGroup(GeneralFields.MAIN_MENU));
             userStateService.clearState(chatId);
         }
     }
