@@ -1,6 +1,8 @@
 package com.orgtgbot.service.services;
 
+import com.orgtgbot.dto.ProbegUpdateDto;
 import com.orgtgbot.entity.ReportEntry;
+import com.orgtgbot.mapper.ProbegMapper;
 import com.orgtgbot.repository.ReportEntryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -8,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +17,7 @@ import java.util.function.Consumer;
 public class ProbegService {
 
     private final ReportEntryRepository reportEntryRepository;
+    private final ProbegMapper probegMapper;
 
     public void firstStart() {
         if (getAll().isEmpty()) {
@@ -42,21 +44,10 @@ public class ProbegService {
         });
     }
 
-    public void updateMorningKm(int dayNumber, int km) {
+    public void updateProbegInfo(int dayNumber, ProbegUpdateDto dto) {
         ReportEntry entry = getReportEntry(dayNumber);
-        entry.setMorningKm(km);
+        probegMapper.updateEntityFromDto(dto, entry);
         recalculateTotalKm(entry);
-    }
-
-    public void updateEveningKm(int dayNumber, int km) {
-        ReportEntry entry = getReportEntry(dayNumber);
-        entry.setEveningKm(km);
-        recalculateTotalKm(entry);
-    }
-
-    public void updateFields(int dayNumber, Consumer<ReportEntry> updater) {
-        ReportEntry entry = getReportEntry(dayNumber);
-        updater.accept(entry);
     }
 
     @Transactional(readOnly = true)

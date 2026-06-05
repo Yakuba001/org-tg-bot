@@ -1,6 +1,8 @@
 package com.orgtgbot.service.services;
 
+import com.orgtgbot.dto.GeneralUpdateDto;
 import com.orgtgbot.entity.GeneralEntry;
+import com.orgtgbot.mapper.GeneralMapper;
 import com.orgtgbot.repository.GeneralEntryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.util.List;
 public class GeneralService {
 
     private final GeneralEntryRepository generalEntryRepository;
+    private final GeneralMapper generalMapper;
 
     public void firstStart() {
         if (getAll().isEmpty()) {
@@ -33,6 +36,11 @@ public class GeneralService {
                     .fueling(0)
                     .build());
         }
+    }
+
+    public void updateGeneralInfo(GeneralUpdateDto updateDto) {
+        GeneralEntry entry = getSingleEntry();
+        generalMapper.updateEntityFromDto(updateDto, entry);
     }
 
     @Transactional(readOnly = true)

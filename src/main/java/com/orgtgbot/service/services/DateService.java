@@ -1,6 +1,8 @@
 package com.orgtgbot.service.services;
 
+import com.orgtgbot.dto.DatesUpdateDto;
 import com.orgtgbot.entity.DatesEntry;
+import com.orgtgbot.mapper.DateMapper;
 import com.orgtgbot.repository.DateEntryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.util.List;
 public class DateService {
 
     private final DateEntryRepository dateEntryRepository;
+    private final DateMapper dateMapper;
 
     public void firstStart() {
         if (getAll().isEmpty()) {
@@ -28,9 +31,9 @@ public class DateService {
         }
     }
 
-    public void setDate(int dayNumber, String date) {
-        dateEntryRepository.findById((long) dayNumber)
-                .ifPresent(entry -> entry.setDate(date));
+    public void setDate(int dayNumber, DatesUpdateDto dto) {
+        DatesEntry date = getDatesEntry(dayNumber);
+        dateMapper.updateEntityFromDto(dto, date);
     }
 
     @Transactional(readOnly = true)
