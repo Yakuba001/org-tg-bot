@@ -30,6 +30,7 @@ public class GetReportCallback implements CallbackHandler {
 
     @Override
     public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
-        sender.editMarkup(chatId, botMenuId, "Главное меню", KeyboardFactory.mainMenu());
+        sender.editMarkup(chatId, botMenuId, "Главное меню",
+                KeyboardFactory.buildMenuForGroup(callbackData()));
     }
 }

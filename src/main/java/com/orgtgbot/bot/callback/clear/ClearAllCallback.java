@@ -25,12 +25,13 @@ public class ClearAllCallback implements CallbackHandler {
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
                 callbackData().getDescription(),
-                KeyboardFactory.clearAllMenu()
+                KeyboardFactory.dynamicBack(callbackData())
         );
     }
 
     @Override
     public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
-        sender.editMarkup(chatId, botMenuId, callbackData().getDescription(), KeyboardFactory.clearAllMenu());
+        sender.editMarkup(chatId, botMenuId, callbackData().getDescription(),
+                KeyboardFactory.buildMenuForGroup(callbackData()));
     }
 }

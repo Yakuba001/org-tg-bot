@@ -25,12 +25,13 @@ public class MainMenuCallback implements CallbackHandler {
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
                 callbackData().getDescription(),
-                KeyboardFactory.mainMenu()
+                KeyboardFactory.dynamicBack(callbackData())
         );
     }
 
     @Override
     public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
-        sender.editMarkup(chatId, botMenuId, callbackData().getDescription(), KeyboardFactory.mainMenu());
+        sender.editMarkup(chatId, botMenuId, callbackData().getDescription(),
+                KeyboardFactory.buildMenuForGroup(callbackData()));
     }
 }

@@ -25,12 +25,13 @@ public class DeclineClear implements CallbackHandler {
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
                 callbackData().getDescription(),
-                KeyboardFactory.probegMenu()
+                KeyboardFactory.dynamicBack(callbackData())
         );
     }
 
     @Override
     public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
-        sender.editMarkup(chatId, botMenuId, callbackData().getDescription(), KeyboardFactory.probegMenu());
+        sender.editMarkup(chatId, botMenuId, callbackData().getDescription(),
+                KeyboardFactory.buildMenuForGroup(callbackData()));
     }
 }

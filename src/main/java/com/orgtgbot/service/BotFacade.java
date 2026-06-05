@@ -30,4 +30,11 @@ public class BotFacade {
     public void setAmount(GeneralFields field, String amount) {
         field.setValue(getContext(), amount);
     }
+
+    @Transactional
+    public void initializeFirstStart() {
+        probegService.firstStart();
+        dateService.firstStart();
+        generalService.firstStart();
+    }
 }

@@ -28,13 +28,14 @@ public class SetMondayDate implements CallbackHandler {
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
                 callbackData().getDescription() + ": " + result,
-                KeyboardFactory.probegBack(callbackData())
+                KeyboardFactory.dynamicBack(callbackData())
         );
     }
 
     @Override
     public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
         botFacade.setAmount(callbackData(), text.trim());
-        sender.editMarkup(chatId, botMenuId, "Данные приняты!\n", KeyboardFactory.probegMondayMenu());
+        sender.editMarkup(chatId, botMenuId, "Данные приняты!\n",
+                KeyboardFactory.buildMenuForGroup(callbackData()));
     }
 }

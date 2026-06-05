@@ -29,17 +29,19 @@ public class SetWednesdayTotalProbeg implements CallbackHandler {
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
                 callbackData().getDescription() + ": " + result + " км.",
-                KeyboardFactory.probegBack(callbackData())
+                KeyboardFactory.dynamicBack(callbackData())
         );
     }
 
     @Override
     public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
         if (!text.matches("\\d+")) {
-            sender.editMarkup(chatId, botMenuId, "Ошибка! Введите число.", KeyboardFactory.probegWednesdayMenu());
+            sender.editMarkup(chatId, botMenuId, "Ошибка! Введите число.",
+                    KeyboardFactory.buildMenuForGroup(callbackData()));
         } else {
             botFacade.setAmount(callbackData(), text.trim());
-            sender.editMarkup(chatId, botMenuId, "Данные приняты!\n", KeyboardFactory.probegWednesdayMenu());
+            sender.editMarkup(chatId, botMenuId, "Данные приняты!\n",
+                    KeyboardFactory.buildMenuForGroup(callbackData()));
         }
     }
 }
