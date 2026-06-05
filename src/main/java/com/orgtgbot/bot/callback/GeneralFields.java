@@ -26,8 +26,8 @@ public enum GeneralFields {
 
     GET_REPORT("Получить отчёт", PROBEG_MENU, PROBEG_MENU, null, null),
     CLEAR_ALL("Очистить", PROBEG_MENU, PROBEG_MENU, null, null),
-    ACCEPT_CLEAR("Да", PROBEG_MENU, PROBEG_MENU, null, null),
-    DECLINE_CLEAR("Нет", PROBEG_MENU, PROBEG_MENU, null, null),
+    ACCEPT_CLEAR("Да", CLEAR_ALL, CLEAR_ALL, null, null),
+    DECLINE_CLEAR("Нет", CLEAR_ALL, CLEAR_ALL, null, null),
 
     SET_MORNING_MONDAY_KM("Утро Понедельник", PROBEG_MONDAY, PROBEG_MONDAY,
             ctx -> String.valueOf(ctx.probegService().getReportEntry(1).getMorningKm()),
