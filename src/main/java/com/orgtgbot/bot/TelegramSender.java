@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
@@ -20,6 +21,17 @@ import java.io.ByteArrayInputStream;
 public class TelegramSender {
 
     private final TelegramClient telegramClient;
+
+    public void sendMessage(Long chatId, String text) {
+        try {
+            telegramClient.execute(SendMessage.builder()
+                    .chatId(chatId.toString())
+                    .text(text)
+                    .build());
+        } catch (TelegramApiException e) {
+            log.error("Ошибка отправки сообщения: chatId={}", chatId, e);
+        }
+    }
 
     public void editMarkup(Long chatId, Integer messageId, String text, InlineKeyboardMarkup markup) {
         try {

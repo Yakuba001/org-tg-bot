@@ -38,6 +38,7 @@ public class UpdateDispatcher {
             if (!isUserRegistered && text.startsWith("/start")) {
                 userStateService.setState(chatId, GeneralFields.NONE);
                 sender.deleteMessage(chatId, messageId);
+                sender.sendMessage(chatId, "🔒 Доступ ограничен. Введите пароль:");
                 return;
             }
 
