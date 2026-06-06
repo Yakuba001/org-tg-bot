@@ -43,14 +43,14 @@ public class UpdateDispatcher {
             }
 
             if (!isUserRegistered) {
+                sender.deleteMessage(chatId, messageId);
+
                 if (inviteCodeRepository.existsByCode(text)) {
                     registrationService.registerNewDriver(chatId, update.getMessage().getFrom().getFirstName());
                     userStateService.clearState(chatId);
 
-                    sender.deleteMessage(chatId, messageId);
+                    update.getMessage().setText("/start");
                     startCommand.execute(update);
-                } else {
-                    sender.deleteMessage(chatId, messageId);
                 }
                 return;
             }
