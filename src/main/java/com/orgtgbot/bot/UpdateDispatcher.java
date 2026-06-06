@@ -34,7 +34,6 @@ public class UpdateDispatcher {
             Integer messageId = update.getMessage().getMessageId();
             if (!isUserRegistered && text.startsWith("/start")) {
                 userStateService.setState(chatId, GeneralFields.NONE);
-                sender.deleteMessage(chatId, messageId);
                 return;
             }
             if (!isUserRegistered) {
