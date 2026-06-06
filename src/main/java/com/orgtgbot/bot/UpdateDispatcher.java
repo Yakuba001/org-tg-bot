@@ -28,30 +28,36 @@ public class UpdateDispatcher {
     public void dispatch(Update update) throws Exception {
         Long chatId = extractChatId(update);
         if (chatId == null) return;
+
         boolean isUserRegistered = userEntryRepository.existsByTelegramChatId(chatId);
+
         if (update.hasMessage() && update.getMessage().hasText()) {
-            String text = update.getMessage().getText();
+            String text = update.getMessage().getText().trim();
             Integer messageId = update.getMessage().getMessageId();
+
             if (!isUserRegistered && text.startsWith("/start")) {
                 userStateService.setState(chatId, GeneralFields.NONE);
+                sender.deleteMessage(chatId, messageId);
                 return;
             }
+
             if (!isUserRegistered) {
                 if (inviteCodeRepository.existsByCode(text)) {
                     registrationService.registerNewDriver(chatId, update.getMessage().getFrom().getFirstName());
                     userStateService.clearState(chatId);
+
+                    sender.deleteMessage(chatId, messageId);
                     startCommand.execute(update);
                 } else {
                     sender.deleteMessage(chatId, messageId);
-                    return;
                 }
-                sender.deleteMessage(chatId, messageId);
                 return;
             }
+
             if (text.startsWith("/start")) {
                 startCommand.execute(update);
                 userStateService.clearState(chatId);
-                sender.deleteMessage(chatId, update.getMessage().getMessageId());
+                sender.deleteMessage(chatId, messageId);
             } else {
                 GeneralFields field = userStateService.getState(chatId);
                 callbackRegistry.handle(field, chatId, text, userStateService.getMessageId(chatId));
@@ -59,7 +65,8 @@ public class UpdateDispatcher {
             }
             return;
         }
-        if (update.hasCallbackQuery()) {
+
+        if (update.hasCallbackQuery() && isUserRegistered) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
             GeneralFields clickedField = GeneralFields.valueOf(callbackQuery.getData());
             Integer callbackMessageId = callbackQuery.getMessage().getMessageId();
