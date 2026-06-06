@@ -10,7 +10,6 @@ import com.orgtgbot.service.services.user.RegistrationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Slf4j
@@ -28,44 +27,36 @@ public class UpdateDispatcher {
     private final RegistrationService registrationService;
 
     public void dispatch(Update update) throws Exception {
-        Long chatId = extractChatId(update);
-//        if (chatId == null) return;
-
-
         log.info("=== ПРИШЕЛ НОВЫЙ АПДЕЙТ! ===");
-        if (update.hasMessage()) {
-            log.info("Сообщение от chatID: {}, Текст: {}", update.getMessage().getChatId(), update.getMessage().getText());
-        } else if (update.hasCallbackQuery()) {
-            log.info("Коллбек от chatID: {}, Данные: {}", update.getCallbackQuery().getMessage().getChatId(), update.getCallbackQuery().getData());
-        }
-
-        if (chatId == null) {
-            log.warn("Не удалось извлечь chatId!");
-            return;
-        }
-
+        Long chatId = extractChatId(update);
+        if (chatId == null) return;
 
         boolean isUserRegistered = userEntryRepository.existsByTelegramChatId(chatId);
+        log.info("ChatId: {}, Зарегистрирован: {}", chatId, isUserRegistered);
+
         if (update.hasMessage() && update.getMessage().hasText()) {
             String text = update.getMessage().getText().trim();
             Integer messageId = update.getMessage().getMessageId();
+            log.info("Получен текст: '{}', messageId: {}", text, messageId);
 
             if (!isUserRegistered && text.startsWith("/start")) {
                 userStateService.setState(chatId, GeneralFields.NONE);
                 sender.deleteMessage(chatId, messageId);
-                sender.sendMessage(chatId, "🔒 Доступ ограничен. Введите пароль:");
+                sender.sendMessage(chatId, "🔒 Доступ ограничен. Введите секретный код для авторизации:");
                 return;
             }
 
             if (!isUserRegistered) {
                 sender.deleteMessage(chatId, messageId);
-
                 if (inviteCodeRepository.existsByCode(text)) {
+                    log.info("Код верный! Регистрируем пользователя {}", chatId);
                     registrationService.registerNewDriver(chatId, update.getMessage().getFrom().getFirstName());
                     userStateService.clearState(chatId);
 
                     update.getMessage().setText("/start");
                     startCommand.execute(update);
+                } else {
+                    log.warn("Неверный код авторизации: '{}'", text);
                 }
                 return;
             }
@@ -75,24 +66,29 @@ public class UpdateDispatcher {
                 userStateService.clearState(chatId);
                 sender.deleteMessage(chatId, messageId);
             } else {
-                GeneralFields field = userStateService.getState(chatId);
-                callbackRegistry.handle(field, chatId, text, userStateService.getMessageId(chatId));
-                sender.deleteMessage(chatId, messageId);
+                GeneralFields currentField = userStateService.getState(chatId);
+                log.info("Текущее состояние игрока/водителя в системе: {}", currentField);
+
+                if (currentField == null || currentField == GeneralFields.NONE) {
+                    log.info("Зарегистрированный пользователь отправил текст вне контекста. Перенаправляем на старт.");
+                    startCommand.execute(update);
+                    sender.deleteMessage(chatId, messageId);
+                } else {
+                    callbackRegistry.handle(currentField, chatId, text, userStateService.getMessageId(chatId));
+                    sender.deleteMessage(chatId, messageId);
+                }
             }
             return;
         }
 
         if (update.hasCallbackQuery() && isUserRegistered) {
-            CallbackQuery callbackQuery = update.getCallbackQuery();
+            var callbackQuery = update.getCallbackQuery();
             GeneralFields clickedField = GeneralFields.valueOf(callbackQuery.getData());
             Integer callbackMessageId = callbackQuery.getMessage().getMessageId();
             Integer botMenuId = userStateService.getMessageId(chatId);
-            callbackRegistry.dispatch(
-                    clickedField,
-                    callbackQuery,
-                    chatId,
-                    callbackMessageId,
-                    botMenuId);
+
+            log.info("Кликнута кнопка: {}, MessageId сообщения с кнопками: {}", clickedField, callbackMessageId);
+            callbackRegistry.dispatch(clickedField, callbackQuery, chatId, callbackMessageId, botMenuId);
         }
     }
 
