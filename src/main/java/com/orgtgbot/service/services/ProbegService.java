@@ -2,13 +2,13 @@ package com.orgtgbot.service.services;
 
 import com.orgtgbot.dto.ProbegUpdateDto;
 import com.orgtgbot.entity.ReportEntry;
+import com.orgtgbot.entity.user.UserWorkspace;
 import com.orgtgbot.mapper.ProbegMapper;
-import com.orgtgbot.repository.ReportEntryRepository;
+import com.orgtgbot.repository.UserWorkspaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,27 +16,11 @@ import java.util.List;
 @Transactional
 public class ProbegService {
 
-    private final ReportEntryRepository reportEntryRepository;
+    private final UserWorkspaceRepository userWorkspaceRepository;
     private final ProbegMapper probegMapper;
 
-    public void firstStart() {
-        if (getAll().isEmpty()) {
-            List<ReportEntry> result = new ArrayList<>();
-            for (int i = 0; i < 5; i++) {
-                result.add(ReportEntry.builder()
-                        .dayNumber(i + 1)
-                        .route(" ")
-                        .morningKm(0)
-                        .eveningKm(0)
-                        .totalKm(0)
-                        .build());
-            }
-            reportEntryRepository.saveAll(result);
-        }
-    }
-
-    public void clearAll() {
-        getAll().forEach(entry -> {
+    public void clearAll(Long chatId) {
+        getAll(chatId).forEach(entry -> {
             entry.setMorningKm(0);
             entry.setEveningKm(0);
             entry.setTotalKm(0);
@@ -44,23 +28,27 @@ public class ProbegService {
         });
     }
 
-    public void updateProbegInfo(int dayNumber, ProbegUpdateDto dto) {
-        ReportEntry entry = getReportEntry(dayNumber);
+    public void updateProbegInfo(Long chatId, int dayNumber, ProbegUpdateDto dto) {
+        ReportEntry entry = getReportEntry(chatId, dayNumber);
         probegMapper.updateEntityFromDto(dto, entry);
         recalculateTotalKm(entry);
     }
 
     @Transactional(readOnly = true)
-    public ReportEntry getReportEntry(int dayNumber) {
-        return reportEntryRepository.findAllByOrderByDayNumberAsc().stream()
+    public ReportEntry getReportEntry(Long chatId, int dayNumber) {
+        UserWorkspace workspace = userWorkspaceRepository.findByUser_TelegramChatId(chatId)
+                .orElseThrow(() -> new IllegalStateException("Workspace not found for chat: " + chatId));
+        return workspace.getReportEntries().stream()
                 .filter(e -> e.getDayNumber() == dayNumber)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Day not found: " + dayNumber));
     }
 
     @Transactional(readOnly = true)
-    public List<ReportEntry> getAll() {
-        return reportEntryRepository.findAllByOrderByDayNumberAsc();
+    public List<ReportEntry> getAll(Long chatId) {
+        UserWorkspace workspace = userWorkspaceRepository.findByUser_TelegramChatId(chatId)
+                .orElseThrow(() -> new IllegalStateException("Workspace not found for chat: " + chatId));
+        return workspace.getReportEntries();
     }
 
     private void recalculateTotalKm(ReportEntry entry) {

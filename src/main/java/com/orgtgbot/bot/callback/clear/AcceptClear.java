@@ -23,7 +23,8 @@ public class AcceptClear implements CallbackHandler {
 
     @Override
     public void handle(CallbackQuery callbackQuery) throws Exception {
-        probegService.clearAll();
+        Long chatId = callbackQuery.getMessage().getChatId();
+        probegService.clearAll(chatId);
 
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),

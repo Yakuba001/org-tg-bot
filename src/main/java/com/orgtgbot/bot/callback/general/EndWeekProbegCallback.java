@@ -23,7 +23,8 @@ public class EndWeekProbegCallback implements CallbackHandler {
 
     @Override
     public void handle(CallbackQuery callbackQuery) throws Exception {
-        String result = botFacade.getAmount(callbackData());
+        Long chatId = callbackQuery.getMessage().getChatId();
+        String result = botFacade.getAmount(callbackData(), chatId);
 
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
@@ -39,7 +40,7 @@ public class EndWeekProbegCallback implements CallbackHandler {
             sender.editMarkup(chatId, botMenuId, "Ошибка! Введите число.",
                     KeyboardFactory.buildMenuForGroup(callbackData()));
         } else {
-            botFacade.setAmount(callbackData(), text.trim());
+            botFacade.setAmount(callbackData(), text.trim(), chatId);
             sender.editMarkup(chatId, botMenuId, "Данные приняты!\n",
                     KeyboardFactory.buildMenuForGroup(callbackData()));
         }

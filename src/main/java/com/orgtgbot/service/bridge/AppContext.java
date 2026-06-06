@@ -4,4 +4,9 @@ import com.orgtgbot.service.services.DateService;
 import com.orgtgbot.service.services.GeneralService;
 import com.orgtgbot.service.services.ProbegService;
 
-public record AppContext(GeneralService generalService, ProbegService probegService, DateService dateService) { }
+public record AppContext(
+        GeneralService generalService,
+        ProbegService probegService,
+        DateService dateService,
+        Long chatId
+) {}

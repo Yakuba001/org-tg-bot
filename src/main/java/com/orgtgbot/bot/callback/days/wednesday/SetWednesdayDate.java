@@ -23,7 +23,8 @@ public class SetWednesdayDate implements CallbackHandler {
 
     @Override
     public void handle(CallbackQuery callbackQuery) throws Exception {
-        String result = botFacade.getAmount(callbackData());
+        Long chatId = callbackQuery.getMessage().getChatId();
+        String result = botFacade.getAmount(callbackData(), chatId);
         sender.editMarkup(
                 callbackQuery.getMessage().getChatId(),
                 callbackQuery.getMessage().getMessageId(),
@@ -34,7 +35,7 @@ public class SetWednesdayDate implements CallbackHandler {
 
     @Override
     public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
-        botFacade.setAmount(callbackData(), text.trim());
+        botFacade.setAmount(callbackData(), text.trim(), chatId);
         sender.editMarkup(chatId, botMenuId, "Данные приняты!\n",
                 KeyboardFactory.buildMenuForGroup(callbackData()));
     }

@@ -2,13 +2,13 @@ package com.orgtgbot.service.services;
 
 import com.orgtgbot.dto.DatesUpdateDto;
 import com.orgtgbot.entity.DatesEntry;
+import com.orgtgbot.entity.user.UserWorkspace;
 import com.orgtgbot.mapper.DateMapper;
-import com.orgtgbot.repository.DateEntryRepository;
+import com.orgtgbot.repository.UserWorkspaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,34 +16,28 @@ import java.util.List;
 @Transactional
 public class DateService {
 
-    private final DateEntryRepository dateEntryRepository;
+    private final UserWorkspaceRepository userWorkspaceRepository;
     private final DateMapper dateMapper;
 
-    public void firstStart() {
-        if (getAll().isEmpty()) {
-            List<DatesEntry> result = new ArrayList<>();
-            for (int i = 0; i < 5; i++) {
-                result.add(DatesEntry.builder()
-                        .date(" ")
-                        .build());
-            }
-            dateEntryRepository.saveAll(result);
-        }
-    }
-
-    public void setDate(int dayNumber, DatesUpdateDto dto) {
-        DatesEntry date = getDatesEntry(dayNumber);
+    public void setDate(Long chatId, int dayNumber, DatesUpdateDto dto) {
+        DatesEntry date = getDatesEntry(chatId, dayNumber);
         dateMapper.updateEntityFromDto(dto, date);
     }
 
     @Transactional(readOnly = true)
-    public List<DatesEntry> getAll() {
-        return dateEntryRepository.findAllByOrderByIdAsc();
+    public List<DatesEntry> getAll(Long chatId) {
+        UserWorkspace workspace = userWorkspaceRepository.findByUser_TelegramChatId(chatId)
+                .orElseThrow(() -> new IllegalStateException("Workspace not found for chat: " + chatId));
+        return workspace.getDatesEntries();
     }
 
     @Transactional(readOnly = true)
-    public DatesEntry getDatesEntry(int dayNumber) {
-        return dateEntryRepository.findById((long) dayNumber)
-                .orElseThrow(() -> new IllegalStateException("Day not found: " + dayNumber));
+    public DatesEntry getDatesEntry(Long chatId, int dayNumber) {
+        List<DatesEntry> dates = getAll(chatId);
+        int index = dayNumber - 1;
+        if (index < 0 || index >= dates.size()) {
+            throw new IllegalStateException("Day index out of bounds: " + dayNumber);
+        }
+        return dates.get(index);
     }
 }

@@ -17,24 +17,17 @@ public class BotFacade {
     private final ProbegService probegService;
     private final DateService dateService;
 
-    private AppContext getContext() {
-        return new AppContext(generalService, probegService, dateService);
+    private AppContext getContext(Long chatId) {
+        return new AppContext(generalService, probegService, dateService, chatId);
     }
 
     @Transactional(readOnly = true)
-    public String getAmount(GeneralFields field) {
-        return field.getValue(getContext());
+    public String getAmount(GeneralFields field, Long chatId) {
+        return field.getValue(getContext(chatId));
     }
 
     @Transactional
-    public void setAmount(GeneralFields field, String amount) {
-        field.setValue(getContext(), amount);
-    }
-
-    @Transactional
-    public void initializeFirstStart() {
-        probegService.firstStart();
-        dateService.firstStart();
-        generalService.firstStart();
+    public void setAmount(GeneralFields field, String amount, Long chatId) {
+        field.setValue(getContext(chatId), amount);
     }
 }

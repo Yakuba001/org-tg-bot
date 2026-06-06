@@ -2,13 +2,10 @@ package com.orgtgbot.mapper;
 
 import com.orgtgbot.dto.DatesUpdateDto;
 import com.orgtgbot.entity.DatesEntry;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
 @Mapper(
-        componentModel = "spring",
+        componentModel = MappingConstants.ComponentModel.SPRING,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface DateMapper {

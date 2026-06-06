@@ -7,7 +7,7 @@ import org.mapstruct.*;
 import java.math.BigDecimal;
 
 @Mapper(
-        componentModel = "spring",
+        componentModel = MappingConstants.ComponentModel.SPRING,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public interface GeneralMapper {
