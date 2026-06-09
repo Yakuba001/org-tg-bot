@@ -1,6 +1,6 @@
 package com.orgtgbot.bot;
 
-import com.orgtgbot.bot.callback.UserStateService;
+import com.orgtgbot.service.services.user.UserStateService;
 import com.orgtgbot.bot.callback.registry.CallbackRegistry;
 import com.orgtgbot.bot.command.StartCommand;
 import com.orgtgbot.bot.callback.GeneralFields;

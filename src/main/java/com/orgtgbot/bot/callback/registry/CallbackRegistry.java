@@ -2,7 +2,7 @@ package com.orgtgbot.bot.callback.registry;
 
 import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.CallbackHandler;
-import com.orgtgbot.bot.callback.UserStateService;
+import com.orgtgbot.service.services.user.UserStateService;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import com.orgtgbot.bot.callback.GeneralFields;
 import lombok.extern.slf4j.Slf4j;
