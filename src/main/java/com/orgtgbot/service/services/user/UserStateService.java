@@ -2,7 +2,6 @@ package com.orgtgbot.service.services.user;
 
 import com.orgtgbot.bot.callback.GeneralFields;
 import com.orgtgbot.entity.user.StateManager;
-import com.orgtgbot.entity.user.UserEntry;
 import com.orgtgbot.repository.StateManagerRepository;
 import com.orgtgbot.repository.UserEntryRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +45,7 @@ public class UserStateService {
     public StateManager getCurrentState(Long chatId) {
         return stateManagerRepository.findById(chatId).orElseGet(
                 () -> {
-                    UserEntry user = userEntryRepository.findByTelegramChatId(chatId).orElseThrow(
+                    userEntryRepository.findByTelegramChatId(chatId).orElseThrow(
                             () -> new IllegalStateException("User not found for chat: " + chatId));
 
                     StateManager newState = StateManager.builder()
