@@ -53,7 +53,6 @@ public class UserStateService {
                             .telegramChatId(chatId)
                             .currentField(GeneralFields.NONE)
                             .lastBotMenuId(null)
-                            .user(user)
                             .build();
                     return stateManagerRepository.save(newState);
                 });
