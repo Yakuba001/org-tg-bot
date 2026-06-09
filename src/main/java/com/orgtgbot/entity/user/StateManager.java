@@ -26,7 +26,10 @@ public class StateManager {
     private Integer lastBotMenuId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    @JoinColumn(name = "telegram_chat_id")
+    @JoinColumn(
+            name = "telegram_chat_id",
+            referencedColumnName = "telegram_chat_id",
+            insertable = false,
+            updatable = false)
     private UserEntry user;
 }
