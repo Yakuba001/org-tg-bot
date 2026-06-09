@@ -42,7 +42,8 @@ public class UserStateService {
         result.setLastBotMenuId(null);
     }
 
-    private StateManager getCurrentState(Long chatId) {
+    @Transactional
+    public StateManager getCurrentState(Long chatId) {
         return stateManagerRepository.findById(chatId).orElseGet(
                 () -> {
                     UserWorkspace user = userWorkspaceRepository.findByUser_TelegramChatId(chatId).orElseThrow(
