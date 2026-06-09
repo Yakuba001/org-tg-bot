@@ -2,7 +2,9 @@ package com.orgtgbot.service.services.user;
 
 import com.orgtgbot.bot.callback.GeneralFields;
 import com.orgtgbot.entity.user.StateManager;
+import com.orgtgbot.entity.user.UserWorkspace;
 import com.orgtgbot.repository.StateManagerRepository;
+import com.orgtgbot.repository.UserWorkspaceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserStateService {
 
     private final StateManagerRepository stateManagerRepository;
+    private final UserWorkspaceRepository userWorkspaceRepository;
 
     @Transactional
     public void setState(Long chatId, GeneralFields field) {
@@ -42,10 +45,14 @@ public class UserStateService {
     private StateManager getCurrentState(Long chatId) {
         return stateManagerRepository.findById(chatId).orElseGet(
                 () -> {
+                    UserWorkspace user = userWorkspaceRepository.findByUser_TelegramChatId(chatId).orElseThrow(
+                            () -> new IllegalStateException("User not found for chat: " + chatId));
+
                     StateManager newState = StateManager.builder()
                             .telegramChatId(chatId)
                             .currentField(GeneralFields.NONE)
                             .lastBotMenuId(null)
+                            .user(user.getUser())
                             .build();
                     return stateManagerRepository.save(newState);
                 });
