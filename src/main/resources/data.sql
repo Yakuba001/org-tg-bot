@@ -1,1 +1,2 @@
-ALTER TABLE state_manager DROP CONSTRAINT IF EXISTS fk_state_manager_users;
+INSERT INTO invite_codes (code)
+VALUES ('Afina') ON CONFLICT (code) DO NOTHING;
