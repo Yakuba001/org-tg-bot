@@ -54,8 +54,6 @@ public class CallbackRegistry {
                        String text,
                        Integer botMenuId) throws Exception {
         CallbackHandler handler = handlers.get(field);
-        log.info("===> РЕЕСТР ИЩЕТ ХЭНДЛЕР ДЛЯ СТЕЙТА: '{}'. НАЙДЕН: {}", field, (handler != null));
-
         if (handler != null) {
             handler.handle(chatId, text, botMenuId, telegramSender);
             userStateService.clearState(chatId);

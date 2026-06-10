@@ -56,9 +56,6 @@ public class UpdateDispatcher {
                 sender.deleteMessage(chatId, messageId);
             } else {
                 GeneralFields currentField = userStateService.getState(chatId);
-                log.info("===> ДИСПЕТЧЕР ПРОВЕРЯЕТ СТЕЙТ ПЕРЕД ВВОДОМ ТЕКСТА: '{}'", currentField);
-
-
                 if (currentField == null || currentField == GeneralFields.NONE) {
                     startCommand.execute(update);
                     sender.deleteMessage(chatId, messageId);
