@@ -30,6 +30,8 @@ public class StateManager {
             name = "telegram_chat_id",
             referencedColumnName = "telegram_chat_id",
             insertable = false,
-            updatable = false)
+            updatable = false,
+            foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT)
+    )
     private UserEntry user;
 }

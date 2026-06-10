@@ -58,7 +58,7 @@ public class CallbackRegistry {
 
         if (handler != null) {
             handler.handle(chatId, text, botMenuId, telegramSender);
-
+            userStateService.clearState(chatId);
         } else {
             log.warn("Неожиданный стейт: {}", field);
         }
