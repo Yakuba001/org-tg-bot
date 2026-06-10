@@ -4,6 +4,9 @@ import com.orgtgbot.bot.callback.GeneralFields;
 import com.orgtgbot.entity.user.StateManager;
 import com.orgtgbot.repository.StateManagerRepository;
 import com.orgtgbot.repository.UserEntryRepository;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +18,21 @@ public class UserStateService {
 
     private final StateManagerRepository stateManagerRepository;
     private final UserEntryRepository userEntryRepository;
+
+    @PersistenceContext
+    private final EntityManager entityManager;
+
+    @PostConstruct
+    @Transactional
+    public void dropConstraintOnStart() {
+        try {
+            entityManager.createNativeQuery(
+                    "ALTER TABLE state_manager DROP CONSTRAINT IF EXISTS fkkjfh7xql4lhy4xa9ipqi4lmmo"
+            ).executeUpdate();
+        } catch (Exception e) {
+
+        }
+    }
 
     @Transactional
     public void setState(Long chatId, GeneralFields field) {
