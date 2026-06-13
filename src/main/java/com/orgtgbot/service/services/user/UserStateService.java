@@ -5,12 +5,14 @@ import com.orgtgbot.entity.user.StateManager;
 import com.orgtgbot.repository.StateManagerRepository;
 import com.orgtgbot.repository.UserEntryRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class UserStateService {
 
     private final StateManagerRepository stateManagerRepository;
@@ -18,7 +20,9 @@ public class UserStateService {
 
     @Transactional
     public void setState(Long chatId, GeneralFields field) {
-        getCurrentState(chatId).setCurrentField(field);
+        StateManager state = getCurrentState(chatId);
+        state.setCurrentField(field);
+        stateManagerRepository.save(state);
     }
 
     public GeneralFields getState(Long chatId) {
@@ -27,7 +31,9 @@ public class UserStateService {
 
     @Transactional
     public void setMessageId(Long chatId, Integer messageId) {
-        getCurrentState(chatId).setLastBotMenuId(messageId);
+        StateManager state = getCurrentState(chatId);
+        state.setLastBotMenuId(messageId);
+        stateManagerRepository.save(state);
     }
 
     public Integer getMessageId(Long chatId) {
@@ -36,15 +42,21 @@ public class UserStateService {
 
     @Transactional
     public void clearState(Long chatId) {
-        StateManager result = getCurrentState(chatId);
-        result.setCurrentField(GeneralFields.NONE);
-        result.setLastBotMenuId(null);
+        StateManager state = getCurrentState(chatId);
+        state.setCurrentField(GeneralFields.NONE);
+        state.setLastBotMenuId(null);
+        stateManagerRepository.save(state);
     }
 
     @Transactional
     public StateManager getCurrentState(Long chatId) {
+        log.info("[SERVICE] Вызов getCurrentState для chatId: {}", chatId);
+
         return stateManagerRepository.findById(chatId).orElseGet(
                 () -> {
+
+                    log.warn("[DATABASE] Стейт не найден в БД! Создаю новый для chatId: {}", chatId);
+
                     userEntryRepository.findByTelegramChatId(chatId).orElseThrow(
                             () -> new IllegalStateException("User not found for chat: " + chatId));
 

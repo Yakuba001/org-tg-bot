@@ -14,8 +14,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: false
+    show-sql: true
     defer-datasource-initialization: true
+
+  cache:
+    type: caffeine
+    cache-names:
+      - states_cache
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=10m
 
 telegram:
   bot:
