@@ -39,8 +39,9 @@ public class UserStateService {
     }
 
     @Transactional
-    public void setMessageId(Long chatId, Integer messageId) {
+    public void setStateAndMessageId(Long chatId, GeneralFields field, Integer messageId) {
         StateManager state = self.getCurrentState(chatId);
+        state.setCurrentField(field);
         state.setLastBotMenuId(messageId);
         stateManagerRepository.save(state);
         self.updateCache(chatId, state);

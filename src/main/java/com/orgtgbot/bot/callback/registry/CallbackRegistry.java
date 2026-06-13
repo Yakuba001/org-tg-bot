@@ -40,8 +40,7 @@ public class CallbackRegistry {
         telegramSender.answerCallback(callbackQuery.getId());
         if (handler != null) {
             handler.handle(callbackQuery);
-            userStateService.setState(chatId, field);
-            userStateService.setMessageId(chatId, callbackMessageId);
+            userStateService.setStateAndMessageId(chatId, field, callbackMessageId);
         } else {
             telegramSender.editMarkup(chatId, botMenuId, "Ошибка диспетчера!\n",
                     KeyboardFactory.buildMenuForGroup(GeneralFields.MAIN_MENU));

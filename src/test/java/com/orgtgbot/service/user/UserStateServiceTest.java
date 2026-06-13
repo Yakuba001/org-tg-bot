@@ -59,7 +59,7 @@ public class UserStateServiceTest {
     void setMessageId_shouldSaveMessageId() {
         when(stateManagerRepository.findById(anyLong())).thenReturn(Optional.of(example));
 
-        userStateService.setMessageId(anyLong(), 999);
+        userStateService.setStateAndMessageId(anyLong(), any(), 999);
 
         assertThat(example.getLastBotMenuId()).isEqualTo(999);
         verify(stateManagerRepository, times(1)).findById(anyLong());
