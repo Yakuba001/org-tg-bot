@@ -6,6 +6,9 @@ import com.orgtgbot.repository.StateManagerRepository;
 import com.orgtgbot.repository.UserEntryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,26 +21,32 @@ public class UserStateService {
     private final StateManagerRepository stateManagerRepository;
     private final UserEntryRepository userEntryRepository;
 
+    @Autowired
+    @Lazy
+    private UserStateService self;
+
     @Transactional
     public void setState(Long chatId, GeneralFields field) {
-        StateManager state = getCurrentState(chatId);
+        StateManager state = self.getCurrentState(chatId);
         state.setCurrentField(field);
         stateManagerRepository.save(state);
+        self.updateCache(chatId, state);
     }
 
     public GeneralFields getState(Long chatId) {
-        return getCurrentState(chatId).getCurrentField();
+        return self.getCurrentState(chatId).getCurrentField();
     }
 
     @Transactional
     public void setMessageId(Long chatId, Integer messageId) {
-        StateManager state = getCurrentState(chatId);
+        StateManager state = self.getCurrentState(chatId);
         state.setLastBotMenuId(messageId);
         stateManagerRepository.save(state);
+        self.updateCache(chatId, state);
     }
 
     public Integer getMessageId(Long chatId) {
-        return getCurrentState(chatId).getLastBotMenuId();
+        return self.getCurrentState(chatId).getLastBotMenuId();
     }
 
     @Transactional
@@ -46,17 +55,15 @@ public class UserStateService {
         state.setCurrentField(GeneralFields.NONE);
         state.setLastBotMenuId(null);
         stateManagerRepository.save(state);
+        self.updateCache(chatId, state);
     }
 
     @Transactional
     public StateManager getCurrentState(Long chatId) {
-        log.info("[SERVICE] Вызов getCurrentState для chatId: {}", chatId);
+        log.info("[DATABASE-HIT] Промах кэша! Читаю стейт из БД для chatId: {}", chatId);
 
         return stateManagerRepository.findById(chatId).orElseGet(
                 () -> {
-
-                    log.warn("[DATABASE] Стейт не найден в БД! Создаю новый для chatId: {}", chatId);
-
                     userEntryRepository.findByTelegramChatId(chatId).orElseThrow(
                             () -> new IllegalStateException("User not found for chat: " + chatId));
 
@@ -67,5 +74,11 @@ public class UserStateService {
                             .build();
                     return stateManagerRepository.save(newState);
                 });
+    }
+
+    @CachePut(cacheNames = "states_cache", key = "#chatId")
+    public StateManager updateCache(Long chatId, StateManager state) {
+        log.debug("[CACHE-UPDATE] Синхронизация кэша в Heap для chatId: {}", chatId);
+        return state;
     }
 }
