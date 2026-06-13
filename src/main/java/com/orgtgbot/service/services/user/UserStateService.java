@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +60,7 @@ public class UserStateService {
     }
 
     @Transactional
+    @Cacheable(cacheNames = "states_cache", key = "#chatId")
     public StateManager getCurrentState(Long chatId) {
         log.info("[DATABASE-HIT] Промах кэша! Читаю стейт из БД для chatId: {}", chatId);
 
