@@ -52,14 +52,13 @@ public class UserStateService {
 
     @Transactional
     public void clearState(Long chatId) {
-        StateManager state = getCurrentState(chatId);
+        StateManager state = self.getCurrentState(chatId);
         state.setCurrentField(GeneralFields.NONE);
         state.setLastBotMenuId(null);
         stateManagerRepository.save(state);
         self.updateCache(chatId, state);
     }
 
-    @Transactional
     @Cacheable(cacheNames = "states_cache", key = "#chatId")
     public StateManager getCurrentState(Long chatId) {
         log.info("[DATABASE-HIT] Промах кэша! Читаю стейт из БД для chatId: {}", chatId);
