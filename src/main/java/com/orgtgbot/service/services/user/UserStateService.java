@@ -19,9 +19,6 @@ public class UserStateService {
 
     private final StateManagerRepository stateManagerRepository;
     private final UserEntryRepository userEntryRepository;
-
-    @Autowired
-    @Lazy
     private UserStateService self;
 
     @Transactional
@@ -77,5 +74,10 @@ public class UserStateService {
     @CachePut(cacheNames = "states_cache", key = "#chatId")
     public StateManager updateCache(@SuppressWarnings("unused") Long chatId, StateManager state) {
         return state;
+    }
+
+    @Autowired
+    public void setSelf(@Lazy UserStateService self) {
+        this.self = self;
     }
 }
