@@ -5,7 +5,6 @@ import com.orgtgbot.entity.user.StateManager;
 import com.orgtgbot.repository.StateManagerRepository;
 import com.orgtgbot.repository.UserEntryRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Slf4j
 public class UserStateService {
 
     private final StateManagerRepository stateManagerRepository;
@@ -62,8 +60,6 @@ public class UserStateService {
 
     @Cacheable(cacheNames = "states_cache", key = "#chatId")
     public StateManager getCurrentState(Long chatId) {
-        log.info("[DATABASE-HIT] Промах кэша! Читаю стейт из БД для chatId: {}", chatId);
-
         return stateManagerRepository.findById(chatId).orElseGet(
                 () -> {
                     userEntryRepository.findByTelegramChatId(chatId).orElseThrow(
@@ -79,8 +75,7 @@ public class UserStateService {
     }
 
     @CachePut(cacheNames = "states_cache", key = "#chatId")
-    public StateManager updateCache(Long chatId, StateManager state) {
-        log.debug("[CACHE-UPDATE] Синхронизация кэша в Heap для chatId: {}", chatId);
+    public StateManager updateCache(@SuppressWarnings("unused") Long chatId, StateManager state) {
         return state;
     }
 }

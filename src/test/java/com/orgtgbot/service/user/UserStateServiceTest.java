@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 
@@ -35,6 +36,7 @@ public class UserStateServiceTest {
                 .currentField(GeneralFields.NONE)
                 .lastBotMenuId(null)
                 .build();
+        ReflectionTestUtils.setField(userStateService, "self", userStateService);
     }
 
     @Test
@@ -56,12 +58,13 @@ public class UserStateServiceTest {
     }
 
     @Test
-    void setMessageId_shouldSaveMessageId() {
+    void setStateAndMessageId_correctlySetStateAndMessageId() {
         when(stateManagerRepository.findById(anyLong())).thenReturn(Optional.of(example));
 
-        userStateService.setStateAndMessageId(anyLong(), any(), 999);
+        userStateService.setStateAndMessageId(1L, GeneralFields.MAIN_MENU, 999);
 
         assertThat(example.getLastBotMenuId()).isEqualTo(999);
+        assertThat(example.getCurrentField()).isEqualTo(GeneralFields.MAIN_MENU);
         verify(stateManagerRepository, times(1)).findById(anyLong());
     }
 
