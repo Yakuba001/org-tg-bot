@@ -33,3 +33,6 @@ logging:
   level:
     root: INFO
     com.orgtgbot: DEBUG
+
+gemini:
+  api-key: ${GEMINI_API_KEY}

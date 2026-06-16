@@ -7,7 +7,7 @@ import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 @Configuration
-@EnableConfigurationProperties(TelegramBotProperties.class)
+@EnableConfigurationProperties({TelegramBotProperties.class, GeminiProperties.class})
 public class AppConfig {
 
     @Bean

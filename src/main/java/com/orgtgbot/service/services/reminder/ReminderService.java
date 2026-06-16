@@ -3,12 +3,12 @@ package com.orgtgbot.service.services.reminder;
 import com.orgtgbot.dto.reminder.ReminderDto;
 import com.orgtgbot.entity.reminder.ReminderEntity;
 import com.orgtgbot.repository.ReminderRepository;
+import com.orgtgbot.service.services.gemini.GeminiParserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,16 +19,14 @@ import java.util.stream.Collectors;
 public class ReminderService {
 
     private final ReminderRepository reminderRepository;
+    private final GeminiParserService geminiParserService;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     @Transactional
     public void addRemind(Long chatId, String rawText) {
         log.info("[REMINDER] Попытка добавить напоминание для chatId {}: {}", chatId, rawText);
 
-        ReminderDto parsedDto = new ReminderDto(
-                "Робот-напоминалка (Заглушка): " + rawText,
-                LocalDateTime.now().plusMinutes(10)
-        );
+        ReminderDto parsedDto = geminiParserService.parseReminder(rawText);
 
         ReminderEntity entity = ReminderEntity.builder()
                 .telegramChatId(chatId)
@@ -37,8 +35,8 @@ public class ReminderService {
                 .build();
 
         reminderRepository.save(entity);
-
-        log.info("[REMINDER] Напоминание успешно сохранено в БД для chatId {}", chatId);
+        log.info("[REMINDER] Напоминание успешно сохранено в БД. Время: {}, Текст: {}",
+                parsedDto.targetTime(), parsedDto.text());
     }
 
     @Transactional(readOnly = true)
