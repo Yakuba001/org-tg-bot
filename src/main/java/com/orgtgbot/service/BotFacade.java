@@ -5,6 +5,7 @@ import com.orgtgbot.service.bridge.AppContext;
 import com.orgtgbot.service.services.DateService;
 import com.orgtgbot.service.services.GeneralService;
 import com.orgtgbot.service.services.ProbegService;
+import com.orgtgbot.service.services.reminder.ReminderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +17,10 @@ public class BotFacade {
     private final GeneralService generalService;
     private final ProbegService probegService;
     private final DateService dateService;
+    private final ReminderService reminderService;
 
     private AppContext getContext(Long chatId) {
-        return new AppContext(generalService, probegService, dateService, chatId);
+        return new AppContext(generalService, probegService, dateService, reminderService, chatId);
     }
 
     @Transactional(readOnly = true)

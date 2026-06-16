@@ -233,7 +233,11 @@ public enum GeneralFields {
     FUELING("Заправлено литров", GENERAL, GENERAL,
             ctx -> String.valueOf(ctx.generalService().getSingleEntry(ctx.chatId()).getFueling()),
             (ctx, val) -> ctx.generalService().updateGeneralInfo(ctx.chatId(),
-                    GeneralUpdateDto.builder().fueling(Integer.parseInt(val)).build()));
+                    GeneralUpdateDto.builder().fueling(Integer.parseInt(val)).build())),
+
+    MAIN_REMINDER("Напоминалка", MAIN_MENU, MAIN_MENU,
+            ctx -> ctx.reminderService().getAllRemindersFormatted(ctx.chatId()),
+            (ctx, val) -> ctx.reminderService().addRemind(ctx.chatId(), val)),;
 
     private final String description;
     private final GeneralFields parent;
