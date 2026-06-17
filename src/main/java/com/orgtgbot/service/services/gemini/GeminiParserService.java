@@ -1,6 +1,8 @@
 package com.orgtgbot.service.services.gemini;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.orgtgbot.config.GeminiProperties;
 import com.orgtgbot.dto.reminder.ReminderDto;
 import lombok.extern.slf4j.Slf4j;
@@ -33,35 +35,43 @@ public class GeminiParserService {
         String apiKey = geminiProperties.apiKey();
         String currentTime = LocalDateTime.now().toString();
 
-        // Переносим инструкции прямо в текст запроса, чтобы не злить парсер Google сложными объектами
-        String fullPrompt = "Ты — строгий парсер напоминаний. Твоя задача — извлечь суть напоминания и определить точное время его срабатывания.\n" +
+        // Инструкция для ИИ
+        String systemInstruction = "Ты — строгий парсер напоминаний. Твоя задача — извлечь суть напоминания и определить точное время его срабатывания.\n" +
                 "Текущее время сервера: " + currentTime + ".\n" +
-                "Ответь СТРОГО в формате JSON без какого-либо форматирования, markdown разметки или лишних символов (просто голый JSON-текст), используя схему:\n" +
+                "Ответь СТРОГО в формате JSON, используя схему:\n" +
                 "{\n" +
-                "  \"text\": \"очищенный текст напоминания (например, 'Купить яйца', а не 'Напомни мне купить яйца через 10 минут')\",\n" +
+                "  \"text\": \"очищенный текст напоминания (например, 'Купить молоко', а не 'Прив, через 10 минут напомни купить молоко')\",\n" +
                 "  \"targetTime\": \"дата и время в формате YYYY-MM-DDTHH:mm:ss\"\n" +
-                "}\n\n" +
-                "Текст пользователя для парсинга: \"" + rawText + "\"";
+                "}";
 
-        // Стандартная структура для v1beta в camelCase, но БЕЗ systemInstruction
-        Map<String, Object> requestBody = Map.of(
-                "contents", List.of(
-                        Map.of("parts", List.of(
-                                Map.of("text", fullPrompt)
-                        ))
-                ),
-                "generationConfig", Map.of(
-                        "responseMimeType", "application/json"
-                )
-        );
+        // Собираем валидное JSON-дерево для Google API
+        ObjectNode requestBody = objectMapper.createObjectNode();
+
+        // 1. Текст пользователя в contents
+        ObjectNode textNode = objectMapper.createObjectNode().put("text", rawText);
+        ArrayNode partsArray = objectMapper.createArrayNode().add(textNode);
+        ObjectNode contentNode = objectMapper.createObjectNode().set("parts", partsArray);
+        requestBody.set("contents", objectMapper.createArrayNode().add(contentNode));
+
+        // 2. Системный промпт в systemInstruction
+        ObjectNode systemTextNode = objectMapper.createObjectNode().put("text", systemInstruction);
+        ArrayNode systemPartsArray = objectMapper.createArrayNode().add(systemTextNode);
+        ObjectNode systemInstructionNode = objectMapper.createObjectNode().set("parts", systemPartsArray);
+        requestBody.set("systemInstruction", systemInstructionNode);
+
+        // 3. Конфигурация для строгого возврата JSON
+        ObjectNode configNode = objectMapper.createObjectNode().put("responseMimeType", "application/json");
+        requestBody.set("generationConfig", configNode);
 
         try {
             log.info("[GEMINI] Отправка запроса к ИИ для парсинга: '{}'", rawText);
 
+            String requestJsonString = objectMapper.writeValueAsString(requestBody);
+
             String responseJson = restClient.post()
                     .uri(GEMINI_API_URL + "?key=" + apiKey)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(requestBody)
+                    .body(requestJsonString)
                     .retrieve()
                     .body(String.class);
 
@@ -76,18 +86,19 @@ public class GeminiParserService {
                     .path("text")
                     .asText();
 
-            // Очистка от возможных markdown-кавычек, если модель их проигнорирует
+            // Чистим от возможных кавычек разметки markdown, если модель их добавит
             String cleanJson = aiJsonText.replaceAll("```json", "")
                     .replaceAll("```", "")
                     .trim();
 
-            log.info("[GEMINI] Извлеченный чистый JSON: {}", cleanJson);
+            log.info("[GEMINI] Извлеченный чистый JSON для Jackson: {}", cleanJson);
 
             return objectMapper.readValue(cleanJson, ReminderDto.class);
 
         } catch (Exception e) {
             log.error("[GEMINI-ERROR] Ошибка при парсинге ИИ, включается аварийный режим", e);
-            return new ReminderDto(rawText, LocalDateTime.now().plusHours(1));
+            // Если ИИ упадет, упадем в дефолт (как на твоем скриншоте)
+            return new ReminderDto(rawText, LocalDateTime.now().plusMinutes(10));
         }
     }
 }
