@@ -21,7 +21,7 @@ public class GeminiParserService {
     private final ObjectMapper objectMapper;
 
     private static final String GEMINI_API_URL =
-            "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent";
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-001:generateContent";
 
     public GeminiParserService(GeminiProperties geminiProperties, RestClient.Builder restClient, ObjectMapper objectMapper) {
         this.geminiProperties = geminiProperties;
@@ -41,19 +41,20 @@ public class GeminiParserService {
                 "  \"targetTime\": \"дата и время в формате YYYY-MM-DDTHH:mm:ss\"\n" +
                 "}";
 
+        // ВОЗВРАЩАЕМ CAMELCASE, КОТОРЫЙ ТРЕБУЕТ V1BETA
         Map<String, Object> requestBody = Map.of(
                 "contents", List.of(
                         Map.of("parts", List.of(
                                 Map.of("text", rawText)
                         ))
                 ),
-                "system_instruction", Map.of(
+                "systemInstruction", Map.of(
                         "parts", List.of(
                                 Map.of("text", systemInstruction)
                         )
                 ),
-                "generation_config", Map.of(
-                        "response_mime_type", "application/json"
+                "generationConfig", Map.of(
+                        "responseMimeType", "application/json"
                 )
         );
 
@@ -67,6 +68,8 @@ public class GeminiParserService {
                     .retrieve()
                     .body(String.class);
 
+            log.info("[GEMINI] Чистый JSON от Google: {}", responseJson);
+
             var rootNode = objectMapper.readTree(responseJson);
             String aiJsonText = rootNode.path("candidates")
                     .get(0)
@@ -76,7 +79,7 @@ public class GeminiParserService {
                     .path("text")
                     .asText();
 
-            log.info("[GEMINI] Получен JSON от модели: {}", aiJsonText.trim());
+            log.info("[GEMINI] Извлеченный текст модели: {}", aiJsonText.trim());
 
             return objectMapper.readValue(aiJsonText, ReminderDto.class);
 
