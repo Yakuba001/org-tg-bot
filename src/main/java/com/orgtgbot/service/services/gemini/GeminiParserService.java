@@ -47,13 +47,13 @@ public class GeminiParserService {
                                 Map.of("text", rawText)
                         ))
                 ),
-                "systemInstruction", Map.of(
+                "system_instruction", Map.of(
                         "parts", List.of(
                                 Map.of("text", systemInstruction)
                         )
                 ),
-                "generationConfig", Map.of(
-                        "responseMimeType", "application/json"
+                "generation_config", Map.of(
+                        "response_mime_type", "application/json"
                 )
         );
 
