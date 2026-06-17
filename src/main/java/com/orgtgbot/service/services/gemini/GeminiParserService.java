@@ -23,7 +23,7 @@ public class GeminiParserService {
     private final ObjectMapper objectMapper;
 
     private static final String GEMINI_API_URL =
-            "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent";
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
     public GeminiParserService(GeminiProperties geminiProperties, RestClient.Builder restClient, ObjectMapper objectMapper) {
         this.geminiProperties = geminiProperties;
@@ -54,15 +54,14 @@ public class GeminiParserService {
             log.info("[GEMINI] Запрос к ИИ: '{}'", rawText);
             String requestJsonString = objectMapper.writeValueAsString(requestBody);
 
-            // Шлем запрос на стабильную v1
+            // Ключ AQ передаем через .header(), из uri его убрали
             String responseJson = restClient.post()
-                    .uri(GEMINI_API_URL + "?key=" + apiKey)
+                    .uri(GEMINI_API_URL)
+                    .header("x-goog-api-key", apiKey)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(requestJsonString)
                     .retrieve()
                     .body(String.class);
-
-            log.info("[GEMINI] Ответ от Google: {}", responseJson);
 
             var rootNode = objectMapper.readTree(responseJson);
             String aiJsonText = rootNode.path("candidates").get(0)
@@ -70,12 +69,10 @@ public class GeminiParserService {
                     .path("text").asText().trim();
 
             String cleanJson = aiJsonText.replaceAll("```json", "").replaceAll("```", "").trim();
-            log.info("[GEMINI] Чистый JSON для Jackson: {}", cleanJson);
-
             return objectMapper.readValue(cleanJson, ReminderDto.class);
 
         } catch (Exception e) {
-            log.error("[GEMINI-ERROR] Падение в аварийный режим", e);
+            log.error("[GEMINI-ERROR] Аварийный режим", e);
             return new ReminderDto(rawText, LocalDateTime.now().plusMinutes(10));
         }
     }
