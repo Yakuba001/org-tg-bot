@@ -21,7 +21,7 @@ public class GeminiParserService {
     private final ObjectMapper objectMapper;
 
     private static final String GEMINI_API_URL =
-            "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent";
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
     public GeminiParserService(GeminiProperties geminiProperties, RestClient.Builder restClient, ObjectMapper objectMapper) {
         this.geminiProperties = geminiProperties;
@@ -33,7 +33,7 @@ public class GeminiParserService {
         String apiKey = geminiProperties.apiKey();
         String currentTime = LocalDateTime.now().toString();
 
-        // Склеиваем инструкцию и текст пользователя в один мощный запрос, который поймет любая модель
+        // Переносим инструкции прямо в текст запроса, чтобы не злить парсер Google сложными объектами
         String fullPrompt = "Ты — строгий парсер напоминаний. Твоя задача — извлечь суть напоминания и определить точное время его срабатывания.\n" +
                 "Текущее время сервера: " + currentTime + ".\n" +
                 "Ответь СТРОГО в формате JSON без какого-либо форматирования, markdown разметки или лишних символов (просто голый JSON-текст), используя схему:\n" +
@@ -43,12 +43,15 @@ public class GeminiParserService {
                 "}\n\n" +
                 "Текст пользователя для парсинга: \"" + rawText + "\"";
 
-        // Кристально чистая структура тела запроса, которая БЕЗУПРЕЧНО работает на v1
+        // Стандартная структура для v1beta в camelCase, но БЕЗ systemInstruction
         Map<String, Object> requestBody = Map.of(
                 "contents", List.of(
                         Map.of("parts", List.of(
                                 Map.of("text", fullPrompt)
                         ))
+                ),
+                "generationConfig", Map.of(
+                        "responseMimeType", "application/json"
                 )
         );
 
@@ -73,7 +76,7 @@ public class GeminiParserService {
                     .path("text")
                     .asText();
 
-            // Очищаем от возможных markdown-кавычек ```json если модель их всё-таки добавит
+            // Очистка от возможных markdown-кавычек, если модель их проигнорирует
             String cleanJson = aiJsonText.replaceAll("```json", "")
                     .replaceAll("```", "")
                     .trim();
