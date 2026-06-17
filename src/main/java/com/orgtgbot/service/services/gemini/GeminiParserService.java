@@ -76,7 +76,7 @@ public class GeminiParserService {
                     .path("text")
                     .asText();
 
-            log.debug("[GEMINI] Получен JSON от модели: {}", aiJsonText.trim());
+            log.info("[GEMINI] Получен JSON от модели: {}", aiJsonText.trim());
 
             return objectMapper.readValue(aiJsonText, ReminderDto.class);
 
