@@ -23,7 +23,7 @@ public class GeminiParserService {
     private final ObjectMapper objectMapper;
 
     private static final String GEMINI_API_URL =
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
+            "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent";
 
     public GeminiParserService(GeminiProperties geminiProperties, RestClient.Builder restClient, ObjectMapper objectMapper) {
         this.geminiProperties = geminiProperties;
@@ -54,6 +54,7 @@ public class GeminiParserService {
             log.info("[GEMINI] Запрос к ИИ: '{}'", rawText);
             String requestJsonString = objectMapper.writeValueAsString(requestBody);
 
+            // Шлем запрос на стабильную v1
             String responseJson = restClient.post()
                     .uri(GEMINI_API_URL + "?key=" + apiKey)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -61,13 +62,15 @@ public class GeminiParserService {
                     .retrieve()
                     .body(String.class);
 
+            log.info("[GEMINI] Ответ от Google: {}", responseJson);
+
             var rootNode = objectMapper.readTree(responseJson);
             String aiJsonText = rootNode.path("candidates").get(0)
                     .path("content").path("parts").get(0)
                     .path("text").asText().trim();
 
             String cleanJson = aiJsonText.replaceAll("```json", "").replaceAll("```", "").trim();
-            log.info("[GEMINI] Распарсенный JSON: {}", cleanJson);
+            log.info("[GEMINI] Чистый JSON для Jackson: {}", cleanJson);
 
             return objectMapper.readValue(cleanJson, ReminderDto.class);
 
