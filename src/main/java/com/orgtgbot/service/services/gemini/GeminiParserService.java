@@ -26,14 +26,14 @@ public class GeminiParserService {
     private static final String GEMINI_API_URL =
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
 
-    public ReminderDto parseReminder(String rawText) {
+    public ReminderDto parseReminder(String rawText, LocalDateTime userTime) {
         String apiKey = geminiProperties.apiKey();
 
         String systemInstruction = "Ты — системный backend-модуль. Твоя единственная задача — распарсить текст напоминания от пользователя. " +
                 "Ты должен вернуть JSON-объект с двумя полями: " +
                 "1. 'text' (строка, суть того, о чем напомнить, без лишних слов вежливости вроде 'пожалуйста'). " +
                 "2. 'targetTime' (строка в формате ISO-8601 'YYYY-MM-DDTHH:mm:ss', рассчитанная на основе текущего времени). " +
-                "Текущее время сервера: " + LocalDateTime.now() + ". " +
+                "Текущее время сервера: " + userTime.toString() + ". " +
                 "Если пользователь не указал конкретное время, выстави targetTime на 1 час вперед от текущего.";
 
         String jsonBody = "{"

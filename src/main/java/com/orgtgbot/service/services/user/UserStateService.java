@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -44,6 +46,14 @@ public class UserStateService {
 
     public Integer getMessageId(Long chatId) {
         return self.getCurrentState(chatId).getLastBotMenuId();
+    }
+
+    @Transactional
+    public void updateLastActivityTime(Long chatId, LocalDateTime activityTime) {
+        StateManager state = self.getCurrentState(chatId);
+        state.setUserLastActivityTime(activityTime);
+        stateManagerRepository.save(state);
+        self.updateCache(chatId, state);
     }
 
     @Transactional

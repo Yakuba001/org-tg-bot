@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -31,6 +33,21 @@ public class UpdateDispatcher {
         Long chatId = extractChatId(update);
         if (chatId == null) return;
         boolean isUserRegistered = userEntryRepository.existsByTelegramChatId(chatId);
+
+        Integer dateSeconds = null;
+        if (update.hasMessage()) {
+            dateSeconds = update.getMessage().getDate();
+        } else if (update.hasCallbackQuery() && update.getCallbackQuery().getMessage() != null) {
+            dateSeconds = update.getCallbackQuery().getMessage().getDate();
+        }
+        if (dateSeconds != null && isUserRegistered) {
+            LocalDateTime userActionTime = LocalDateTime.ofInstant(
+                    java.time.Instant.ofEpochSecond(dateSeconds),
+                    java.time.ZoneId.systemDefault()
+            );
+            log.info("[DISPATCHER] Фиксируем активность юзера {} в: {}", chatId, userActionTime);
+            userStateService.updateLastActivityTime(chatId, userActionTime);
+        }
 
         if (update.hasMessage() && update.getMessage().hasText()) {
             String text = update.getMessage().getText().trim();

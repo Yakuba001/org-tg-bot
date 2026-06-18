@@ -4,6 +4,8 @@ import com.orgtgbot.bot.callback.GeneralFields;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "state_manager")
 @Getter
@@ -24,6 +26,9 @@ public class StateManager {
 
     @Column(name = "last_bot_menu_id")
     private Integer lastBotMenuId;
+
+    @Column(name = "user_last_activity_time")
+    private LocalDateTime userLastActivityTime;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(
