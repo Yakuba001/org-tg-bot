@@ -43,8 +43,6 @@ public class GeminiParserService {
                 + "}";
 
         try {
-            log.info("[GEMINI-STEP-2] Инициализация запроса. Текст: '{}'", rawText);
-
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(GEMINI_API_URL))
@@ -55,8 +53,6 @@ public class GeminiParserService {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             client.close();
-            log.info("[GEMINI-TEST] HTTP Status Code: {}", response.statusCode());
-            log.info("[GEMINI-TEST] Raw Response Body: {}", response.body());
 
             if (response.statusCode() == 200) {
                 JsonNode rootNode = objectMapper.readTree(response.body());
@@ -69,10 +65,7 @@ public class GeminiParserService {
 
                 String cleanJson = aiGeneratedText.replaceAll("```json", "").replaceAll("```", "").trim();
 
-                ReminderDto dto = objectMapper.readValue(cleanJson, ReminderDto.class);
-
-                log.info("[GEMINI-PARSER] Успешно создано DTO: {}", dto);
-                return dto;
+                return objectMapper.readValue(cleanJson, ReminderDto.class);
             }
 
         } catch (Exception e) {

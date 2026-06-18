@@ -4,7 +4,6 @@ import com.orgtgbot.dto.reminder.ReminderDto;
 import com.orgtgbot.entity.reminder.ReminderEntity;
 import com.orgtgbot.entity.user.StateManager;
 import com.orgtgbot.repository.ReminderRepository;
-import com.orgtgbot.repository.StateManagerRepository;
 import com.orgtgbot.service.services.gemini.GeminiParserService;
 import com.orgtgbot.service.services.user.UserStateService;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +30,6 @@ public class ReminderService {
 
     @Transactional
     public void addRemind(Long chatId, String rawText) {
-        log.info("[REMINDER] Попытка добавить напоминание для chatId {}: {}", chatId, rawText);
-
         StateManager stateManager = userStateService.getCurrentState(chatId);
         LocalDateTime userTime = stateManager.getUserLastActivityTime() == null ?
                 LocalDateTime.now() : stateManager.getUserLastActivityTime();
@@ -46,8 +43,6 @@ public class ReminderService {
                 .build();
 
         reminderRepository.save(entity);
-        log.info("[REMINDER] Напоминание успешно сохранено в БД. Время: {}, Текст: {}",
-                parsedDto.targetTime(), parsedDto.text());
     }
 
     @Transactional(readOnly = true)

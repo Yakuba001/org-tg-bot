@@ -13,7 +13,9 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Slf4j
 @Component
@@ -42,10 +44,9 @@ public class UpdateDispatcher {
         }
         if (dateSeconds != null && isUserRegistered) {
             LocalDateTime userActionTime = LocalDateTime.ofInstant(
-                    java.time.Instant.ofEpochSecond(dateSeconds),
-                    java.time.ZoneId.systemDefault()
+                    Instant.ofEpochSecond(dateSeconds),
+                    ZoneId.of("Europe/Kiev")
             );
-            log.info("[DISPATCHER] Фиксируем активность юзера {} в: {}", chatId, userActionTime);
             userStateService.updateLastActivityTime(chatId, userActionTime);
         }
 
