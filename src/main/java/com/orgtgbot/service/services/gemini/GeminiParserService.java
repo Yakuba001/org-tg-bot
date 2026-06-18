@@ -1,5 +1,7 @@
 package com.orgtgbot.service.services.gemini;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.orgtgbot.config.GeminiProperties;
 import com.orgtgbot.dto.reminder.ReminderDto;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 public class GeminiParserService {
 
     private final GeminiProperties geminiProperties;
+    private final ObjectMapper objectMapper;
 
     private static final String GEMINI_API_URL =
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
@@ -36,6 +39,7 @@ public class GeminiParserService {
         String jsonBody = "{"
                 + "\"systemInstruction\": {\"parts\": [{\"text\": \"" + systemInstruction.replace("\"", "\\\"") + "\"}]},"
                 + "\"contents\": [{\"parts\": [{\"text\": \"" + rawText.replace("\"", "\\\"") + "\"}]}]"
+                + ",\"generationConfig\": {\"responseMimeType\": \"application/json\"}"
                 + "}";
 
         try {
@@ -53,6 +57,23 @@ public class GeminiParserService {
             client.close();
             log.info("[GEMINI-TEST] HTTP Status Code: {}", response.statusCode());
             log.info("[GEMINI-TEST] Raw Response Body: {}", response.body());
+
+            if (response.statusCode() == 200) {
+                JsonNode rootNode = objectMapper.readTree(response.body());
+
+                String aiGeneratedText = rootNode
+                        .path("candidates").get(0)
+                        .path("content")
+                        .path("parts").get(0)
+                        .path("text").asText();
+
+                String cleanJson = aiGeneratedText.replaceAll("```json", "").replaceAll("```", "").trim();
+
+                ReminderDto dto = objectMapper.readValue(cleanJson, ReminderDto.class);
+
+                log.info("[GEMINI-PARSER] Успешно создано DTO: {}", dto);
+                return dto;
+            }
 
         } catch (Exception e) {
             log.error("[GEMINI-TEST-ERROR] Ошибка при отправке тестового запроса к ИИ", e);
