@@ -14,6 +14,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.Base64;
 
 @Slf4j
 @Service
@@ -28,13 +29,7 @@ public class GeminiParserService {
 
     public ReminderDto parseReminder(String rawText, LocalDateTime userTime) {
         String apiKey = geminiProperties.apiKey();
-
-        String systemInstruction = "Ты — системный backend-модуль. Твоя единственная задача — распарсить текст напоминания от пользователя. " +
-                "Ты должен вернуть JSON-объект с двумя полями: " +
-                "1. 'text' (строка, суть того, о чем напомнить, без лишних слов вежливости вроде 'пожалуйста'). " +
-                "2. 'targetTime' (строка в формате ISO-8601 'YYYY-MM-DDTHH:mm:ss', рассчитанная на основе текущего времени). " +
-                "Текущее время сервера: " + userTime.toString() + ". " +
-                "Если пользователь не указал конкретное время, выстави targetTime на 1 час вперед от текущего.";
+        String systemInstruction = getSystemInstruction(userTime);
 
         String jsonBody = "{"
                 + "\"systemInstruction\": {\"parts\": [{\"text\": \"" + systemInstruction.replace("\"", "\\\"") + "\"}]},"
@@ -42,6 +37,36 @@ public class GeminiParserService {
                 + ",\"generationConfig\": {\"responseMimeType\": \"application/json\"}"
                 + "}";
 
+        return sendHttpRequestToGemini(jsonBody, apiKey, rawText);
+    }
+
+    public ReminderDto parseVoiceReminder(byte[] audioBytes, LocalDateTime userTime) {
+        String apiKey = geminiProperties.apiKey();
+        String systemInstruction = getSystemInstruction(userTime);
+
+        String base64Audio = Base64.getEncoder().encodeToString(audioBytes);
+
+        String jsonBody = "{"
+                + "\"systemInstruction\": {\"parts\": [{\"text\": \"" + systemInstruction.replace("\"", "\\\"") + "\"}]},"
+                + "\"contents\": [{\"parts\": ["
+                + "  {\"inlineData\": {\"mimeType\": \"audio/ogg\", \"data\": \"" + base64Audio + "\"}}"
+                + "]}]"
+                + ",\"generationConfig\": {\"responseMimeType\": \"application/json\"}"
+                + "}";
+
+        return sendHttpRequestToGemini(jsonBody, apiKey, "Голосовое сообщение");
+    }
+
+    private String getSystemInstruction(LocalDateTime userTime) {
+        return "Ты — системный backend-модуль. Твоя единственная задача — прослушать голосовое сообщение или прочитать текст и распарсить напоминание от пользователя. " +
+                "Ты должен вернуть JSON-объект с двумя полями: " +
+                "1. 'text' (строка, суть того, о чем напомнить, без лишних слов вежливости). " +
+                "2. 'targetTime' (строка в формате ISO-8601 'YYYY-MM-DDTHH:mm:ss', рассчитанная на основе текущего времени). " +
+                "Текущее время сервера: " + userTime.toString() + ". " +
+                "Если пользователь не указал конкретное время, выстави targetTime на 1 час вперед от текущего.";
+    }
+
+    private ReminderDto sendHttpRequestToGemini(String jsonBody, String apiKey, String defaultText) {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
@@ -64,14 +89,14 @@ public class GeminiParserService {
                         .path("text").asText();
 
                 String cleanJson = aiGeneratedText.replaceAll("```json", "").replaceAll("```", "").trim();
-
                 return objectMapper.readValue(cleanJson, ReminderDto.class);
+            } else {
+                log.error("[GEMINI-ERROR] Ошибка API. Статус код: {}, Ответ: {}", response.statusCode(), response.body());
             }
 
         } catch (Exception e) {
-            log.error("[GEMINI-TEST-ERROR] Ошибка при отправке тестового запроса к ИИ", e);
+            log.error("[GEMINI-ERROR] Ошибка отправки запроса к ИИ", e);
         }
-
-        return new ReminderDto(rawText, LocalDateTime.now());
+        return new ReminderDto(defaultText, LocalDateTime.now());
     }
 }

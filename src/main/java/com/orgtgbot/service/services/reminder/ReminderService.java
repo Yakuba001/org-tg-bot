@@ -23,19 +23,31 @@ public class ReminderService {
 
     private final ReminderRepository reminderRepository;
     private final GeminiParserService geminiParserService;
-
     private final UserStateService userStateService;
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     @Transactional
     public void addRemind(Long chatId, String rawText) {
-        StateManager stateManager = userStateService.getCurrentState(chatId);
-        LocalDateTime userTime = stateManager.getUserLastActivityTime() == null ?
-                LocalDateTime.now() : stateManager.getUserLastActivityTime();
-
+        LocalDateTime userTime = getUserTime(chatId);
         ReminderDto parsedDto = geminiParserService.parseReminder(rawText, userTime);
+        saveReminder(chatId, parsedDto);
+    }
 
+    @Transactional
+    public void addVoiceRemind(Long chatId, byte[] audioBytes) {
+        LocalDateTime userTime = getUserTime(chatId);
+        ReminderDto parsedDto = geminiParserService.parseVoiceReminder(audioBytes, userTime);
+        saveReminder(chatId, parsedDto);
+    }
+
+    private LocalDateTime getUserTime(Long chatId) {
+        StateManager stateManager = userStateService.getCurrentState(chatId);
+        return stateManager.getUserLastActivityTime() == null ?
+                LocalDateTime.now() : stateManager.getUserLastActivityTime();
+    }
+
+    private void saveReminder(Long chatId, ReminderDto parsedDto) {
         ReminderEntity entity = ReminderEntity.builder()
                 .telegramChatId(chatId)
                 .text(parsedDto.text())
@@ -43,6 +55,7 @@ public class ReminderService {
                 .build();
 
         reminderRepository.save(entity);
+        log.info("[REMINDER] Напоминание успешно сохранено. Текст: '{}', Время: {}", parsedDto.text(), parsedDto.targetTime());
     }
 
     @Transactional(readOnly = true)
