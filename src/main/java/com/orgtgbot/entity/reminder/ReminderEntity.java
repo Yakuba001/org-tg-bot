@@ -26,4 +26,8 @@ public class ReminderEntity {
 
     @Column(name = "target_time", nullable = false)
     private LocalDateTime targetTime;
+
+    @Builder.Default
+    @Column(name = "is_sent", nullable = false)
+    private boolean isSent = false;
 }
