@@ -29,7 +29,8 @@ public class VoiceUpdateHandler implements UpdateHandler {
         GeneralFields currentField = userStateService.getState(chatId);
 
         if (currentField == GeneralFields.MAIN_REMINDER) {
-            voiceService.handleVoice(chatId, message.getVoice());
+            Integer botMenuId = userStateService.getMessageId(chatId);
+            voiceService.handleVoiceAsync(chatId, message.getVoice(), botMenuId, currentField);
         } else {
             sender.sendMessage(chatId, "❌ В этом разделе голосовые сообщения не поддерживаются.");
         }

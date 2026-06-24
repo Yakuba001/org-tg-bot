@@ -7,7 +7,6 @@ import com.orgtgbot.repository.ReminderRepository;
 import com.orgtgbot.service.services.gemini.GeminiParserService;
 import com.orgtgbot.service.services.user.UserStateService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +15,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReminderService {
@@ -55,7 +53,6 @@ public class ReminderService {
                 .build();
 
         reminderRepository.save(entity);
-        log.info("[REMINDER] Напоминание успешно сохранено. Текст: '{}', Время: {}", parsedDto.text(), parsedDto.targetTime());
     }
 
     @Transactional(readOnly = true)
