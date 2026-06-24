@@ -49,6 +49,7 @@ public class GeminiParserService {
         String jsonBody = "{"
                 + "\"systemInstruction\": {\"parts\": [{\"text\": \"" + systemInstruction.replace("\"", "\\\"") + "\"}]},"
                 + "\"contents\": [{\"parts\": ["
+                + "  {\"text\": \"Распарси это голосовое сообщение и верни строго JSON.\"},"
                 + "  {\"inlineData\": {\"mimeType\": \"audio/ogg\", \"data\": \"" + base64Audio + "\"}}"
                 + "]}]"
                 + ",\"generationConfig\": {\"responseMimeType\": \"application/json\"}"
