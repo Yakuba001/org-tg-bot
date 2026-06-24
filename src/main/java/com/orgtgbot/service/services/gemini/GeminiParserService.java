@@ -2,6 +2,8 @@ package com.orgtgbot.service.services.gemini;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.orgtgbot.config.GeminiProperties;
 import com.orgtgbot.dto.reminder.ReminderDto;
 import lombok.RequiredArgsConstructor;
@@ -43,19 +45,37 @@ public class GeminiParserService {
     public ReminderDto parseVoiceReminder(byte[] audioBytes, LocalDateTime userTime) {
         String apiKey = geminiProperties.apiKey();
         String systemInstruction = getSystemInstruction(userTime);
-
         String base64Audio = Base64.getEncoder().encodeToString(audioBytes);
 
-        String jsonBody = "{"
-                + "\"systemInstruction\": {\"parts\": [{\"text\": \"" + systemInstruction.replace("\"", "\\\"") + "\"}]},"
-                + "\"contents\": [{\"parts\": ["
-                + "  {\"text\": \"Распарси это голосовое сообщение и верни строго JSON.\"},"
-                + "  {\"inlineData\": {\"mimeType\": \"audio/ogg\", \"data\": \"" + base64Audio + "\"}}"
-                + "]}]"
-                + ",\"generationConfig\": {\"responseMimeType\": \"application/json\"}"
-                + "}";
+        try {
+            ObjectNode rootNode = objectMapper.createObjectNode();
 
-        return sendHttpRequestToGemini(jsonBody, apiKey, "Голосовое сообщение");
+            rootNode.putObject("systemInstruction")
+                    .putArray("parts")
+                    .addObject()
+                    .put("text", systemInstruction);
+
+            ArrayNode partsArray = rootNode.putObject("contents")
+                    .putArray("parts");
+
+            partsArray.addObject().put("text", "Распарси это голосовое сообщение и верни строго JSON.");
+
+            partsArray.addObject()
+                    .putObject("inlineData")
+                    .put("mimeType", "audio/ogg")
+                    .put("data", base64Audio);
+
+            rootNode.putObject("generationConfig")
+                    .put("responseMimeType", "application/json");
+
+            String jsonBody = objectMapper.writeValueAsString(rootNode);
+
+            return sendHttpRequestToGemini(jsonBody, apiKey, "Голосовое сообщение");
+
+        } catch (Exception e) {
+            log.error("[GEMINI-ERROR] Ошибка при сборке JSON для голосового сообщения", e);
+            return new ReminderDto("Голосовое сообщение", LocalDateTime.now());
+        }
     }
 
     private String getSystemInstruction(LocalDateTime userTime) {
