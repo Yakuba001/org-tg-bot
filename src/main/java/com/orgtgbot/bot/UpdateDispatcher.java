@@ -1,25 +1,18 @@
 package com.orgtgbot.bot;
 
+import com.orgtgbot.bot.update.UpdateHandler;
 import com.orgtgbot.service.services.user.UserStateService;
-import com.orgtgbot.bot.callback.registry.CallbackRegistry;
-import com.orgtgbot.bot.command.StartCommand;
-import com.orgtgbot.bot.callback.GeneralFields;
-import com.orgtgbot.repository.InviteCodeRepository;
 import com.orgtgbot.repository.UserEntryRepository;
-import com.orgtgbot.service.services.user.RegistrationService;
-import com.orgtgbot.service.voice.VoiceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.Voice;
 import org.telegram.telegrambots.meta.api.objects.message.MaybeInaccessibleMessage;
-import org.telegram.telegrambots.meta.api.objects.message.Message;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -28,14 +21,9 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class UpdateDispatcher {
 
-    private final StartCommand startCommand;
-    private final CallbackRegistry callbackRegistry;
-    private final UserStateService userStateService;
-    private final TelegramSender sender;
     private final UserEntryRepository userEntryRepository;
-    private final InviteCodeRepository inviteCodeRepository;
-    private final RegistrationService registrationService;
-    private final VoiceService voiceService;
+    private final UserStateService userStateService;
+    private final List<UpdateHandler> handlers;
 
     public void dispatch(Update update) throws Exception {
         Long chatId = fieldExtractor(update, MaybeInaccessibleMessage::getChatId)
@@ -51,83 +39,11 @@ public class UpdateDispatcher {
             }
         });
 
-        if (update.hasMessage()) {
-            handleMessageUpdate(update, chatId, isUserRegistered);
-        } else if (update.hasCallbackQuery() && isUserRegistered) {
-            handleCallbackUpdate(update, chatId);
-        }
-    }
-
-    private void handleMessageUpdate(Update update, Long chatId, boolean isUserRegistered) throws Exception {
-        Message message = update.getMessage();
-        if (message == null || (!message.hasText() && !message.hasVoice())) return;
-
-        Integer messageId = message.getMessageId();
-
-        if (!isUserRegistered) {
-            if (message.hasText()) {
-                processUnregisteredText(update, chatId, messageId);
-            } else {
-                sender.deleteMessage(chatId, messageId);
-                sender.sendMessage(chatId, "🔒 Доступ ограничен. Авторизация возможна только текстом.");
-            }
-            return;
-        }
-
-        if (message.hasVoice()) {
-            processVoice(chatId, message.getVoice(), messageId);
-        } else if (message.hasText()) {
-            processRegisteredText(update, chatId, messageId);
-        }
-    }
-
-    private void processUnregisteredText(Update update, Long chatId, Integer messageId) throws Exception {
-        String text = update.getMessage().getText().trim();
-        if (text.startsWith("/start")) {
-            userStateService.setState(chatId, GeneralFields.NONE);
-            sender.deleteMessage(chatId, messageId);
-            sender.sendMessage(chatId, "🔒 Доступ ограничен. Введите секретный код для авторизации:");
-            return;
-        }
-
-        if (inviteCodeRepository.existsByCode(text)) {
-            registrationService.registerNewDriver(chatId, update.getMessage().getFrom().getFirstName());
-            startCommand.execute(update);
-        } else {
-            sender.deleteMessage(chatId, messageId);
-            sender.sendMessage(chatId, "🔒 Неверный код. Доступ ограничен:");
-        }
-    }
-
-    private void processRegisteredText(Update update, Long chatId, Integer messageId) throws Exception {
-        String text = update.getMessage().getText().trim();
-        GeneralFields currentField = userStateService.getState(chatId);
-
-        sender.deleteMessage(chatId, messageId);
-
-        if (text.startsWith("/start") || currentField == null || currentField == GeneralFields.NONE) {
-            startCommand.execute(update);
-        } else {
-            callbackRegistry.handle(currentField, chatId, text, userStateService.getMessageId(chatId));
-        }
-    }
-
-    private void processVoice(Long chatId, Voice voice, Integer messageId) {
-        GeneralFields currentField = userStateService.getState(chatId);
-        if (currentField == GeneralFields.MAIN_REMINDER) {
-            voiceService.handleVoice(chatId, voice);
-        } else {
-            sender.sendMessage(chatId, "❌ В этом разделе голосовые сообщения не поддерживаются.");
-        }
-        sender.deleteMessage(chatId, messageId);
-    }
-
-    private void handleCallbackUpdate(Update update, Long chatId) throws Exception {
-        CallbackQuery callbackQuery = update.getCallbackQuery();
-        GeneralFields clickedField = GeneralFields.valueOf(callbackQuery.getData());
-        Integer callbackMessageId = callbackQuery.getMessage().getMessageId();
-        Integer botMenuId = userStateService.getMessageId(chatId);
-        callbackRegistry.dispatch(clickedField, callbackQuery, chatId, callbackMessageId, botMenuId);
+        handlers.stream()
+                .filter(handler -> handler.canHandle(update, isUserRegistered))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Запрос не поддерживается системой"))
+                .handle(update, chatId);
     }
 
     private <T> Optional<T> fieldExtractor(Update update, Function<MaybeInaccessibleMessage, T> extractor) {
