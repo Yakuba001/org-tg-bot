@@ -53,7 +53,7 @@ public class ReminderSchedulerService {
         reminderRepository.saveAll(activeReminders);
     }
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void cleanOldReminders() {
         LocalDateTime timeAgo = LocalDateTime.now(ZoneId.of("Europe/Kiev")).minusDays(1);
