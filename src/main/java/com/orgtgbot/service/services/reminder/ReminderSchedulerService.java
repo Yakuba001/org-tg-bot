@@ -52,4 +52,14 @@ public class ReminderSchedulerService {
         }
         reminderRepository.saveAll(activeReminders);
     }
+
+    @Scheduled(cron = "0 * * * * *")
+    @Transactional
+    public void cleanOldReminders() {
+        LocalDateTime timeAgo = LocalDateTime.now(ZoneId.of("Europe/Kiev")).minusDays(1);
+
+        reminderRepository.deleteOldSentReminders(timeAgo);
+
+        log.info("[CLEANER] Старые отправленные напоминания успешно удалены из БД");
+    }
 }
