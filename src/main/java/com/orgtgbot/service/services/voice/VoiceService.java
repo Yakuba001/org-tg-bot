@@ -14,9 +14,6 @@ import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.Voice;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
-import java.io.InputStream;
-import java.net.URI;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -26,6 +23,7 @@ public class VoiceService {
     private final TelegramBotProperties telegramBotProperties;
     private final ReminderService reminderService;
     private final TelegramSender sender;
+    private final TelegramFileDownloader fileDownloader;
 
     @Async
     public void handleVoiceAsync(Long chatId, Voice voice, Integer botMenuId, GeneralFields currentField) {
@@ -34,27 +32,18 @@ public class VoiceService {
         try {
             GetFile getFileMethod = new GetFile(voice.getFileId());
             File file = telegramClient.execute(getFileMethod);
-            String downloadUrl =
-                    "https://api.telegram.org/file/bot" + telegramBotProperties.token() + "/" + file.getFilePath();
+            String downloadUrl = "https://api.telegram.org/file/bot" + telegramBotProperties.token() + "/" + file.getFilePath();
 
-            byte[] audioBytes;
-            try (InputStream inputStream = URI.create(downloadUrl).toURL().openStream()) {
-                audioBytes = inputStream.readAllBytes();
-            }
-            log.info("[VOICE-SERVICE] Файл скачан в байты. Передаем в ReminderService...");
+            log.info("[VOICE-SERVICE] Скачиваем файл через downloader...");
+
+            byte[] audioBytes = fileDownloader.downloadAsBytes(downloadUrl);
 
             reminderService.addVoiceRemind(chatId, audioBytes);
             log.info("[VOICE-SERVICE] Голосовое напоминание успешно сохранено в БД.");
 
-            sender.editMarkup(
-                    chatId,
-                    botMenuId,
-                    "Данные приняты из голосового сообщения!\n",
-                    KeyboardFactory.buildMenuForGroup(currentField)
-            );
-
+            sender.editMarkup(chatId, botMenuId, "Данные приняты из голосового сообщения!\n", KeyboardFactory.buildMenuForGroup(currentField));
         } catch (Exception e) {
-            log.error("[VOICE-SERVICE-ERROR] Сбой асинхронной обработки голоса для чата " + chatId, e);
+            log.error("[VOICE-SERVICE-ERROR] Сбой асинхронной обработки голоса для чата {}", chatId, e);
             sender.sendMessage(chatId, "❌ Не удалось распознать или сохранить голосовое напоминание.");
         }
     }
