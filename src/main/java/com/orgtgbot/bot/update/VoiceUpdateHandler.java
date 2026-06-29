@@ -3,7 +3,7 @@ package com.orgtgbot.bot.update;
 import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.GeneralFields;
 import com.orgtgbot.service.services.user.UserStateService;
-import com.orgtgbot.service.voice.VoiceService;
+import com.orgtgbot.service.services.voice.VoiceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;

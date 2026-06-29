@@ -1,4 +1,4 @@
-package com.orgtgbot.service.voice;
+package com.orgtgbot.service.services.voice;
 
 import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.GeneralFields;
