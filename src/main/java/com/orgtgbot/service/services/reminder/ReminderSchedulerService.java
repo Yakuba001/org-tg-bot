@@ -47,10 +47,9 @@ public class ReminderSchedulerService {
                         reminder.getTelegramChatId(), reminder.getId());
 
             } catch (Exception e) {
-                log.error("[SCHEDULER-ERROR] Не удалось отправить напоминание ID: " + reminder.getId(), e);
+                log.error("[SCHEDULER-ERROR] Не удалось отправить напоминание ID: {}", reminder.getId(), e);
             }
         }
-        reminderRepository.saveAll(activeReminders);
     }
 
     @Scheduled(cron = "0 0 0 * * *")
