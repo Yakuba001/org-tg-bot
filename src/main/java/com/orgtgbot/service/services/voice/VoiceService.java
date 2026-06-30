@@ -1,7 +1,7 @@
 package com.orgtgbot.service.services.voice;
 
 import com.orgtgbot.bot.TelegramSender;
-import com.orgtgbot.bot.callback.GeneralFields;
+import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import com.orgtgbot.config.TelegramBotProperties;
 import com.orgtgbot.service.services.reminder.ReminderService;

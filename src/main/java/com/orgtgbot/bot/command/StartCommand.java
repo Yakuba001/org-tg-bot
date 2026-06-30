@@ -1,6 +1,6 @@
 package com.orgtgbot.bot.command;
 
-import com.orgtgbot.bot.callback.GeneralFields;
+import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

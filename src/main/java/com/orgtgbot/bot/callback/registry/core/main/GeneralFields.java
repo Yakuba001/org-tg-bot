@@ -1,4 +1,4 @@
-package com.orgtgbot.bot.callback;
+package com.orgtgbot.bot.callback.registry.core.main;
 
 import com.orgtgbot.dto.DatesUpdateDto;
 import com.orgtgbot.dto.GeneralUpdateDto;

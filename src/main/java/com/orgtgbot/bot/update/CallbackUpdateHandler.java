@@ -1,6 +1,6 @@
 package com.orgtgbot.bot.update;
 
-import com.orgtgbot.bot.callback.GeneralFields;
+import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
 import com.orgtgbot.bot.callback.registry.CallbackRegistry;
 import com.orgtgbot.service.services.user.UserStateService;
 import lombok.RequiredArgsConstructor;

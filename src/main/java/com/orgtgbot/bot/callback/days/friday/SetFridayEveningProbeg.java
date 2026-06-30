@@ -1,20 +1,17 @@
 package com.orgtgbot.bot.callback.days.friday;
 
 import com.orgtgbot.bot.TelegramSender;
-import com.orgtgbot.bot.callback.CallbackHandler;
-import com.orgtgbot.bot.callback.GeneralFields;
-import com.orgtgbot.bot.keyboard.KeyboardFactory;
+import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
+import com.orgtgbot.bot.callback.registry.core.routers.AbstractRouteCallbackHandler;
 import com.orgtgbot.service.BotFacade;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 @Component
-@RequiredArgsConstructor
-public class SetFridayEveningProbeg implements CallbackHandler {
+public class SetFridayEveningProbeg extends AbstractRouteCallbackHandler {
 
-    private final TelegramSender sender;
-    private final BotFacade botFacade;
+    public SetFridayEveningProbeg(TelegramSender sender, BotFacade botFacade) {
+        super(sender, botFacade);
+    }
 
     @Override
     public GeneralFields callbackData() {
@@ -22,27 +19,12 @@ public class SetFridayEveningProbeg implements CallbackHandler {
     }
 
     @Override
-    public void handle(CallbackQuery callbackQuery) throws Exception {
-        Long chatId = callbackQuery.getMessage().getChatId();
-        String result = botFacade.getAmount(callbackData(), chatId);
-
-        sender.editMarkup(
-                callbackQuery.getMessage().getChatId(),
-                callbackQuery.getMessage().getMessageId(),
-                callbackData().getDescription() + ": " + result + " км.",
-                KeyboardFactory.dynamicBack(callbackData())
-        );
+    protected String getRouteAmount(Long chatId) {
+        return botFacade.getAmount(callbackData(), chatId);
     }
 
     @Override
-    public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
-        if (!text.matches("\\d+")) {
-            sender.editMarkup(chatId, botMenuId, "Ошибка! Введите число.",
-                    KeyboardFactory.buildMenuForGroup(callbackData()));
-        } else {
-            botFacade.setAmount(callbackData(), text.trim(), chatId);
-            sender.editMarkup(chatId, botMenuId, "Данные приняты!\n",
-                    KeyboardFactory.buildMenuForGroup(callbackData()));
-        }
+    protected void setRouteAmount(Long chatId, String text) {
+        botFacade.setAmount(callbackData(), text, chatId);
     }
 }

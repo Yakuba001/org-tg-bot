@@ -1,6 +1,6 @@
 package com.orgtgbot.service.user;
 
-import com.orgtgbot.bot.callback.GeneralFields;
+import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
 import com.orgtgbot.entity.user.StateManager;
 import com.orgtgbot.repository.StateManagerRepository;
 import com.orgtgbot.service.services.user.UserStateService;

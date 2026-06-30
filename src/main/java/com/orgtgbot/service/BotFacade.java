@@ -1,6 +1,6 @@
 package com.orgtgbot.service;
 
-import com.orgtgbot.bot.callback.GeneralFields;
+import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
 import com.orgtgbot.service.bridge.AppContext;
 import com.orgtgbot.service.services.DateService;
 import com.orgtgbot.service.services.GeneralService;

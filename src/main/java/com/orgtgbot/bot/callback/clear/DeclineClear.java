@@ -1,8 +1,8 @@
 package com.orgtgbot.bot.callback.clear;
 
 import com.orgtgbot.bot.TelegramSender;
-import com.orgtgbot.bot.callback.CallbackHandler;
-import com.orgtgbot.bot.callback.GeneralFields;
+import com.orgtgbot.bot.callback.registry.core.interactions.ClickableHandler;
+import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 @Component
 @RequiredArgsConstructor
-public class DeclineClear implements CallbackHandler {
+public class DeclineClear implements ClickableHandler {
 
     private final TelegramSender sender;
 
@@ -27,11 +27,5 @@ public class DeclineClear implements CallbackHandler {
                 GeneralFields.PROBEG_MENU.getDescription(),
                 KeyboardFactory.buildMenuForGroup(GeneralFields.PROBEG_MENU)
         );
-    }
-
-    @Override
-    public void handle(Long chatId, String text, Integer botMenuId, TelegramSender sender) {
-        sender.editMarkup(chatId, botMenuId, callbackData().getDescription(),
-                KeyboardFactory.buildMenuForGroup(callbackData()));
     }
 }

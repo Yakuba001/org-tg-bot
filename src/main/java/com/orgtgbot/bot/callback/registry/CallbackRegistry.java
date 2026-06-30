@@ -1,10 +1,12 @@
 package com.orgtgbot.bot.callback.registry;
 
 import com.orgtgbot.bot.TelegramSender;
-import com.orgtgbot.bot.callback.CallbackHandler;
+import com.orgtgbot.bot.callback.registry.core.interactions.CallbackHandler;
+import com.orgtgbot.bot.callback.registry.core.interactions.ClickableHandler;
+import com.orgtgbot.bot.callback.registry.core.interactions.TextAnswerableHandler;
 import com.orgtgbot.service.services.user.UserStateService;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
-import com.orgtgbot.bot.callback.GeneralFields;
+import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -39,12 +41,15 @@ public class CallbackRegistry {
         CallbackHandler handler = handlers.get(field);
         telegramSender.answerCallback(callbackQuery.getId());
         if (handler != null) {
-            handler.handle(callbackQuery);
-            userStateService.setStateAndMessageId(chatId, field, callbackMessageId);
+            if (handler instanceof ClickableHandler clickableHandler) {
+                clickableHandler.handle(callbackQuery);
+                userStateService.setStateAndMessageId(chatId, field, callbackMessageId);
+            } else {
+                log.warn("Найден хэндлер для {}, но он не реализует ClickableHandler!", field);
+                sendDispatcherError(chatId, botMenuId);
+            }
         } else {
-            telegramSender.editMarkup(chatId, botMenuId, "Ошибка диспетчера!\n",
-                    KeyboardFactory.buildMenuForGroup(GeneralFields.MAIN_MENU));
-            userStateService.clearState(chatId);
+            sendDispatcherError(chatId, botMenuId);
         }
     }
 
@@ -54,10 +59,21 @@ public class CallbackRegistry {
                        Integer botMenuId) throws Exception {
         CallbackHandler handler = handlers.get(field);
         if (handler != null) {
-            handler.handle(chatId, text, botMenuId, telegramSender);
-            userStateService.clearState(chatId);
+            if (handler instanceof TextAnswerableHandler answerableHandler) {
+                answerableHandler.handle(chatId, text, botMenuId, telegramSender);
+                userStateService.clearState(chatId);
+            } else {
+                log.warn("Хэндлер для стейта {} найден, но он не ожидает текстового ввода (нет TextAnswerableHandler)", field);
+                userStateService.clearState(chatId);
+            }
         } else {
             log.warn("Неожиданный стейт: {}", field);
         }
+    }
+
+    private void sendDispatcherError(Long chatId, Integer botMenuId) {
+        telegramSender.editMarkup(chatId, botMenuId, "Ошибка диспетчера!\n",
+                KeyboardFactory.buildMenuForGroup(GeneralFields.MAIN_MENU));
+        userStateService.clearState(chatId);
     }
 }

@@ -1,6 +1,6 @@
 package com.orgtgbot.entity.user;
 
-import com.orgtgbot.bot.callback.GeneralFields;
+import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
 import jakarta.persistence.*;
 import lombok.*;
 
