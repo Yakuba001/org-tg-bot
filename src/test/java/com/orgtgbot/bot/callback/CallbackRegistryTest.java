@@ -1,4 +1,4 @@
-package com.orgtgbot.callback;
+package com.orgtgbot.bot.callback;
 
 import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.registry.CallbackRegistry;
