@@ -13,6 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,7 +30,7 @@ public class CallbackRegistry {
         this.telegramSender = telegramSender;
         this.handlers = all.stream()
                 .collect(Collectors.toUnmodifiableMap(
-                        CallbackHandler::callbackData, h -> h));
+                        CallbackHandler::callbackData, Function.identity()));
         this.userStateService = userStateService;
     }
 
@@ -64,10 +65,11 @@ public class CallbackRegistry {
                 userStateService.clearState(chatId);
             } else {
                 log.warn("Хэндлер для стейта {} найден, но он не ожидает текстового ввода (нет TextAnswerableHandler)", field);
-                userStateService.clearState(chatId);
+                sendDispatcherError(chatId, botMenuId);
             }
         } else {
             log.warn("Неожиданный стейт: {}", field);
+            sendDispatcherError(chatId, botMenuId);
         }
     }
 
