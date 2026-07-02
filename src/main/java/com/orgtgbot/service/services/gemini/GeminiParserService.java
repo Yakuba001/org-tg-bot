@@ -7,10 +7,14 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.orgtgbot.config.GeminiProperties;
 import com.orgtgbot.dto.reminder.ReminderDto;
+import com.orgtgbot.exception.exceptions.gemini.DeserializeGeminiResponse;
+import com.orgtgbot.exception.exceptions.gemini.GeminiParseTextException;
+import com.orgtgbot.exception.exceptions.gemini.GeminiParseVoiceException;
+import com.orgtgbot.exception.exceptions.http.SendHttpRequestToGeminiException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -19,7 +23,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Base64;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GeminiParserService {
@@ -35,15 +38,11 @@ public class GeminiParserService {
         try {
             ObjectNode rootNode = createBaseGeminiRequest(userTime);
             ArrayNode partsArray = (ArrayNode) rootNode.path("contents").path("parts");
-
             partsArray.addObject().put("text", rawText);
-
             String jsonBody = objectMapper.writeValueAsString(rootNode);
-            return sendHttpRequestToGemini(jsonBody, rawText, userTime);
-
-        } catch (Exception e) {
-            log.error("[GEMINI-ERROR] Ошибка сборки JSON для текстового напоминания", e);
-            return createFallbackDto(rawText, userTime);
+            return sendHttpRequestToGemini(jsonBody);
+        } catch (JsonProcessingException e) {
+            throw new GeminiParseTextException("Failed to build JSON request for GEMINI API from text", e);
         }
     }
 
@@ -61,11 +60,9 @@ public class GeminiParserService {
                     .put("data", base64Audio);
 
             String jsonBody = objectMapper.writeValueAsString(rootNode);
-            return sendHttpRequestToGemini(jsonBody, "Голосовое сообщение", userTime);
-
-        } catch (Exception e) {
-            log.error("[GEMINI-ERROR] Ошибка сборки JSON для голосового напоминания", e);
-            return createFallbackDto("Голосовое сообщение", userTime);
+            return sendHttpRequestToGemini(jsonBody);
+        } catch (JsonProcessingException e) {
+            throw new GeminiParseVoiceException("Failed to build JSON request for GEMINI API from voice", e);
         }
     }
 
@@ -95,7 +92,7 @@ public class GeminiParserService {
                 "Если пользователь не указал конкретное время, выстави targetTime на 1 час вперед от текущего.";
     }
 
-    private ReminderDto sendHttpRequestToGemini(String jsonBody, String defaultText, LocalDateTime userTime) {
+    private ReminderDto sendHttpRequestToGemini(String jsonBody) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(GEMINI_API_URL))
@@ -103,36 +100,30 @@ public class GeminiParserService {
                     .header("x-goog-api-key", geminiProperties.apiKey())
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody, StandardCharsets.UTF_8))
                     .build();
-
             HttpResponse<String> response = geminiHttpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-            if (response.statusCode() == 200) {
+            if (response.statusCode() == 200)
                 return deserializeGeminiResponse(response.body());
-            }
 
-            log.error("[GEMINI-ERROR] Сервер вернул код ошибки: {}. Ответ: {}", response.statusCode(), response.body());
-
-        } catch (Exception e) {
-            log.error("[GEMINI-ERROR] Критический сбой при выполнении HTTP-запроса", e);
+            throw new SendHttpRequestToGeminiException("Gemini returned non-200 status code: " + response.statusCode());
+        } catch (IOException | InterruptedException e) {
+            if (e instanceof InterruptedException) Thread.currentThread().interrupt();
+            throw new SendHttpRequestToGeminiException("Failed try to call gemini.", e);
         }
-        return createFallbackDto(defaultText, userTime);
     }
 
-    private ReminderDto deserializeGeminiResponse(String responseBody) throws JsonProcessingException {
-        JsonNode rootNode = objectMapper.readTree(responseBody);
-
-        String aiGeneratedText = rootNode
-                .path("candidates").get(0)
-                .path("content")
-                .path("parts").get(0)
-                .path("text").asText();
-
-        String cleanJson = aiGeneratedText.replaceAll("```json", "")
-                .replaceAll("```", "").trim();
-        return objectMapper.readValue(cleanJson, ReminderDto.class);
-    }
-
-    private ReminderDto createFallbackDto(String text, LocalDateTime userTime) {
-        return new ReminderDto(text, userTime.plusHours(1));
+    private ReminderDto deserializeGeminiResponse(String responseBody) {
+        try {
+            JsonNode rootNode = objectMapper.readTree(responseBody);
+            String aiGeneratedText = rootNode
+                    .path("candidates").get(0)
+                    .path("content")
+                    .path("parts").get(0)
+                    .path("text").asText();
+            String cleanJson = aiGeneratedText.replaceAll("```json", "")
+                    .replaceAll("```", "").trim();
+            return objectMapper.readValue(cleanJson, ReminderDto.class);
+        } catch (JsonProcessingException e) {
+            throw new DeserializeGeminiResponse("Failed to deserialize GEMINI response", e);
+        }
     }
 }

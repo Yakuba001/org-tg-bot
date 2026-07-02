@@ -1,6 +1,7 @@
 package com.orgtgbot.bot;
 
 import com.orgtgbot.config.TelegramBotProperties;
+import com.orgtgbot.exception.GlobalExceptionHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ public class OrganizerBot implements SpringLongPollingBot, LongPollingSingleThre
 
     private final TelegramBotProperties props;
     private final UpdateDispatcher dispatcher;
+    private final GlobalExceptionHandler globalExceptionHandler;
 
     @Override
     public String getBotToken() {
@@ -31,7 +33,9 @@ public class OrganizerBot implements SpringLongPollingBot, LongPollingSingleThre
         try {
             dispatcher.dispatch(update);
         } catch (Exception e) {
-            log.error("CRITICAL ERROR: ", e);
+            globalExceptionHandler.handle(e,
+                    FieldExtractor.extractChatId(update),
+                    FieldExtractor.extractMessageId(update));
         }
     }
 }
