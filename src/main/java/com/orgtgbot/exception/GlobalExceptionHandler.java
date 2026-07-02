@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -19,18 +21,22 @@ public class GlobalExceptionHandler {
 
     private final TelegramSender sender;
 
+    private static final Map<Class<? extends Exception>, String> ERROR_MESSAGES = Map.of(
+            GeminiParseTextException.class, "Fail, try create remind again.",
+            GeminiParseVoiceException.class, "Fail, try create remind by text.",
+            SendHttpRequestToGeminiException.class, "Fail, from AI side.",
+            DeserializeGeminiResponse.class, "Fail, from AI side."
+    );
+
     public void handle(Exception e, Long chatId, Integer messageId) {
         Long resolvedChatId = (e instanceof BotException be && be.getChatId() != null)
                 ? be.getChatId()
                 : chatId;
         log.error("[BOT-ERROR] Exception caught in GEH: {}", e.getMessage(), e);
-        String errorUserMessage = switch (e) {
-            case GeminiParseTextException ignored -> "Fail, try create remind again.";
-            case GeminiParseVoiceException ignored -> "Fail, try create remind by text.";
-            case SendHttpRequestToGeminiException ignored -> "Fail, from AI side.";
-            case DeserializeGeminiResponse ignored -> "Fail, from AI side.";
-            default -> "Something went wrong. Please try again later.";
-        };
+        String errorUserMessage = ERROR_MESSAGES.getOrDefault(
+                e.getClass(),
+                "Something went wrong. Please try again later."
+        );
         safeEdit(resolvedChatId, errorUserMessage, messageId);
     }
 
