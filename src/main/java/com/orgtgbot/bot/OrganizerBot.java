@@ -1,5 +1,6 @@
 package com.orgtgbot.bot;
 
+import com.orgtgbot.bot.util.FieldExtractor;
 import com.orgtgbot.config.TelegramBotProperties;
 import com.orgtgbot.exception.GlobalExceptionHandler;
 import lombok.RequiredArgsConstructor;

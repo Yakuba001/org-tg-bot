@@ -1,4 +1,4 @@
-package com.orgtgbot.bot;
+package com.orgtgbot.bot.util;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
