@@ -43,6 +43,7 @@ public class CallbackRegistry {
             userStateService.setStateAndMessageId(chatId, field, callbackMessageId);
             return;
         }
+        userStateService.clearState(chatId);
         throw new DispatcherHandleException(chatId, "You can`t handle this handler(dispatch): " + handler);
     }
 
@@ -56,6 +57,7 @@ public class CallbackRegistry {
             userStateService.clearState(chatId);
             return;
         }
+        userStateService.clearState(chatId);
         throw new DispatcherHandleException(chatId, "You can`t handle this handler(handle): " + handler);
     }
 }

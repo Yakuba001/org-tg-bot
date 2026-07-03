@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.orgtgbot.config.GeminiProperties;
 import com.orgtgbot.dto.reminder.ReminderDto;
+import com.orgtgbot.exception.exceptions.service.http.SendHttpRequestToGeminiException;
 import com.orgtgbot.service.services.gemini.GeminiParserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,8 +17,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -75,18 +76,16 @@ public class GeminiParserServiceTest {
     }
 
     @Test
-    void parseReminder_fail_throw() throws Exception {
+    void parseReminder_fail_throwSendHttpRequestToGeminiException() throws Exception {
         String rawText = "Напомни позвонить маме";
 
         when(httpResponse.statusCode()).thenReturn(503);
-        when(httpResponse.body()).thenReturn("Service Unavailable");
         when(geminiHttpClient.<String>send(any(), any())).thenReturn(httpResponse);
 
-        ReminderDto result = geminiParserService.parseReminder(rawText, userTime);
+        SendHttpRequestToGeminiException result = assertThrows(SendHttpRequestToGeminiException.class,
+                () -> geminiParserService.parseReminder(rawText, userTime));
 
-        assertNotNull(result);
-        assertEquals(rawText, result.text());
-        assertEquals(userTime.plusHours(1), result.targetTime());
+        assertThat(result.getMessage()).contains("Gemini returned non-200 status code");
     }
 
     @Test
@@ -125,10 +124,9 @@ public class GeminiParserServiceTest {
         when(geminiHttpClient.<String>send(any(), any()))
                 .thenThrow(new IOException("Connection reset"));
 
-        ReminderDto result = geminiParserService.parseVoiceReminder(mockAudioBytes, userTime);
+        SendHttpRequestToGeminiException result = assertThrows(SendHttpRequestToGeminiException.class,
+                () -> geminiParserService.parseVoiceReminder(mockAudioBytes, userTime));
 
-        assertNotNull(result);
-        assertEquals("Голосовое сообщение", result.text());
-        assertEquals(userTime.plusHours(1), result.targetTime());
+        assertThat(result.getMessage()).contains("Failed try to call gemini");
     }
 }

@@ -3,6 +3,7 @@ package com.orgtgbot.service.voice;
 import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
 import com.orgtgbot.config.TelegramBotProperties;
+import com.orgtgbot.exception.exceptions.service.voice.FailedHandleVoiceException;
 import com.orgtgbot.service.services.reminder.ReminderService;
 import com.orgtgbot.service.services.voice.TelegramFileDownloader;
 import com.orgtgbot.service.services.voice.VoiceService;
@@ -16,6 +17,8 @@ import org.telegram.telegrambots.meta.api.objects.File;
 import org.telegram.telegrambots.meta.api.objects.Voice;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,16 +64,17 @@ public class VoiceServiceTest {
     }
 
     @Test
-    void handleVoiceAsync_exception_shouldSendErrorMessage() throws Exception {
+    void handleVoiceAsync_exception_shouldThrowFailedHandleVoiceException() throws Exception {
         Long chatId = 12345L;
         Voice voice = mock(Voice.class);
         when(voice.getFileId()).thenReturn("broken_id");
 
         when(telegramClient.execute(any(GetFile.class))).thenThrow(new RuntimeException("Telegram API Error"));
 
-        voiceService.handleVoiceAsync(chatId, voice, 999, GeneralFields.MAIN_REMINDER);
+        FailedHandleVoiceException result = assertThrows(FailedHandleVoiceException.class,
+                () -> voiceService.handleVoiceAsync(chatId, voice, 999, GeneralFields.MAIN_REMINDER));
 
-        verify(sender, times(1)).sendMessage(eq(chatId), contains("❌ Не удалось распознать"));
+        assertThat(result.getMessage()).contains("Failed handle voice");
         verifyNoInteractions(reminderService);
     }
 }

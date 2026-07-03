@@ -61,7 +61,7 @@ public class RegisteredTextUpdateHandlerTest {
     }
 
     @Test
-    void handle_WhenTextIsStartCommand_ShouldExecuteStartCommand() throws Exception {
+    void handle_WhenTextIsStartCommand_ShouldExecuteStartCommand() {
         when(update.getMessage()).thenReturn(message);
         when(message.getMessageId()).thenReturn(MESSAGE_ID);
         when(message.getText()).thenReturn("/start");
@@ -75,7 +75,7 @@ public class RegisteredTextUpdateHandlerTest {
     }
 
     @Test
-    void handle_startCommandIfUserDoesNotHaveState_andInvokeStartCommand() throws Exception {
+    void handle_startCommandIfUserDoesNotHaveState_andInvokeStartCommand() {
         when(update.getMessage()).thenReturn(message);
         when(message.getMessageId()).thenReturn(MESSAGE_ID);
         when(message.getText()).thenReturn("Start for unregistered user");
@@ -89,7 +89,7 @@ public class RegisteredTextUpdateHandlerTest {
     }
 
     @Test
-    void handle_WithActiveState_ShouldTrimTextAndDelegateToCallbackRegistry() throws Exception {
+    void handle_WithActiveState_ShouldTrimTextAndDelegateToCallbackRegistry() {
         String userInput = "   150   ";
         String expectedTrimmedInput = "150";
         GeneralFields activeState = GeneralFields.SET_MORNING_MONDAY_KM;

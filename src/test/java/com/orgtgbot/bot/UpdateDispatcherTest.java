@@ -1,6 +1,8 @@
 package com.orgtgbot.bot;
 
 import com.orgtgbot.bot.update.UpdateHandler;
+import com.orgtgbot.exception.exceptions.bot.FailedExtractingException;
+import com.orgtgbot.exception.exceptions.bot.UnknownUpdateHandlerException;
 import com.orgtgbot.repository.UserEntryRepository;
 import com.orgtgbot.service.services.user.UserStateService;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +50,7 @@ public class UpdateDispatcherTest {
         when(update.hasMessage()).thenReturn(false);
         when(update.hasCallbackQuery()).thenReturn(false);
 
-        IllegalStateException exception = assertThrows(IllegalStateException.class, () ->
+        FailedExtractingException exception = assertThrows(FailedExtractingException.class, () ->
                 updateDispatcher.dispatch(update)
         );
 
@@ -57,7 +59,7 @@ public class UpdateDispatcherTest {
     }
 
     @Test
-    void dispatch_WithRegisteredUser_ShouldUpdateActivityAndCallHandler() throws Exception {
+    void dispatch_WithRegisteredUser_ShouldUpdateActivityAndCallHandler() {
         when(update.hasMessage()).thenReturn(true);
         when(update.getMessage()).thenReturn(message);
         when(message.getChatId()).thenReturn(chatId);
@@ -72,7 +74,7 @@ public class UpdateDispatcherTest {
     }
 
     @Test
-    void dispatch_WithUnregisteredUser_ShouldNotUpdateActivityButCallHandler() throws Exception {
+    void dispatch_WithUnregisteredUser_ShouldNotUpdateActivityButCallHandler() {
         when(update.hasMessage()).thenReturn(false);
         when(update.hasCallbackQuery()).thenReturn(true);
         when(update.getCallbackQuery()).thenReturn(callbackQuery);
@@ -89,7 +91,7 @@ public class UpdateDispatcherTest {
     }
 
     @Test
-    void dispatch_WhenNoHandlerCanHandle_ShouldThrowIllegalArgumentException() throws Exception {
+    void dispatch_WhenNoHandlerCanHandle_ShouldThrowUnknownUpdateException() {
         when(update.hasMessage()).thenReturn(true);
         when(update.getMessage()).thenReturn(message);
         when(message.getChatId()).thenReturn(chatId);
@@ -98,11 +100,11 @@ public class UpdateDispatcherTest {
         when(userEntryRepository.existsByTelegramChatId(chatId)).thenReturn(true);
         when(updateHandler.canHandle(update, true)).thenReturn(false);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+        UnknownUpdateHandlerException exception = assertThrows(UnknownUpdateHandlerException.class, () ->
                 updateDispatcher.dispatch(update)
         );
 
-        assertEquals("Запрос не поддерживается системой", exception.getMessage());
+        assertEquals("Requested handler not found", exception.getMessage());
         verify(updateHandler, never()).handle(any(), anyLong());
     }
 }

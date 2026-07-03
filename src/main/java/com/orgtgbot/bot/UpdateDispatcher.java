@@ -1,6 +1,8 @@
 package com.orgtgbot.bot;
 
 import com.orgtgbot.bot.update.UpdateHandler;
+import com.orgtgbot.exception.exceptions.bot.FailedExtractingException;
+import com.orgtgbot.exception.exceptions.bot.UnknownUpdateHandlerException;
 import com.orgtgbot.service.services.user.UserStateService;
 import com.orgtgbot.repository.UserEntryRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +27,7 @@ public class UpdateDispatcher {
 
     public void dispatch(Update update) {
         Long chatId = fieldExtractor(update, MaybeInaccessibleMessage::getChatId)
-                .orElseThrow(() -> new IllegalStateException("ChatId not found"));
+                .orElseThrow(() -> new FailedExtractingException("ChatId not found"));
         boolean isUserRegistered = userEntryRepository.existsByTelegramChatId(chatId);
 
         fieldExtractor(update, MaybeInaccessibleMessage::getDate).ifPresent(dateSeconds -> {
@@ -40,7 +42,7 @@ public class UpdateDispatcher {
         handlers.stream()
                 .filter(handler -> handler.canHandle(update, isUserRegistered))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Запрос не поддерживается системой"))
+                .orElseThrow(() -> new UnknownUpdateHandlerException("Requested handler not found"))
                 .handle(update, chatId);
     }
 

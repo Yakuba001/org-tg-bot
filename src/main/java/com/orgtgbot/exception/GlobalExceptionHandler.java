@@ -4,6 +4,8 @@ import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import com.orgtgbot.exception.exceptions.BotException;
+import com.orgtgbot.exception.exceptions.bot.FailedExtractingException;
+import com.orgtgbot.exception.exceptions.bot.UnknownUpdateHandlerException;
 import com.orgtgbot.exception.exceptions.callback.DispatcherHandleException;
 import com.orgtgbot.exception.exceptions.service.DateIndexOutOfBoundException;
 import com.orgtgbot.exception.exceptions.service.DayNotFoundException;
@@ -49,7 +51,9 @@ public class GlobalExceptionHandler {
             Map.entry(TSEditMarkupException.class, "Something went wrong."),
             Map.entry(TSSendMessageException.class, "Something went wrong."),
             Map.entry(DispatcherHandleException.class, "Fail in dispatcher."),
-            Map.entry(TelegramClientExecutorException.class, "Something went wrong.")
+            Map.entry(TelegramClientExecutorException.class, "Something went wrong."),
+            Map.entry(FailedExtractingException.class, "Something went wrong."),
+            Map.entry(UnknownUpdateHandlerException.class, "Something went wrong.")
     );
 
     public void handle(Exception e, Long chatId, Integer messageId) {

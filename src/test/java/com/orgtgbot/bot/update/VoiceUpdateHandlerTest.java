@@ -61,7 +61,7 @@ public class VoiceUpdateHandlerTest {
     }
 
     @Test
-    void handle_WhenVoiceMessageIsReceived_andStateIsMainReminder_ShouldHandling() throws Exception {
+    void handle_WhenVoiceMessageIsReceived_andStateIsMainReminder_ShouldHandling() {
         when(update.getMessage()).thenReturn(message);
         when(message.getMessageId()).thenReturn(MESSAGE_ID);
         when(message.getVoice()).thenReturn(voice);
@@ -75,7 +75,7 @@ public class VoiceUpdateHandlerTest {
     }
 
     @Test
-    void handle_WhenVoiceMessageIsReceived_andStateIsNotMainReminder_doNothingAndSendErrorMessage() throws Exception {
+    void handle_WhenVoiceMessageIsReceived_andStateIsNotMainReminder_doNothingAndSendErrorMessage() {
         when(update.getMessage()).thenReturn(message);
         when(message.getMessageId()).thenReturn(MESSAGE_ID);
         when(userStateService.getState(CHAT_ID)).thenReturn(GeneralFields.MAIN_MENU);

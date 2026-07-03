@@ -61,7 +61,7 @@ public class AbstractRouteCallbackHandlerTest {
     }
 
     @Test
-    void handleCallbackQuery_ShouldEditMarkupWithDynamicBack() throws Exception {
+    void handleCallbackQuery_ShouldEditMarkupWithDynamicBack() {
         when(callbackQuery.getMessage()).thenReturn(message);
         when(message.getChatId()).thenReturn(CHAT_ID);
         when(message.getMessageId()).thenReturn(MESSAGE_ID);

@@ -3,6 +3,7 @@ package com.orgtgbot.service;
 import com.orgtgbot.dto.DatesUpdateDto;
 import com.orgtgbot.entity.DatesEntry;
 import com.orgtgbot.entity.user.UserWorkspace;
+import com.orgtgbot.exception.exceptions.service.DateIndexOutOfBoundException;
 import com.orgtgbot.mapper.DateMapper;
 import com.orgtgbot.repository.UserWorkspaceRepository;
 import com.orgtgbot.service.services.DateService;
@@ -72,10 +73,10 @@ public class DateServiceTest {
     }
 
     @Test
-    void getDate_throwException_ifIndexIsOutOfRange() {
+    void getDate_throwDateIndexOutOfBoundException_ifIndexIsOutOfRange() {
         when(userWorkspaceRepository.findByUser_TelegramChatId(anyLong())).thenReturn(Optional.of(example));
 
-        Assertions.assertThrows(IllegalStateException.class,
+        Assertions.assertThrows(DateIndexOutOfBoundException.class,
                 () -> dateService.getDatesEntry(anyLong(), 6));
 
         verify(userWorkspaceRepository, times(1)).findByUser_TelegramChatId(anyLong());
