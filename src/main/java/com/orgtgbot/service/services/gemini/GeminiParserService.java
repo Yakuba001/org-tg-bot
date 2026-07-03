@@ -7,10 +7,10 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.orgtgbot.config.GeminiProperties;
 import com.orgtgbot.dto.reminder.ReminderDto;
-import com.orgtgbot.exception.exceptions.gemini.DeserializeGeminiResponse;
-import com.orgtgbot.exception.exceptions.gemini.GeminiParseTextException;
-import com.orgtgbot.exception.exceptions.gemini.GeminiParseVoiceException;
-import com.orgtgbot.exception.exceptions.http.SendHttpRequestToGeminiException;
+import com.orgtgbot.exception.exceptions.service.gemini.DeserializeGeminiResponse;
+import com.orgtgbot.exception.exceptions.service.gemini.GeminiParseTextException;
+import com.orgtgbot.exception.exceptions.service.gemini.GeminiParseVoiceException;
+import com.orgtgbot.exception.exceptions.service.http.SendHttpRequestToGeminiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

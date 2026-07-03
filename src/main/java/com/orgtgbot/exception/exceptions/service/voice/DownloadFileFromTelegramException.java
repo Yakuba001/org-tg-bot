@@ -1,4 +1,4 @@
-package com.orgtgbot.exception.exceptions.voice;
+package com.orgtgbot.exception.exceptions.service.voice;
 
 import com.orgtgbot.exception.exceptions.BotException;
 

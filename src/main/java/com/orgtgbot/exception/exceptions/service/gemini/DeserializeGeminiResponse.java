@@ -1,4 +1,4 @@
-package com.orgtgbot.exception.exceptions.gemini;
+package com.orgtgbot.exception.exceptions.service.gemini;
 
 import com.orgtgbot.exception.exceptions.BotException;
 

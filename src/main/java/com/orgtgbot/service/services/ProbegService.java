@@ -3,6 +3,8 @@ package com.orgtgbot.service.services;
 import com.orgtgbot.dto.ProbegUpdateDto;
 import com.orgtgbot.entity.ReportEntry;
 import com.orgtgbot.entity.user.UserWorkspace;
+import com.orgtgbot.exception.exceptions.service.DayNotFoundException;
+import com.orgtgbot.exception.exceptions.service.WorkspaceNotFoundException;
 import com.orgtgbot.mapper.ProbegMapper;
 import com.orgtgbot.repository.UserWorkspaceRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,17 +39,17 @@ public class ProbegService {
     @Transactional(readOnly = true)
     public ReportEntry getReportEntry(Long chatId, int dayNumber) {
         UserWorkspace workspace = userWorkspaceRepository.findByUser_TelegramChatId(chatId)
-                .orElseThrow(() -> new IllegalStateException("Workspace not found for chat: " + chatId));
+                .orElseThrow(() -> new WorkspaceNotFoundException(chatId, "Workspace not found in getReportEntry"));
         return workspace.getReportEntries().stream()
                 .filter(e -> e.getDayNumber() == dayNumber)
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Day not found: " + dayNumber));
+                .orElseThrow(() -> new DayNotFoundException(chatId, "Day not found"));
     }
 
     @Transactional(readOnly = true)
     public List<ReportEntry> getAll(Long chatId) {
         UserWorkspace workspace = userWorkspaceRepository.findByUser_TelegramChatId(chatId)
-                .orElseThrow(() -> new IllegalStateException("Workspace not found for chat: " + chatId));
+                .orElseThrow(() -> new WorkspaceNotFoundException(chatId, "Workspace not found in getAll"));
         return workspace.getReportEntries();
     }
 

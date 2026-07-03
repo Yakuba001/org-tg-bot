@@ -4,13 +4,15 @@ import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import com.orgtgbot.exception.exceptions.BotException;
-import com.orgtgbot.exception.exceptions.gemini.DeserializeGeminiResponse;
-import com.orgtgbot.exception.exceptions.gemini.GeminiParseTextException;
-import com.orgtgbot.exception.exceptions.gemini.GeminiParseVoiceException;
-import com.orgtgbot.exception.exceptions.http.SendHttpRequestToGeminiException;
-import com.orgtgbot.exception.exceptions.reminder.SendRemindException;
-import com.orgtgbot.exception.exceptions.voice.DownloadFileFromTelegramException;
-import com.orgtgbot.exception.exceptions.voice.FailedHandleVoiceException;
+import com.orgtgbot.exception.exceptions.service.DayNotFoundException;
+import com.orgtgbot.exception.exceptions.service.WorkspaceNotFoundException;
+import com.orgtgbot.exception.exceptions.service.gemini.DeserializeGeminiResponse;
+import com.orgtgbot.exception.exceptions.service.gemini.GeminiParseTextException;
+import com.orgtgbot.exception.exceptions.service.gemini.GeminiParseVoiceException;
+import com.orgtgbot.exception.exceptions.service.http.SendHttpRequestToGeminiException;
+import com.orgtgbot.exception.exceptions.service.reminder.SendRemindException;
+import com.orgtgbot.exception.exceptions.service.voice.DownloadFileFromTelegramException;
+import com.orgtgbot.exception.exceptions.service.voice.FailedHandleVoiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -31,7 +33,9 @@ public class GlobalExceptionHandler {
             DeserializeGeminiResponse.class, "Fail, from AI side.",
             SendRemindException.class, "Send remind failed.",
             DownloadFileFromTelegramException.class, "Fail, try create remind by text.",
-            FailedHandleVoiceException.class, "Fail, try create remind by text."
+            FailedHandleVoiceException.class, "Fail, try create remind by text.",
+            WorkspaceNotFoundException.class, "Try again later.",
+            DayNotFoundException.class, "Add this day and try again."
     );
 
     public void handle(Exception e, Long chatId, Integer messageId) {

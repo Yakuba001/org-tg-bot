@@ -1,4 +1,4 @@
-package com.orgtgbot.exception.exceptions.reminder;
+package com.orgtgbot.exception.exceptions.service.reminder;
 
 import com.orgtgbot.exception.exceptions.BotException;
 

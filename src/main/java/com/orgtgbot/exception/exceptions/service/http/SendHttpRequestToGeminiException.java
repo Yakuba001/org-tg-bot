@@ -1,4 +1,4 @@
-package com.orgtgbot.exception.exceptions.http;
+package com.orgtgbot.exception.exceptions.service.http;
 
 import com.orgtgbot.exception.exceptions.BotException;
 

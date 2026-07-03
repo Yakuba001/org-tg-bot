@@ -2,7 +2,7 @@ package com.orgtgbot.service.services.reminder;
 
 import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.entity.reminder.ReminderEntity;
-import com.orgtgbot.exception.exceptions.reminder.SendRemindException;
+import com.orgtgbot.exception.exceptions.service.reminder.SendRemindException;
 import com.orgtgbot.repository.ReminderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;

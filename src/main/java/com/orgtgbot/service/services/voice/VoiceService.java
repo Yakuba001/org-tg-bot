@@ -4,7 +4,7 @@ import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import com.orgtgbot.config.TelegramBotProperties;
-import com.orgtgbot.exception.exceptions.voice.FailedHandleVoiceException;
+import com.orgtgbot.exception.exceptions.service.voice.FailedHandleVoiceException;
 import com.orgtgbot.service.services.reminder.ReminderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
