@@ -3,6 +3,7 @@ package com.orgtgbot.service.services;
 import com.orgtgbot.entity.DatesEntry;
 import com.orgtgbot.entity.GeneralEntry;
 import com.orgtgbot.entity.ReportEntry;
+import com.orgtgbot.exception.exceptions.service.ExcelGeneratorException;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -41,7 +43,7 @@ public class ExcelService {
     private static final int DATE_COLUMN = 2;                  // C
 
     @Transactional(readOnly = true)
-    public byte[] generateReport(Long chatId) throws Exception {
+    public byte[] generateReport(Long chatId) {
         // 1. Извлекаем изолированные данные конкретного водителя
         List<ReportEntry> entries = probegService.getAll(chatId);
         List<DatesEntry> dates = dateService.getAll(chatId);
@@ -119,6 +121,8 @@ public class ExcelService {
 
             workbook.write(out);
             return out.toByteArray();
+        } catch (IOException e) {
+            throw new ExcelGeneratorException(chatId, "Fail create excel file");
         }
     }
 

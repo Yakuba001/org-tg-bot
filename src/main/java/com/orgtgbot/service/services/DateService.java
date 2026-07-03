@@ -3,6 +3,8 @@ package com.orgtgbot.service.services;
 import com.orgtgbot.dto.DatesUpdateDto;
 import com.orgtgbot.entity.DatesEntry;
 import com.orgtgbot.entity.user.UserWorkspace;
+import com.orgtgbot.exception.exceptions.service.DateIndexOutOfBoundException;
+import com.orgtgbot.exception.exceptions.service.WorkspaceNotFoundException;
 import com.orgtgbot.mapper.DateMapper;
 import com.orgtgbot.repository.UserWorkspaceRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,7 @@ public class DateService {
     @Transactional(readOnly = true)
     public List<DatesEntry> getAll(Long chatId) {
         UserWorkspace workspace = userWorkspaceRepository.findByUser_TelegramChatId(chatId)
-                .orElseThrow(() -> new IllegalStateException("Workspace not found for chat: " + chatId));
+                .orElseThrow(() -> new WorkspaceNotFoundException(chatId, "Workspace not found in DateService getAll"));
         return workspace.getDatesEntries();
     }
 
@@ -36,7 +38,7 @@ public class DateService {
         List<DatesEntry> dates = getAll(chatId);
         int index = dayNumber - 1;
         if (index < 0 || index >= dates.size()) {
-            throw new IllegalStateException("Day index out of bounds: " + dayNumber);
+            throw new DateIndexOutOfBoundException(chatId, "Day index out of bounds: " + dayNumber);
         }
         return dates.get(index);
     }

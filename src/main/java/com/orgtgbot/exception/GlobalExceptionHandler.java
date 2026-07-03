@@ -4,7 +4,9 @@ import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import com.orgtgbot.exception.exceptions.BotException;
+import com.orgtgbot.exception.exceptions.service.DateIndexOutOfBoundException;
 import com.orgtgbot.exception.exceptions.service.DayNotFoundException;
+import com.orgtgbot.exception.exceptions.service.ExcelGeneratorException;
 import com.orgtgbot.exception.exceptions.service.WorkspaceNotFoundException;
 import com.orgtgbot.exception.exceptions.service.gemini.DeserializeGeminiResponse;
 import com.orgtgbot.exception.exceptions.service.gemini.GeminiParseTextException;
@@ -26,16 +28,18 @@ public class GlobalExceptionHandler {
 
     private final TelegramSender sender;
 
-    private static final Map<Class<? extends Exception>, String> ERROR_MESSAGES = Map.of(
-            GeminiParseTextException.class, "Fail, try create remind again.",
-            GeminiParseVoiceException.class, "Fail, try create remind by text.",
-            SendHttpRequestToGeminiException.class, "Fail, from AI side.",
-            DeserializeGeminiResponse.class, "Fail, from AI side.",
-            SendRemindException.class, "Send remind failed.",
-            DownloadFileFromTelegramException.class, "Fail, try create remind by text.",
-            FailedHandleVoiceException.class, "Fail, try create remind by text.",
-            WorkspaceNotFoundException.class, "Try again later.",
-            DayNotFoundException.class, "Add this day and try again."
+    private static final Map<Class<? extends Exception>, String> ERROR_MESSAGES = Map.ofEntries(
+            Map.entry(GeminiParseTextException.class, "Fail, try create remind again."),
+            Map.entry(GeminiParseVoiceException.class, "Fail, try create remind by text."),
+            Map.entry(SendHttpRequestToGeminiException.class, "Fail, from AI side."),
+            Map.entry(DeserializeGeminiResponse.class, "Fail, from AI side."),
+            Map.entry(SendRemindException.class, "Send remind failed."),
+            Map.entry(DownloadFileFromTelegramException.class, "Fail, try create remind by text."),
+            Map.entry(FailedHandleVoiceException.class, "Fail, try create remind by text."),
+            Map.entry(WorkspaceNotFoundException.class, "Try again later."),
+            Map.entry(DayNotFoundException.class, "Add this day and try again."),
+            Map.entry(ExcelGeneratorException.class, "Fail, create excel file."),
+            Map.entry(DateIndexOutOfBoundException.class, "You input wrong day, try again.")
     );
 
     public void handle(Exception e, Long chatId, Integer messageId) {
