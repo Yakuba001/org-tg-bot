@@ -4,10 +4,9 @@ import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.registry.core.interactions.CallbackHandler;
 import com.orgtgbot.bot.callback.registry.core.interactions.ClickableHandler;
 import com.orgtgbot.bot.callback.registry.core.interactions.TextAnswerableHandler;
+import com.orgtgbot.exception.exceptions.callback.DispatcherHandleException;
 import com.orgtgbot.service.services.user.UserStateService;
-import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
@@ -16,7 +15,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Component
 public class CallbackRegistry {
 
@@ -27,55 +25,37 @@ public class CallbackRegistry {
     public CallbackRegistry(List<CallbackHandler> all,
                             TelegramSender telegramSender,
                             UserStateService userStateService) {
-        this.telegramSender = telegramSender;
         this.handlers = all.stream()
                 .collect(Collectors.toUnmodifiableMap(
                         CallbackHandler::callbackData, Function.identity()));
+        this.telegramSender = telegramSender;
         this.userStateService = userStateService;
     }
 
     public void dispatch(GeneralFields field,
                          CallbackQuery callbackQuery,
                          Long chatId,
-                         Integer callbackMessageId,
-                         Integer botMenuId) throws Exception {
+                         Integer callbackMessageId) {
         CallbackHandler handler = handlers.get(field);
         telegramSender.answerCallback(callbackQuery.getId());
-        if (handler != null) {
-            if (handler instanceof ClickableHandler clickableHandler) {
-                clickableHandler.handle(callbackQuery);
-                userStateService.setStateAndMessageId(chatId, field, callbackMessageId);
-            } else {
-                log.warn("Найден хэндлер для {}, но он не реализует ClickableHandler!", field);
-                sendDispatcherError(chatId, botMenuId);
-            }
-        } else {
-            sendDispatcherError(chatId, botMenuId);
+        if (handler instanceof ClickableHandler clickableHandler) {
+            clickableHandler.handle(callbackQuery);
+            userStateService.setStateAndMessageId(chatId, field, callbackMessageId);
+            return;
         }
+        throw new DispatcherHandleException(chatId, "You can`t handle this handler(dispatch): " + handler);
     }
 
     public void handle(GeneralFields field,
                        Long chatId,
                        String text,
-                       Integer botMenuId) throws Exception {
+                       Integer botMenuId) {
         CallbackHandler handler = handlers.get(field);
-        if (handler != null) {
-            if (handler instanceof TextAnswerableHandler answerableHandler) {
-                answerableHandler.handle(chatId, text, botMenuId, telegramSender);
-                userStateService.clearState(chatId);
-            } else {
-                log.warn("Хэндлер для стейта {} найден, но он не ожидает текстового ввода (нет TextAnswerableHandler)", field);
-                sendDispatcherError(chatId, botMenuId);
-            }
-        } else {
-            log.warn("Неожиданный стейт: {}", field);
-            sendDispatcherError(chatId, botMenuId);
+        if (handler instanceof TextAnswerableHandler answerableHandler) {
+            answerableHandler.handle(chatId, text, botMenuId, telegramSender);
+            userStateService.clearState(chatId);
+            return;
         }
-    }
-
-    private void sendDispatcherError(Long chatId, Integer botMenuId) {
-        telegramSender.editMarkup(chatId, botMenuId, "Ошибка диспетчера!\n",
-                KeyboardFactory.buildMenuForGroup(GeneralFields.MAIN_MENU));
-        userStateService.clearState(chatId);
+        throw new DispatcherHandleException(chatId, "You can`t handle this handler(handle): " + handler);
     }
 }

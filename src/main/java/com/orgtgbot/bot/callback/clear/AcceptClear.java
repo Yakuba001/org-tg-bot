@@ -22,7 +22,7 @@ public class AcceptClear implements ClickableHandler {
     }
 
     @Override
-    public void handle(CallbackQuery callbackQuery) throws Exception {
+    public void handle(CallbackQuery callbackQuery) {
         Long chatId = callbackQuery.getMessage().getChatId();
         probegService.clearAll(chatId);
 

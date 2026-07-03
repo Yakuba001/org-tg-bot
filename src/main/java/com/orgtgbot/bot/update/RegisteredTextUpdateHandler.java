@@ -25,7 +25,7 @@ public class RegisteredTextUpdateHandler implements UpdateHandler {
     }
 
     @Override
-    public void handle(Update update, Long chatId) throws Exception {
+    public void handle(Update update, Long chatId) {
         Message message = update.getMessage();
         Integer messageId = message.getMessageId();
         String text = message.getText().trim();

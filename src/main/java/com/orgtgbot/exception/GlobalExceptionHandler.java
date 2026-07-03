@@ -4,10 +4,13 @@ import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
 import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import com.orgtgbot.exception.exceptions.BotException;
+import com.orgtgbot.exception.exceptions.callback.DispatcherHandleException;
 import com.orgtgbot.exception.exceptions.service.DateIndexOutOfBoundException;
 import com.orgtgbot.exception.exceptions.service.DayNotFoundException;
 import com.orgtgbot.exception.exceptions.service.ExcelGeneratorException;
 import com.orgtgbot.exception.exceptions.service.WorkspaceNotFoundException;
+import com.orgtgbot.exception.exceptions.service.bot.telegram.client.TelegramClientExecutorException;
+import com.orgtgbot.exception.exceptions.service.bot.telegram.sender.*;
 import com.orgtgbot.exception.exceptions.service.gemini.DeserializeGeminiResponse;
 import com.orgtgbot.exception.exceptions.service.gemini.GeminiParseTextException;
 import com.orgtgbot.exception.exceptions.service.gemini.GeminiParseVoiceException;
@@ -39,7 +42,14 @@ public class GlobalExceptionHandler {
             Map.entry(WorkspaceNotFoundException.class, "Try again later."),
             Map.entry(DayNotFoundException.class, "Add this day and try again."),
             Map.entry(ExcelGeneratorException.class, "Fail, create excel file."),
-            Map.entry(DateIndexOutOfBoundException.class, "You input wrong day, try again.")
+            Map.entry(DateIndexOutOfBoundException.class, "You input wrong day, try again."),
+            Map.entry(TSAnswerCallbackException.class, "Something went wrong."),
+            Map.entry(TSSendDocumentException.class, "Something went wrong."),
+            Map.entry(TSDeleteMessageException.class, "Something went wrong."),
+            Map.entry(TSEditMarkupException.class, "Something went wrong."),
+            Map.entry(TSSendMessageException.class, "Something went wrong."),
+            Map.entry(DispatcherHandleException.class, "Fail in dispatcher."),
+            Map.entry(TelegramClientExecutorException.class, "Something went wrong.")
     );
 
     public void handle(Exception e, Long chatId, Integer messageId) {

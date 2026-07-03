@@ -21,7 +21,7 @@ public abstract class AbstractRouteCallbackHandler implements ClickableHandler, 
     protected abstract void setRouteAmount(Long chatId, String text);
 
     @Override
-    public final void handle(CallbackQuery callbackQuery) throws Exception {
+    public final void handle(CallbackQuery callbackQuery) {
         Long chatId = callbackQuery.getMessage().getChatId();
         Integer messageId = callbackQuery.getMessage().getMessageId();
         String amount = getRouteAmount(chatId);

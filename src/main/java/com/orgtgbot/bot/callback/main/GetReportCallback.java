@@ -21,7 +21,7 @@ public class GetReportCallback implements ClickableHandler {
     }
 
     @Override
-    public void handle(CallbackQuery callbackQuery) throws Exception {
+    public void handle(CallbackQuery callbackQuery) {
         Long chatId = callbackQuery.getMessage().getChatId();
         byte[] file = excelService.generateReport(chatId);
         sender.sendDocument(chatId, file, "probeg.xlsx");

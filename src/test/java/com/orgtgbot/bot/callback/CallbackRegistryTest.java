@@ -35,7 +35,6 @@ public class CallbackRegistryTest {
     private final String queryId = "query_123";
     private final Long chatId = 111L;
     private final Integer messageId = 222;
-    private final Integer botMenuId = 333;
 
     @BeforeEach
     void setUp() {
@@ -50,10 +49,10 @@ public class CallbackRegistryTest {
     }
 
     @Test
-    void dispatch_WithValidClickableHandler_ShouldExecuteSuccessfully() throws Exception {
+    void dispatch_WithValidClickableHandler_ShouldExecuteSuccessfully() {
         when(callbackQuery.getId()).thenReturn(queryId);
 
-        callbackRegistry.dispatch(clickableField, callbackQuery, chatId, messageId, botMenuId);
+        callbackRegistry.dispatch(clickableField, callbackQuery, chatId, messageId);
 
         verify(telegramSender).answerCallback(queryId);
         verify(clickableHandler).handle(callbackQuery);
@@ -62,10 +61,10 @@ public class CallbackRegistryTest {
     }
 
     @Test
-    void dispatch_WithNotClickableHandler_ShouldNotExecuteAndDoNotSetState() throws Exception {
+    void dispatch_WithNotClickableHandler_ShouldNotExecuteAndDoNotSetState() {
         when(callbackQuery.getId()).thenReturn(queryId);
 
-        callbackRegistry.dispatch(textAnswerableField, callbackQuery, chatId, messageId, botMenuId);
+        callbackRegistry.dispatch(textAnswerableField, callbackQuery, chatId, messageId);
 
         verify(telegramSender).answerCallback(queryId);
         verify(clickableHandler, never()).handle(callbackQuery);
@@ -74,17 +73,17 @@ public class CallbackRegistryTest {
     }
 
     @Test
-    void dispatch_justSendAnMessage_IfHandlerNotFoundInGeneralHandlerMap() throws Exception {
+    void dispatch_justSendAnMessage_IfHandlerNotFoundInGeneralHandlerMap() {
         when(callbackQuery.getId()).thenReturn(queryId);
 
-        callbackRegistry.dispatch(GeneralFields.NONE, callbackQuery, chatId, messageId, botMenuId);
+        callbackRegistry.dispatch(GeneralFields.NONE, callbackQuery, chatId, messageId);
 
         verify(telegramSender).answerCallback(queryId);
         verify(telegramSender, times(1)).editMarkup(anyLong(), anyInt(), anyString(), any());
     }
 
     @Test
-    void handle_WithValidHandler_ShouldExecuteSuccessfully() throws Exception {
+    void handle_WithValidHandler_ShouldExecuteSuccessfully() {
         callbackRegistry.handle(textAnswerableField, chatId, queryId, messageId);
 
         verify(textAnswerableHandler, times(1)).handle(anyLong(), anyString(), anyInt(), any());
@@ -93,7 +92,7 @@ public class CallbackRegistryTest {
     }
 
     @Test
-    void handle_WithNotTextHandler_ShouldNotExecute() throws Exception {
+    void handle_WithNotTextHandler_ShouldNotExecute() {
         callbackRegistry.handle(clickableField, chatId, queryId, messageId);
 
         verify(textAnswerableHandler, never()).handle(anyLong(), anyString(), anyInt(), any());
@@ -102,7 +101,7 @@ public class CallbackRegistryTest {
     }
 
     @Test
-    void handle_justSendAnMessage_IfHandlerNotFoundInGeneralHandlerMap() throws Exception {
+    void handle_justSendAnMessage_IfHandlerNotFoundInGeneralHandlerMap() {
         callbackRegistry.handle(GeneralFields.NONE, chatId, queryId, messageId);
 
         verify(telegramSender, times(1)).editMarkup(anyLong(), anyInt(), anyString(), any());

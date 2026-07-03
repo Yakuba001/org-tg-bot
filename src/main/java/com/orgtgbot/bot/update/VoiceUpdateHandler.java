@@ -23,7 +23,7 @@ public class VoiceUpdateHandler implements UpdateHandler {
     }
 
     @Override
-    public void handle(Update update, Long chatId) throws Exception {
+    public void handle(Update update, Long chatId) {
         Message message = update.getMessage();
         Integer messageId = message.getMessageId();
         GeneralFields currentField = userStateService.getState(chatId);

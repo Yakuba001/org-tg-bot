@@ -1,7 +1,7 @@
 package com.orgtgbot.bot;
 
+import com.orgtgbot.exception.exceptions.service.bot.telegram.sender.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
@@ -15,7 +15,6 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.io.ByteArrayInputStream;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class TelegramSender {
@@ -29,7 +28,7 @@ public class TelegramSender {
                     .text(text)
                     .build());
         } catch (TelegramApiException e) {
-            log.error("Ошибка отправки сообщения: chatId={}", chatId, e);
+            throw new TSSendMessageException(chatId, "Failed send message", e);
         }
     }
 
@@ -42,7 +41,7 @@ public class TelegramSender {
                     .replyMarkup(markup)
                     .build());
         } catch (TelegramApiException e) {
-            log.error("Ошибка редактирования: messageId={}", messageId, e);
+            throw new TSEditMarkupException(chatId, "Failed edit message by messageId: " + messageId, e);
         }
     }
 
@@ -53,7 +52,7 @@ public class TelegramSender {
                     .messageId(messageId)
                     .build());
         } catch (TelegramApiException e) {
-            log.error("Ошибка удаления: messageId={}", messageId, e);
+            throw new TSDeleteMessageException(chatId, "Failed delete message by messageId: " + messageId, e);
         }
     }
 
@@ -64,13 +63,17 @@ public class TelegramSender {
                     .document(new InputFile(new ByteArrayInputStream(bytes), fileName))
                     .build());
         } catch (TelegramApiException e) {
-            log.error("Ошибка отправки файла chat={}", chatId, e);
+            throw new TSSendDocumentException(chatId, "Failed send document", e);
         }
     }
 
-    public void answerCallback(String callbackQueryId) throws TelegramApiException {
-        telegramClient.execute(AnswerCallbackQuery.builder()
-                .callbackQueryId(callbackQueryId)
-                .build());
+    public void answerCallback(String callbackQueryId) {
+        try {
+            telegramClient.execute(AnswerCallbackQuery.builder()
+                    .callbackQueryId(callbackQueryId)
+                    .build());
+        } catch (TelegramApiException e) {
+            throw new TSAnswerCallbackException("Cant handle this callback: " + callbackQueryId, e);
+        }
     }
 }

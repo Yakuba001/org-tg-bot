@@ -23,7 +23,7 @@ public class UpdateDispatcher {
     private final UserStateService userStateService;
     private final List<UpdateHandler> handlers;
 
-    public void dispatch(Update update) throws Exception {
+    public void dispatch(Update update) {
         Long chatId = fieldExtractor(update, MaybeInaccessibleMessage::getChatId)
                 .orElseThrow(() -> new IllegalStateException("ChatId not found"));
         boolean isUserRegistered = userEntryRepository.existsByTelegramChatId(chatId);
