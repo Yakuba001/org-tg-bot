@@ -8,6 +8,7 @@ import com.orgtgbot.exception.exceptions.gemini.DeserializeGeminiResponse;
 import com.orgtgbot.exception.exceptions.gemini.GeminiParseTextException;
 import com.orgtgbot.exception.exceptions.gemini.GeminiParseVoiceException;
 import com.orgtgbot.exception.exceptions.http.SendHttpRequestToGeminiException;
+import com.orgtgbot.exception.exceptions.reminder.SendRemindException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,8 @@ public class GlobalExceptionHandler {
             GeminiParseTextException.class, "Fail, try create remind again.",
             GeminiParseVoiceException.class, "Fail, try create remind by text.",
             SendHttpRequestToGeminiException.class, "Fail, from AI side.",
-            DeserializeGeminiResponse.class, "Fail, from AI side."
+            DeserializeGeminiResponse.class, "Fail, from AI side.",
+            SendRemindException.class, "Send remind failed."
     );
 
     public void handle(Exception e, Long chatId, Integer messageId) {
