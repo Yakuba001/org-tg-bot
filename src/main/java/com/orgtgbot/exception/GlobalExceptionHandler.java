@@ -57,11 +57,20 @@ public class GlobalExceptionHandler {
                 ? be.getChatId()
                 : chatId;
         log.error("[BOT-ERROR] Exception caught in GEH: {}", e.getMessage(), e);
-        String errorUserMessage = ERROR_MESSAGES.getOrDefault(
-                e.getClass(),
-                "Something went wrong. Please try again later."
-        );
+        String errorUserMessage = findMessageForException(e.getClass());
         safeEdit(resolvedChatId, errorUserMessage, messageId);
+    }
+
+    private String findMessageForException(Class<? extends Exception> exceptionClass) {
+        if (ERROR_MESSAGES.containsKey(exceptionClass)) {
+            return ERROR_MESSAGES.get(exceptionClass);
+        }
+        for (Map.Entry<Class<? extends Exception>, String> entry : ERROR_MESSAGES.entrySet()) {
+            if (entry.getKey().isAssignableFrom(exceptionClass)) {
+                return entry.getValue();
+            }
+        }
+        return "Something went wrong. Please try again later.";
     }
 
     private void safeEdit(Long chatId, String text, Integer messageId) {
