@@ -58,11 +58,9 @@ public class ReminderService {
     @Transactional(readOnly = true)
     public String getAllRemindersFormatted(Long chatId) {
         List<ReminderEntity> reminders = reminderRepository.findAllByTelegramChatId(chatId);
-
         if (reminders.isEmpty()) {
             return "\nУ вас пока нет активных напоминаний.";
         }
-
         return "\nВаши напоминания:\n" + reminders.stream()
                 .map(r -> "🔹 " + r.getTargetTime().format(FORMATTER) + " — " + r.getText())
                 .collect(Collectors.joining("\n"));
