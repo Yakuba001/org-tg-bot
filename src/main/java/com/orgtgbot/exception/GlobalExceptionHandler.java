@@ -84,8 +84,14 @@ public class GlobalExceptionHandler {
         if (chatId == null) return;
         try {
             sender.editMarkup(chatId, messageId, text, KeyboardFactory.buildMenuForGroup(GeneralFields.MAIN_MENU));
-        } catch (Exception e) {
-            log.error("Failed to send error message to chatId={}: ", chatId, e);
+        } catch (Exception tgEditException) {
+            log.warn("[GEH-WARNING] Failed to edit markup, trying fallback sendMessage. Reason: {}", tgEditException.getMessage());
+            try {
+                sender.sendMessage(chatId, "⚠️ " + text);
+            } catch (Exception tgSendException) {
+                log.error("[GEH-CRITICAL] Total collapse. Could not send fallback message to chatId={}. Reason: {}",
+                        chatId, tgSendException.getMessage(), tgSendException);
+            }
         }
     }
 }
