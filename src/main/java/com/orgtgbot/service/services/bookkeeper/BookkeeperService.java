@@ -5,7 +5,7 @@ import com.orgtgbot.entity.bookkeeper.BookkeeperRecord;
 import com.orgtgbot.repository.BookkeeperRepository;
 import com.orgtgbot.service.filehandler.image.ImageService;
 import com.orgtgbot.service.services.gemini.GeminiParserService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,12 +14,19 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class BookkeeperService {
 
     private final BookkeeperRepository bookkeeperRepository;
     private final GeminiParserService geminiParserService;
     private final ImageService imageService;
+
+    public BookkeeperService(BookkeeperRepository bookkeeperRepository,
+                             GeminiParserService geminiParserService,
+                             @Lazy ImageService imageService) {
+        this.bookkeeperRepository = bookkeeperRepository;
+        this.geminiParserService = geminiParserService;
+        this.imageService = imageService;
+    }
 
     @Transactional
     public void addReceipt(Long chatId, String fileId) {
