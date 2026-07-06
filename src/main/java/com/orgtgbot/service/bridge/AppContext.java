@@ -3,6 +3,7 @@ package com.orgtgbot.service.bridge;
 import com.orgtgbot.service.services.DateService;
 import com.orgtgbot.service.services.GeneralService;
 import com.orgtgbot.service.services.ProbegService;
+import com.orgtgbot.service.services.bookkeeper.BookkeeperService;
 import com.orgtgbot.service.services.reminder.ReminderService;
 
 public record AppContext(
@@ -10,5 +11,6 @@ public record AppContext(
         ProbegService probegService,
         DateService dateService,
         ReminderService reminderService,
+        BookkeeperService bookkeeperService,
         Long chatId
 ) {}

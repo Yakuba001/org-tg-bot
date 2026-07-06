@@ -237,7 +237,11 @@ public enum GeneralFields {
 
     MAIN_REMINDER("Напоминалка", MAIN_MENU, MAIN_MENU,
             ctx -> ctx.reminderService().getAllRemindersFormatted(ctx.chatId()),
-            (ctx, val) -> ctx.reminderService().addRemind(ctx.chatId(), val)),;
+            (ctx, val) -> ctx.reminderService().addRemind(ctx.chatId(), val)),
+
+    MAIN_RECEIPT("Бухгалтер", MAIN_MENU, MAIN_MENU,
+            ctx -> ctx.bookkeeperService().getWhatWasSpendDuringTheMonth(ctx.chatId()),
+            (ctx, val) -> ctx.bookkeeperService().addReceipt(ctx.chatId(), val));
 
     private final String description;
     private final GeneralFields parent;

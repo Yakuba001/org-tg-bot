@@ -1,6 +1,5 @@
-package com.orgtgbot.service.voice;
+package com.orgtgbot.service.filehandler;
 
-import com.orgtgbot.service.services.voice.TelegramFileDownloader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 

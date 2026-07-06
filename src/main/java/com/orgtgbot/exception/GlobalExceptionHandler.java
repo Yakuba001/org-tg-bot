@@ -17,6 +17,7 @@ import com.orgtgbot.exception.exceptions.service.gemini.DeserializeGeminiRespons
 import com.orgtgbot.exception.exceptions.service.gemini.GeminiParseTextException;
 import com.orgtgbot.exception.exceptions.service.gemini.GeminiParseVoiceException;
 import com.orgtgbot.exception.exceptions.service.http.SendHttpRequestToGeminiException;
+import com.orgtgbot.exception.exceptions.service.image.FailedHandleImageException;
 import com.orgtgbot.exception.exceptions.service.reminder.SendRemindException;
 import com.orgtgbot.exception.exceptions.service.voice.DownloadFileFromTelegramException;
 import com.orgtgbot.exception.exceptions.service.voice.FailedHandleVoiceException;
@@ -53,7 +54,9 @@ public class GlobalExceptionHandler {
             Map.entry(DispatcherHandleException.class, "Fail in dispatcher."),
             Map.entry(TelegramClientExecutorException.class, "Something went wrong."),
             Map.entry(FailedExtractingException.class, "Something went wrong."),
-            Map.entry(UnknownUpdateHandlerException.class, "Something went wrong.")
+            Map.entry(UnknownUpdateHandlerException.class, "Something went wrong."),
+            Map.entry(TSGetFilePathException.class, "Something went wrong."),
+            Map.entry(FailedHandleImageException.class, "Something went wrong.")
     );
 
     public void handle(Exception e, Long chatId, Integer messageId) {

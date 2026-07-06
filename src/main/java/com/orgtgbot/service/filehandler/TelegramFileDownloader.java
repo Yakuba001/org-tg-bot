@@ -1,4 +1,4 @@
-package com.orgtgbot.service.services.voice;
+package com.orgtgbot.service.filehandler;
 
 import com.orgtgbot.exception.exceptions.service.voice.DownloadFileFromTelegramException;
 import org.springframework.stereotype.Component;

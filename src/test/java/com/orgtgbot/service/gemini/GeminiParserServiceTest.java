@@ -3,6 +3,7 @@ package com.orgtgbot.service.gemini;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.orgtgbot.config.GeminiProperties;
+import com.orgtgbot.dto.bookkeeper.ReceiptItemDto;
 import com.orgtgbot.dto.reminder.ReminderDto;
 import com.orgtgbot.exception.exceptions.service.http.SendHttpRequestToGeminiException;
 import com.orgtgbot.service.services.gemini.GeminiParserService;
@@ -13,9 +14,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -128,5 +131,41 @@ public class GeminiParserServiceTest {
                 () -> geminiParserService.parseVoiceReminder(mockAudioBytes, userTime));
 
         assertThat(result.getMessage()).contains("Failed try to call gemini");
+    }
+
+    @Test
+    void parseReceiptImage_success_notThrow() throws Exception {
+        byte[] mockImageBytes = new byte[]{1, 2, 3, 4};
+        String mockMimeType = "image/jpeg";
+        String mockGeminiJsonResponse = """
+                {
+                  "candidates": [
+                    {
+                      "content": {
+                        "parts": [
+                          {
+                            "text": "[{\\"item\\":\\"Молоко\\",\\"price\\":45.50},{\\"item\\":\\"Хлеб\\",\\"price\\":18.00}]"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }""";
+        when(httpResponse.statusCode()).thenReturn(200);
+        when(httpResponse.body()).thenReturn(mockGeminiJsonResponse);
+        when(geminiHttpClient.<String>send(any(), any())).thenReturn(httpResponse);
+
+        List<ReceiptItemDto> result = geminiParserService.parseReceiptImage(mockImageBytes, mockMimeType);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+
+        ReceiptItemDto firstItem = result.getFirst();
+        assertEquals("Молоко", firstItem.item());
+        assertEquals(new BigDecimal("45.50"), firstItem.price());
+
+        ReceiptItemDto secondItem = result.get(1);
+        assertEquals("Хлеб", secondItem.item());
+        assertEquals(new BigDecimal("18.00"), secondItem.price());
     }
 }

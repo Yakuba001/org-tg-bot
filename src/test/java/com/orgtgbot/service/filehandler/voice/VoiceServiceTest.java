@@ -1,12 +1,11 @@
-package com.orgtgbot.service.voice;
+package com.orgtgbot.service.filehandler.voice;
 
 import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
 import com.orgtgbot.config.TelegramBotProperties;
 import com.orgtgbot.exception.exceptions.service.voice.FailedHandleVoiceException;
 import com.orgtgbot.service.services.reminder.ReminderService;
-import com.orgtgbot.service.services.voice.TelegramFileDownloader;
-import com.orgtgbot.service.services.voice.VoiceService;
+import com.orgtgbot.service.filehandler.TelegramFileDownloader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

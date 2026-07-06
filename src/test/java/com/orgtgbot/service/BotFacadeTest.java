@@ -6,6 +6,7 @@ import com.orgtgbot.entity.ReportEntry;
 import com.orgtgbot.service.services.DateService;
 import com.orgtgbot.service.services.GeneralService;
 import com.orgtgbot.service.services.ProbegService;
+import com.orgtgbot.service.services.bookkeeper.BookkeeperService;
 import com.orgtgbot.service.services.reminder.ReminderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,7 @@ public class BotFacadeTest {
     @Mock private ProbegService probegService;
     @Mock private DateService dateService;
     @Mock private ReminderService reminderService;
+    @Mock private BookkeeperService bookkeeperService;
 
     @Mock private ReportEntry reportEntry;
 
@@ -35,7 +37,7 @@ public class BotFacadeTest {
 
     @BeforeEach
     void setUp() {
-        botFacade = new BotFacade(generalService, probegService, dateService, reminderService);
+        botFacade = new BotFacade(generalService, probegService, dateService, reminderService, bookkeeperService);
     }
 
     @Test
