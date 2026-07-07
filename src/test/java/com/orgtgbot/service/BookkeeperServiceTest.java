@@ -2,15 +2,18 @@ package com.orgtgbot.service;
 
 import com.orgtgbot.dto.bookkeeper.ReceiptItemDto;
 import com.orgtgbot.entity.bookkeeper.BookkeeperRecord;
+import com.orgtgbot.mapper.bookkeeper.BookkeeperMapper;
 import com.orgtgbot.repository.BookkeeperRepository;
-import com.orgtgbot.service.filehandler.image.ImageService;
+import com.orgtgbot.service.filehandler.image.ImageChecker;
 import com.orgtgbot.service.services.bookkeeper.BookkeeperService;
 import com.orgtgbot.service.services.gemini.GeminiParserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
@@ -27,7 +30,10 @@ public class BookkeeperServiceTest {
 
     @Mock private BookkeeperRepository bookkeeperRepository;
     @Mock private GeminiParserService geminiParserService;
-    @Mock private ImageService imageService;
+    @Mock private ImageChecker imageChecker;
+
+    @Spy
+    private BookkeeperMapper bookkeeperMapper = Mappers.getMapper(BookkeeperMapper.class);
 
     private BookkeeperService bookkeeperService;
 
@@ -35,7 +41,8 @@ public class BookkeeperServiceTest {
 
     @BeforeEach
     void setUp() {
-        bookkeeperService = new BookkeeperService(bookkeeperRepository, geminiParserService, imageService);
+        bookkeeperService =
+                new BookkeeperService(bookkeeperRepository, geminiParserService, imageChecker, bookkeeperMapper);
     }
 
     @Test
@@ -47,8 +54,8 @@ public class BookkeeperServiceTest {
                 .item("Milk")
                 .price(new BigDecimal("122.4")).build());
         LocalDate today = LocalDate.now();
-        when(imageService.getMimeType(testFileId)).thenReturn(testMimeType);
-        when(imageService.downloadImageBytes(testFileId)).thenReturn(testBytes);
+        when(imageChecker.getMimeType(testFileId)).thenReturn(testMimeType);
+        when(imageChecker.downloadImageBytes(testFileId)).thenReturn(testBytes);
         when(geminiParserService.parseReceiptImage(testBytes, testMimeType)).thenReturn(receiptItemDtoList);
 
         bookkeeperService.addReceipt(CHAT_ID, testFileId);
