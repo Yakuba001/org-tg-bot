@@ -11,7 +11,6 @@ import org.mapstruct.*;
 public interface UserMapper {
 
     UserDto toDto(UserEntry entity);
-    UserEntry toEntity(UserDto dto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDto(UserDto dto, @MappingTarget UserEntry entity);
