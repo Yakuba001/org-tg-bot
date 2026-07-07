@@ -1,6 +1,6 @@
 package com.orgtgbot.mapper;
 
-import com.orgtgbot.dto.GeneralUpdateDto;
+import com.orgtgbot.dto.GeneralEntryDto;
 import com.orgtgbot.entity.GeneralEntry;
 import org.mapstruct.*;
 
@@ -17,7 +17,9 @@ public interface GeneralMapper {
     @Mapping(target = "endBalanceLitres", qualifiedByName = "stringToBigDecimal")
     @Mapping(target = "fuelNorm", qualifiedByName = "stringToBigDecimal")
     @Mapping(target = "litresSpend", qualifiedByName = "stringToBigDecimal")
-    void updateEntityFromDto(GeneralUpdateDto dto, @MappingTarget GeneralEntry entity);
+    void updateEntityFromDto(GeneralEntryDto dto, @MappingTarget GeneralEntry entity);
+
+    GeneralEntryDto toDto(GeneralEntry entity);
 
     @SuppressWarnings("unused")
     @Named("stringToBigDecimal")

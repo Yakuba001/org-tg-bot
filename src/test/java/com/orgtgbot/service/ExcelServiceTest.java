@@ -1,8 +1,8 @@
 package com.orgtgbot.service;
 
-import com.orgtgbot.entity.DatesEntry;
-import com.orgtgbot.entity.GeneralEntry;
-import com.orgtgbot.entity.ReportEntry;
+import com.orgtgbot.dto.DatesEntryDto;
+import com.orgtgbot.dto.GeneralEntryDto;
+import com.orgtgbot.dto.ReportEntryDto;
 import com.orgtgbot.service.services.DateService;
 import com.orgtgbot.service.services.ExcelService;
 import com.orgtgbot.service.services.GeneralService;
@@ -41,17 +41,17 @@ public class ExcelServiceTest {
     @Test
     void generateReport_shouldCorrectlyFillExcel() throws Exception {
         Long chatId = 999L;
-        List<DatesEntry> mockDates = List.of(
-                DatesEntry.builder().date("01.06").build(),
-                DatesEntry.builder().date("02.06").build(),
-                DatesEntry.builder().date("03.06").build(),
-                DatesEntry.builder().date("04.06").build(),
-                DatesEntry.builder().date("05.06").build()
+        List<DatesEntryDto> mockDates = List.of(
+                DatesEntryDto.builder().date("01.06").build(),
+                DatesEntryDto.builder().date("02.06").build(),
+                DatesEntryDto.builder().date("03.06").build(),
+                DatesEntryDto.builder().date("04.06").build(),
+                DatesEntryDto.builder().date("05.06").build()
         );
-        List<ReportEntry> mockReports = List.of(
-                ReportEntry.builder().dayNumber(1).morningKm(10).eveningKm(20).totalKm(10).route("Monday").build()
+        List<ReportEntryDto> mockReports = List.of(
+                ReportEntryDto.builder().dayNumber(1).morningKm(10).eveningKm(20).totalKm(10).route("Monday").build()
         );
-        GeneralEntry mockGeneral = GeneralEntry.builder()
+        GeneralEntryDto mockGeneral = GeneralEntryDto.builder()
                 .name("Boss")
                 .carModel("Car")
                 .carNumber("123")
@@ -65,9 +65,9 @@ public class ExcelServiceTest {
                 .litresSpend(BigDecimal.valueOf(42.5))
                 .fueling(40)
                 .build();
-        when(dateService.getAll(chatId)).thenReturn(mockDates);
-        when(probegService.getAll(chatId)).thenReturn(mockReports);
-        when(generalService.getSingleEntry(chatId)).thenReturn(mockGeneral);
+        when(dateService.getAllDto(chatId)).thenReturn(mockDates);
+        when(probegService.getAllDto(chatId)).thenReturn(mockReports);
+        when(generalService.getSingleDto(chatId)).thenReturn(mockGeneral);
 
         byte[] excelBytes = excelService.generateReport(chatId);
 

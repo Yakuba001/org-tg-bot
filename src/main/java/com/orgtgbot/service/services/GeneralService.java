@@ -1,6 +1,6 @@
 package com.orgtgbot.service.services;
 
-import com.orgtgbot.dto.GeneralUpdateDto;
+import com.orgtgbot.dto.GeneralEntryDto;
 import com.orgtgbot.entity.GeneralEntry;
 import com.orgtgbot.entity.user.UserWorkspace;
 import com.orgtgbot.exception.exceptions.service.WorkspaceNotFoundException;
@@ -12,19 +12,24 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class GeneralService {
 
     private final UserWorkspaceRepository userWorkspaceRepository;
     private final GeneralMapper generalMapper;
 
-    public void updateGeneralInfo(Long chatId, GeneralUpdateDto updateDto) {
+    @Transactional
+    public void updateGeneralInfo(Long chatId, GeneralEntryDto updateDto) {
         GeneralEntry entry = getSingleEntry(chatId);
         generalMapper.updateEntityFromDto(updateDto, entry);
     }
 
-    @Transactional(readOnly = true)
-    public GeneralEntry getSingleEntry(Long chatId) {
+    public GeneralEntryDto getSingleDto(Long chatId) {
+        GeneralEntry entry = getSingleEntry(chatId);
+        return generalMapper.toDto(entry);
+    }
+
+    private GeneralEntry getSingleEntry(Long chatId) {
        UserWorkspace workspace = userWorkspaceRepository.findByUser_TelegramChatId(chatId)
                 .orElseThrow(() -> new WorkspaceNotFoundException(
                         chatId,

@@ -1,12 +1,13 @@
 package com.orgtgbot.bot.callback.registry.core.main;
 
-import com.orgtgbot.dto.DatesUpdateDto;
-import com.orgtgbot.dto.GeneralUpdateDto;
-import com.orgtgbot.dto.ProbegUpdateDto;
+import com.orgtgbot.dto.DatesEntryDto;
+import com.orgtgbot.dto.GeneralEntryDto;
+import com.orgtgbot.dto.ReportEntryDto;
 import com.orgtgbot.service.bridge.AppContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -32,208 +33,208 @@ public enum GeneralFields {
     DECLINE_CLEAR("Нет", CLEAR_ALL, CLEAR_ALL, null, null),
 
     SET_MORNING_MONDAY_KM("Утро Понедельник", PROBEG_MONDAY, PROBEG_MONDAY,
-            ctx -> String.valueOf(ctx.probegService().getReportEntry(ctx.chatId(),1)
-                    .getMorningKm()),
+            ctx -> String.valueOf(ctx.probegService().getReportEntryDto(ctx.chatId(),1)
+                    .morningKm()),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),1,
-                            ProbegUpdateDto.builder().morningKm(Integer.parseInt(val)).build())),
+                            ReportEntryDto.builder().morningKm(Integer.parseInt(val)).build())),
     SET_EVENING_MONDAY_KM("Вечер Понедельник", PROBEG_MONDAY, PROBEG_MONDAY,
-            ctx -> String.valueOf(ctx.probegService().getReportEntry(ctx.chatId(),1)
-                    .getEveningKm()),
+            ctx -> String.valueOf(ctx.probegService().getReportEntryDto(ctx.chatId(),1)
+                    .eveningKm()),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),1,
-                            ProbegUpdateDto.builder().eveningKm(Integer.parseInt(val)).build())),
+                            ReportEntryDto.builder().eveningKm(Integer.parseInt(val)).build())),
     SET_TOTAL_MONDAY_KM("Тотал Понедельник", PROBEG_MONDAY, PROBEG_MONDAY,
-            ctx -> String.valueOf(ctx.probegService().getReportEntry(ctx.chatId(),1)
-                    .getTotalKm()),
+            ctx -> String.valueOf(ctx.probegService().getReportEntryDto(ctx.chatId(),1)
+                    .totalKm()),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),1,
-                            ProbegUpdateDto.builder().totalKm(Integer.parseInt(val)).build())),
+                            ReportEntryDto.builder().totalKm(Integer.parseInt(val)).build())),
     SET_MONDAY_ROUTE("Маршрут Понедельник", PROBEG_MONDAY, PROBEG_MONDAY,
-            ctx -> ctx.probegService().getReportEntry(ctx.chatId(),1)
-                    .getRoute(),
+            ctx -> ctx.probegService().getReportEntryDto(ctx.chatId(),1)
+                    .route(),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),1,
-                            ProbegUpdateDto.builder().route(val).build())),
+                            ReportEntryDto.builder().route(val).build())),
     MONDAY_DATE("Понедельник Дата", PROBEG_MONDAY, PROBEG_MONDAY,
-            ctx -> ctx.dateService().getDatesEntry(ctx.chatId(),1)
-                    .getDate(),
+            ctx -> ctx.dateService().getDatesDto(ctx.chatId(),1)
+                    .date(),
             (ctx, val) -> ctx.dateService()
                     .setDate(ctx.chatId(),1,
-                            DatesUpdateDto.builder().date(val).build())),
+                            DatesEntryDto.builder().date(val).build())),
 
     SET_MORNING_TUESDAY_KM("Утро Вторник", PROBEG_TUESDAY, PROBEG_TUESDAY,
-            ctx -> String.valueOf(ctx.probegService().getReportEntry(ctx.chatId(),2)
-                    .getMorningKm()),
+            ctx -> String.valueOf(ctx.probegService().getReportEntryDto(ctx.chatId(),2)
+                    .morningKm()),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),2,
-                            ProbegUpdateDto.builder().morningKm(Integer.parseInt(val)).build())),
+                            ReportEntryDto.builder().morningKm(Integer.parseInt(val)).build())),
     SET_EVENING_TUESDAY_KM("Вечер Вторник", PROBEG_TUESDAY, PROBEG_TUESDAY,
-            ctx -> String.valueOf(ctx.probegService().getReportEntry(ctx.chatId(),2)
-                    .getEveningKm()),
+            ctx -> String.valueOf(ctx.probegService().getReportEntryDto(ctx.chatId(),2)
+                    .eveningKm()),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),2,
-                            ProbegUpdateDto.builder().eveningKm(Integer.parseInt(val)).build())),
+                            ReportEntryDto.builder().eveningKm(Integer.parseInt(val)).build())),
     SET_TOTAL_TUESDAY_KM("Тотал Вторник", PROBEG_TUESDAY, PROBEG_TUESDAY,
-            ctx -> String.valueOf(ctx.probegService().getReportEntry(ctx.chatId(),2)
-                    .getTotalKm()),
+            ctx -> String.valueOf(ctx.probegService().getReportEntryDto(ctx.chatId(),2)
+                    .totalKm()),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),2,
-                            ProbegUpdateDto.builder().totalKm(Integer.parseInt(val)).build())),
+                            ReportEntryDto.builder().totalKm(Integer.parseInt(val)).build())),
     SET_TUESDAY_ROUTE("Маршрут Вторник", PROBEG_TUESDAY, PROBEG_TUESDAY,
-            ctx -> ctx.probegService().getReportEntry(ctx.chatId(),2)
-                    .getRoute(),
+            ctx -> ctx.probegService().getReportEntryDto(ctx.chatId(),2)
+                    .route(),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),2,
-                            ProbegUpdateDto.builder().route(val).build())),
+                            ReportEntryDto.builder().route(val).build())),
     TUESDAY_DATE("Вторник Дата", PROBEG_TUESDAY, PROBEG_TUESDAY,
-            ctx -> ctx.dateService().getDatesEntry(ctx.chatId(),2)
-                    .getDate(),
+            ctx -> ctx.dateService().getDatesDto(ctx.chatId(),2)
+                    .date(),
             (ctx, val) -> ctx.dateService()
                     .setDate(ctx.chatId(),2,
-                            DatesUpdateDto.builder().date(val).build())),
+                            DatesEntryDto.builder().date(val).build())),
 
     SET_MORNING_WEDNESDAY_KM("Утро Среда", PROBEG_WEDNESDAY, PROBEG_WEDNESDAY,
-            ctx -> String.valueOf(ctx.probegService().getReportEntry(ctx.chatId(),3)
-                    .getMorningKm()),
+            ctx -> String.valueOf(ctx.probegService().getReportEntryDto(ctx.chatId(),3)
+                    .morningKm()),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),3,
-                            ProbegUpdateDto.builder().morningKm(Integer.parseInt(val)).build())),
+                            ReportEntryDto.builder().morningKm(Integer.parseInt(val)).build())),
     SET_EVENING_WEDNESDAY_KM("Вечер Среда", PROBEG_WEDNESDAY, PROBEG_WEDNESDAY,
-            ctx -> String.valueOf(ctx.probegService().getReportEntry(ctx.chatId(),3)
-                    .getEveningKm()),
+            ctx -> String.valueOf(ctx.probegService().getReportEntryDto(ctx.chatId(),3)
+                    .eveningKm()),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),3,
-                            ProbegUpdateDto.builder().eveningKm(Integer.parseInt(val)).build())),
+                            ReportEntryDto.builder().eveningKm(Integer.parseInt(val)).build())),
     SET_TOTAL_WEDNESDAY_KM("Тотал Среда", PROBEG_WEDNESDAY, PROBEG_WEDNESDAY,
-            ctx -> String.valueOf(ctx.probegService().getReportEntry(ctx.chatId(),3)
-                    .getTotalKm()),
+            ctx -> String.valueOf(ctx.probegService().getReportEntryDto(ctx.chatId(),3)
+                    .totalKm()),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),3,
-                            ProbegUpdateDto.builder().totalKm(Integer.parseInt(val)).build())),
+                            ReportEntryDto.builder().totalKm(Integer.parseInt(val)).build())),
     SET_WEDNESDAY_ROUTE("Маршрут Среда", PROBEG_WEDNESDAY, PROBEG_WEDNESDAY,
-            ctx -> ctx.probegService().getReportEntry(ctx.chatId(),3)
-                    .getRoute(),
+            ctx -> ctx.probegService().getReportEntryDto(ctx.chatId(),3)
+                    .route(),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),3,
-                            ProbegUpdateDto.builder().route(val).build())),
+                            ReportEntryDto.builder().route(val).build())),
     WEDNESDAY_DATE("Среда Дата", PROBEG_WEDNESDAY, PROBEG_WEDNESDAY,
-            ctx -> ctx.dateService().getDatesEntry(ctx.chatId(),3)
-                    .getDate(),
+            ctx -> ctx.dateService().getDatesDto(ctx.chatId(),3)
+                    .date(),
             (ctx, val) -> ctx.dateService()
                     .setDate(ctx.chatId(),3,
-                            DatesUpdateDto.builder().date(val).build())),
+                            DatesEntryDto.builder().date(val).build())),
 
     SET_MORNING_THURSDAY_KM("Утро Четверг", PROBEG_THURSDAY, PROBEG_THURSDAY,
-            ctx -> String.valueOf(ctx.probegService().getReportEntry(ctx.chatId(),4)
-                    .getMorningKm()),
+            ctx -> String.valueOf(ctx.probegService().getReportEntryDto(ctx.chatId(),4)
+                    .morningKm()),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),4,
-                            ProbegUpdateDto.builder().morningKm(Integer.parseInt(val)).build())),
+                            ReportEntryDto.builder().morningKm(Integer.parseInt(val)).build())),
     SET_EVENING_THURSDAY_KM("Вечер Четверг", PROBEG_THURSDAY, PROBEG_THURSDAY,
-            ctx -> String.valueOf(ctx.probegService().getReportEntry(ctx.chatId(),4)
-                    .getEveningKm()),
+            ctx -> String.valueOf(ctx.probegService().getReportEntryDto(ctx.chatId(),4)
+                    .eveningKm()),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),4,
-                            ProbegUpdateDto.builder().eveningKm(Integer.parseInt(val)).build())),
+                            ReportEntryDto.builder().eveningKm(Integer.parseInt(val)).build())),
     SET_TOTAL_THURSDAY_KM("Тотал Четверг", PROBEG_THURSDAY, PROBEG_THURSDAY,
-            ctx -> String.valueOf(ctx.probegService().getReportEntry(ctx.chatId(),4)
-                    .getTotalKm()),
+            ctx -> String.valueOf(ctx.probegService().getReportEntryDto(ctx.chatId(),4)
+                    .totalKm()),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),4,
-                            ProbegUpdateDto.builder().totalKm(Integer.parseInt(val)).build())),
+                            ReportEntryDto.builder().totalKm(Integer.parseInt(val)).build())),
     SET_THURSDAY_ROUTE("Маршрут Четверг", PROBEG_THURSDAY, PROBEG_THURSDAY,
-            ctx -> ctx.probegService().getReportEntry(ctx.chatId(),4)
-                    .getRoute(),
+            ctx -> ctx.probegService().getReportEntryDto(ctx.chatId(),4)
+                    .route(),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),4,
-                            ProbegUpdateDto.builder().route(val).build())),
+                            ReportEntryDto.builder().route(val).build())),
     THURSDAY_DATE("Четверг Дата", PROBEG_THURSDAY, PROBEG_THURSDAY,
-            ctx -> ctx.dateService().getDatesEntry(ctx.chatId(),4)
-                    .getDate(),
+            ctx -> ctx.dateService().getDatesDto(ctx.chatId(),4)
+                    .date(),
             (ctx, val) -> ctx.dateService()
                     .setDate(ctx.chatId(),4,
-                            DatesUpdateDto.builder().date(val).build())),
+                            DatesEntryDto.builder().date(val).build())),
 
     SET_MORNING_FRIDAY_KM("Утро Пятница", PROBEG_FRIDAY, PROBEG_FRIDAY,
-            ctx -> String.valueOf(ctx.probegService().getReportEntry(ctx.chatId(),5)
-                    .getMorningKm()),
+            ctx -> String.valueOf(ctx.probegService().getReportEntryDto(ctx.chatId(),5)
+                    .morningKm()),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),5,
-                            ProbegUpdateDto.builder().morningKm(Integer.parseInt(val)).build())),
+                            ReportEntryDto.builder().morningKm(Integer.parseInt(val)).build())),
     SET_EVENING_FRIDAY_KM("Вечер Пятница", PROBEG_FRIDAY, PROBEG_FRIDAY,
-            ctx -> String.valueOf(ctx.probegService().getReportEntry(ctx.chatId(),5)
-                    .getEveningKm()),
+            ctx -> String.valueOf(ctx.probegService().getReportEntryDto(ctx.chatId(),5)
+                    .eveningKm()),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),5,
-                            ProbegUpdateDto.builder().eveningKm(Integer.parseInt(val)).build())),
+                            ReportEntryDto.builder().eveningKm(Integer.parseInt(val)).build())),
     SET_TOTAL_FRIDAY_KM("Тотал Пятница", PROBEG_FRIDAY, PROBEG_FRIDAY,
-            ctx -> String.valueOf(ctx.probegService().getReportEntry(ctx.chatId(),5)
-                    .getTotalKm()),
+            ctx -> String.valueOf(ctx.probegService().getReportEntryDto(ctx.chatId(),5)
+                    .totalKm()),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),5,
-                            ProbegUpdateDto.builder().totalKm(Integer.parseInt(val)).build())),
+                            ReportEntryDto.builder().totalKm(Integer.parseInt(val)).build())),
     SET_FRIDAY_ROUTE("Маршрут Пятница", PROBEG_FRIDAY, PROBEG_FRIDAY,
-            ctx -> ctx.probegService().getReportEntry(ctx.chatId(),5)
-                    .getRoute(),
+            ctx -> ctx.probegService().getReportEntryDto(ctx.chatId(),5)
+                    .route(),
             (ctx, val) -> ctx.probegService()
                     .updateProbegInfo(ctx.chatId(),5,
-                            ProbegUpdateDto.builder().route(val).build())),
+                            ReportEntryDto.builder().route(val).build())),
     FRIDAY_DATE("Пятница Дата", PROBEG_FRIDAY, PROBEG_FRIDAY,
-            ctx -> ctx.dateService().getDatesEntry(ctx.chatId(),5)
-                    .getDate(),
+            ctx -> ctx.dateService().getDatesDto(ctx.chatId(),5)
+                    .date(),
             (ctx, val) -> ctx.dateService()
                     .setDate(ctx.chatId(),5,
-                            DatesUpdateDto.builder().date(val).build())),
+                            DatesEntryDto.builder().date(val).build())),
 
     DRIVER("Водитель", GENERAL, GENERAL,
-            ctx -> ctx.generalService().getSingleEntry(ctx.chatId()).getName(),
+            ctx -> ctx.generalService().getSingleDto(ctx.chatId()).name(),
             (ctx, val) -> ctx.generalService().updateGeneralInfo(ctx.chatId(),
-                    GeneralUpdateDto.builder().name(val).build())),
+                    GeneralEntryDto.builder().name(val).build())),
     DATE("Дата", GENERAL, GENERAL,
-            ctx -> ctx.generalService().getSingleEntry(ctx.chatId()).getDate(),
+            ctx -> ctx.generalService().getSingleDto(ctx.chatId()).date(),
             (ctx, val) -> ctx.generalService().updateGeneralInfo(ctx.chatId(),
-                    GeneralUpdateDto.builder().date(val).build())),
+                    GeneralEntryDto.builder().date(val).build())),
     MODEL_AUTO("Марка авто", GENERAL, GENERAL,
-            ctx -> ctx.generalService().getSingleEntry(ctx.chatId()).getCarModel(),
+            ctx -> ctx.generalService().getSingleDto(ctx.chatId()).carModel(),
             (ctx, val) -> ctx.generalService().updateGeneralInfo(ctx.chatId(),
-                    GeneralUpdateDto.builder().carModel(val).build())),
+                    GeneralEntryDto.builder().carModel(val).build())),
     NUMBER_AUTO("Гос.номер", GENERAL, GENERAL,
-            ctx -> ctx.generalService().getSingleEntry(ctx.chatId()).getCarNumber(),
+            ctx -> ctx.generalService().getSingleDto(ctx.chatId()).carNumber(),
             (ctx, val) -> ctx.generalService().updateGeneralInfo(ctx.chatId(),
-                    GeneralUpdateDto.builder().carNumber(val).build())),
+                    GeneralEntryDto.builder().carNumber(val).build())),
     START_WEEK_PROBEG("Показания до раб.дня", GENERAL, GENERAL,
-            ctx -> String.valueOf(ctx.generalService().getSingleEntry(ctx.chatId()).getStartWeekProbeg()),
+            ctx -> String.valueOf(ctx.generalService().getSingleDto(ctx.chatId()).startWeekProbeg()),
             (ctx, val) -> ctx.generalService().updateGeneralInfo(ctx.chatId(),
-                    GeneralUpdateDto.builder().startWeekProbeg(Integer.parseInt(val)).build())),
+                    GeneralEntryDto.builder().startWeekProbeg(Integer.parseInt(val)).build())),
     END_WEEK_PROBEG("Показания после раб.дня", GENERAL, GENERAL,
-            ctx -> String.valueOf(ctx.generalService().getSingleEntry(ctx.chatId()).getEndWeekProbeg()),
+            ctx -> String.valueOf(ctx.generalService().getSingleDto(ctx.chatId()).endWeekProbeg()),
             (ctx, val) -> ctx.generalService().updateGeneralInfo(ctx.chatId(),
-                    GeneralUpdateDto.builder().endWeekProbeg(Integer.parseInt(val)).build())),
+                    GeneralEntryDto.builder().endWeekProbeg(Integer.parseInt(val)).build())),
     START_BALANCE_LITRES("Остаток литров 'Начало'", GENERAL, GENERAL,
-            ctx -> String.valueOf(ctx.generalService().getSingleEntry(ctx.chatId()).getStartBalanceLitres()),
+            ctx -> String.valueOf(ctx.generalService().getSingleDto(ctx.chatId()).startBalanceLitres()),
             (ctx, val) -> ctx.generalService().updateGeneralInfo(ctx.chatId(),
-                    GeneralUpdateDto.builder().startBalanceLitres(val).build())),
+                    GeneralEntryDto.builder().startBalanceLitres(new BigDecimal(val)).build())),
     END_BALANCE_LITRES("Остаток литров 'Конец'", GENERAL, GENERAL,
-            ctx -> String.valueOf(ctx.generalService().getSingleEntry(ctx.chatId()).getEndBalanceLitres()),
+            ctx -> String.valueOf(ctx.generalService().getSingleDto(ctx.chatId()).endBalanceLitres()),
             (ctx, val) -> ctx.generalService().updateGeneralInfo(ctx.chatId(),
-                    GeneralUpdateDto.builder().endBalanceLitres(val).build())),
+                    GeneralEntryDto.builder().endBalanceLitres(new BigDecimal(val)).build())),
     TOTAL_WEEK_KM("Пройдено за неделю", GENERAL, GENERAL,
-            ctx -> String.valueOf(ctx.generalService().getSingleEntry(ctx.chatId()).getTotalWeekKm()),
+            ctx -> String.valueOf(ctx.generalService().getSingleDto(ctx.chatId()).totalWeekKm()),
             (ctx, val) -> ctx.generalService().updateGeneralInfo(ctx.chatId(),
-                    GeneralUpdateDto.builder().totalWeekKm(Integer.parseInt(val)).build())),
+                    GeneralEntryDto.builder().totalWeekKm(Integer.parseInt(val)).build())),
     FUEL_NORM("Норма расхода", GENERAL, GENERAL,
-            ctx -> String.valueOf(ctx.generalService().getSingleEntry(ctx.chatId()).getFuelNorm()),
+            ctx -> String.valueOf(ctx.generalService().getSingleDto(ctx.chatId()).fuelNorm()),
             (ctx, val) -> ctx.generalService().updateGeneralInfo(ctx.chatId(),
-                    GeneralUpdateDto.builder().fuelNorm(val).build())),
+                    GeneralEntryDto.builder().fuelNorm(new BigDecimal(val)).build())),
     LITRES_SPEND("Расход литров", GENERAL, GENERAL,
-            ctx -> String.valueOf(ctx.generalService().getSingleEntry(ctx.chatId()).getLitresSpend()),
+            ctx -> String.valueOf(ctx.generalService().getSingleDto(ctx.chatId()).litresSpend()),
             (ctx, val) -> ctx.generalService().updateGeneralInfo(ctx.chatId(),
-                    GeneralUpdateDto.builder().litresSpend(val).build())),
+                    GeneralEntryDto.builder().litresSpend(new BigDecimal(val)).build())),
     FUELING("Заправлено литров", GENERAL, GENERAL,
-            ctx -> String.valueOf(ctx.generalService().getSingleEntry(ctx.chatId()).getFueling()),
+            ctx -> String.valueOf(ctx.generalService().getSingleDto(ctx.chatId()).fueling()),
             (ctx, val) -> ctx.generalService().updateGeneralInfo(ctx.chatId(),
-                    GeneralUpdateDto.builder().fueling(Integer.parseInt(val)).build())),
+                    GeneralEntryDto.builder().fueling(Integer.parseInt(val)).build())),
 
     MAIN_REMINDER("Напоминалка", MAIN_MENU, MAIN_MENU,
             ctx -> ctx.reminderService().getAllRemindersFormatted(ctx.chatId()),

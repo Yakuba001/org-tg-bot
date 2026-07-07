@@ -1,6 +1,6 @@
 package com.orgtgbot.service;
 
-import com.orgtgbot.dto.DatesUpdateDto;
+import com.orgtgbot.dto.DatesEntryDto;
 import com.orgtgbot.entity.DatesEntry;
 import com.orgtgbot.entity.user.UserWorkspace;
 import com.orgtgbot.exception.exceptions.service.DateIndexOutOfBoundException;
@@ -55,10 +55,12 @@ public class DateServiceTest {
     void getAll_returnListWithFiveElements() {
         when(userWorkspaceRepository.findByUser_TelegramChatId(anyLong())).thenReturn(Optional.of(example));
 
-        List<DatesEntry> result = dateService.getAll(anyLong());
+        List<DatesEntryDto> result = dateService.getAllDto(anyLong());
 
         assertThat(result).hasSize(5);
-        assertThat(result).isEqualTo(example.getDatesEntries());
+        assertThat(result)
+                .extracting(DatesEntryDto::date)
+                .containsExactly("01.01.01", "02.02.02", "03.03.03", "04.04.04", "05.05.05");
         verify(userWorkspaceRepository, times(1)).findByUser_TelegramChatId(anyLong());
     }
 
@@ -66,9 +68,9 @@ public class DateServiceTest {
     void getDate_returnCorrectDate_ifIndexIsInRange() {
         when(userWorkspaceRepository.findByUser_TelegramChatId(anyLong())).thenReturn(Optional.of(example));
 
-        DatesEntry result = dateService.getDatesEntry(anyLong(), 2);
+        DatesEntryDto result = dateService.getDatesDto(anyLong(), 2);
 
-        assertThat(result.getDate()).isEqualTo(example.getDatesEntries().get(1).getDate());
+        assertThat(result.date()).isEqualTo(example.getDatesEntries().get(1).getDate());
         verify(userWorkspaceRepository, times(1)).findByUser_TelegramChatId(anyLong());
     }
 
@@ -77,14 +79,14 @@ public class DateServiceTest {
         when(userWorkspaceRepository.findByUser_TelegramChatId(anyLong())).thenReturn(Optional.of(example));
 
         Assertions.assertThrows(DateIndexOutOfBoundException.class,
-                () -> dateService.getDatesEntry(anyLong(), 6));
+                () -> dateService.getDatesDto(anyLong(), 6));
 
         verify(userWorkspaceRepository, times(1)).findByUser_TelegramChatId(anyLong());
     }
 
     @Test
     void setDate_updateDate_andCorrectUseMapper() {
-        DatesUpdateDto dto = DatesUpdateDto.builder().date("07.07.07").build();
+        DatesEntryDto dto = DatesEntryDto.builder().date("07.07.07").build();
         when(userWorkspaceRepository.findByUser_TelegramChatId(anyLong())).thenReturn(Optional.of(example));
 
         dateService.setDate(anyLong(), 1, dto);

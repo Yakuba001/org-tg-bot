@@ -1,8 +1,8 @@
 package com.orgtgbot.service.services;
 
-import com.orgtgbot.entity.DatesEntry;
-import com.orgtgbot.entity.GeneralEntry;
-import com.orgtgbot.entity.ReportEntry;
+import com.orgtgbot.dto.DatesEntryDto;
+import com.orgtgbot.dto.GeneralEntryDto;
+import com.orgtgbot.dto.ReportEntryDto;
 import com.orgtgbot.exception.exceptions.service.ExcelGeneratorException;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
@@ -45,11 +45,11 @@ public class ExcelService {
     @Transactional(readOnly = true)
     public byte[] generateReport(Long chatId) {
         // 1. Извлекаем изолированные данные конкретного водителя
-        List<ReportEntry> entries = probegService.getAll(chatId);
-        List<DatesEntry> dates = dateService.getAll(chatId);
-        GeneralEntry general = generalService.getSingleEntry(chatId);
+        List<ReportEntryDto> entries = probegService.getAllDto(chatId);
+        List<DatesEntryDto> dates = dateService.getAllDto(chatId);
+        GeneralEntryDto general = generalService.getSingleDto(chatId);
 
-        DatesEntry[] dataModule = {dates.get(0), dates.get(1), dates.get(2), dates.get(3), dates.get(4)};
+        DatesEntryDto[] dataModule = {dates.get(0), dates.get(1), dates.get(2), dates.get(3), dates.get(4)};
 
         ClassPathResource resource = new ClassPathResource("probeg.xlsx");
 
@@ -60,8 +60,8 @@ public class ExcelService {
             Sheet sheet = workbook.getSheetAt(0);
 
             // 2. Заполняем ежедневные данные (Пробег, Маршруты, Даты дней)
-            for (ReportEntry entry : entries) {
-                int rowIndex = ROW_KM[entry.getDayNumber() - 1];
+            for (ReportEntryDto entry : entries) {
+                int rowIndex = ROW_KM[entry.dayNumber() - 1];
                 Row row = sheet.getRow(rowIndex);
                 if (row == null) row = sheet.createRow(rowIndex);
 
@@ -69,14 +69,14 @@ public class ExcelService {
                 Cell routeCell = getOrCreateCell(row, ROUTE_COLUMN);
                 Cell dateCell = getOrCreateCell(row, DATE_COLUMN);
 
-                if (entry.getTotalKm() != 0) {
-                    kmCell.setCellValue(entry.getTotalKm());
+                if (entry.totalKm() != 0) {
+                    kmCell.setCellValue(entry.totalKm());
                 }
-                if (entry.getRoute() != null && !entry.getRoute().trim().isEmpty()) {
-                    routeCell.setCellValue(entry.getRoute());
+                if (entry.route() != null && !entry.route().trim().isEmpty()) {
+                    routeCell.setCellValue(entry.route());
                 }
 
-                String dayDate = dataModule[entry.getDayNumber() - 1].getDate();
+                String dayDate = dataModule[entry.dayNumber() - 1].date();
                 if (dayDate != null && !dayDate.trim().isEmpty()) {
                     dateCell.setCellValue(dayDate);
                 }
@@ -84,40 +84,41 @@ public class ExcelService {
 
             // Строка 3: Водитель, Марка авто, Гос.номер
             Row row3 = getOrCreateRow(sheet, GENERAL_ROW[0]);
-            getOrCreateCell(row3, DRIVER_COLUMN).setCellValue(general.getName());
-            getOrCreateCell(row3, TOTAL_END_COLUMN).setCellValue(general.getCarModel());
-            getOrCreateCell(row3, TOTAL_COLUMN).setCellValue(general.getCarNumber());
+            getOrCreateCell(row3, DRIVER_COLUMN).setCellValue(general.name());
+            getOrCreateCell(row3, TOTAL_END_COLUMN).setCellValue(general.carModel());
+            getOrCreateCell(row3, TOTAL_COLUMN).setCellValue(general.carNumber());
 
             // Строка 5: Дата отчета (в колонку K)
             Row row5 = getOrCreateRow(sheet, GENERAL_ROW[1]);
-            if (general.getDate() != null) {
-                getOrCreateCell(row5, DATE_GENERAL_COLUMN).setCellValue(general.getDate());
+            if (general.date() != null) {
+                getOrCreateCell(row5, DATE_GENERAL_COLUMN).setCellValue(general.date());
             }
 
             // Строка 7: Показания спидометра (До / После рабочего дня)
             Row row7 = getOrCreateRow(sheet, GENERAL_ROW[2]);
-            getOrCreateCell(row7, TOTAL_START_COLUMN).setCellValue(general.getStartWeekProbeg());
-            getOrCreateCell(row7, TOTAL_END_COLUMN).setCellValue(general.getEndWeekProbeg());
+            getOrCreateCell(row7, TOTAL_START_COLUMN).setCellValue(general.startWeekProbeg());
+            getOrCreateCell(row7, TOTAL_END_COLUMN).setCellValue(general.endWeekProbeg());
 
             // Строка 21: Литры (Остаток литров Начало / Конец, Всего пройдено)
             Row row21 = getOrCreateRow(sheet, GENERAL_ROW[3]);
-            if (general.getStartBalanceLitres() != null) {
-                getOrCreateCell(row21, START_BALANCE_LITRES_COLUMN).setCellValue(general.getStartBalanceLitres().doubleValue());
+            if (general.startBalanceLitres() != null) {
+                getOrCreateCell(row21, START_BALANCE_LITRES_COLUMN)
+                        .setCellValue(general.startBalanceLitres().doubleValue());
             }
-            if (general.getEndBalanceLitres() != null) {
-                getOrCreateCell(row21, TOTAL_START_COLUMN).setCellValue(general.getEndBalanceLitres().doubleValue());
+            if (general.endBalanceLitres() != null) {
+                getOrCreateCell(row21, TOTAL_START_COLUMN).setCellValue(general.endBalanceLitres().doubleValue());
             }
-            getOrCreateCell(row21, TOTAL_END_COLUMN).setCellValue(general.getTotalWeekKm());
+            getOrCreateCell(row21, TOTAL_END_COLUMN).setCellValue(general.totalWeekKm());
 
             // Строка 23: Расход топлива (Норма расхода, Расход литров, Заправлено литров)
             Row row23 = getOrCreateRow(sheet, GENERAL_ROW[4]);
-            if (general.getFuelNorm() != null) {
-                getOrCreateCell(row23, FUEL_NORM_COLUMN).setCellValue(general.getFuelNorm().doubleValue());
+            if (general.fuelNorm() != null) {
+                getOrCreateCell(row23, FUEL_NORM_COLUMN).setCellValue(general.fuelNorm().doubleValue());
             }
-            if (general.getLitresSpend() != null) {
-                getOrCreateCell(row23, TOTAL_START_COLUMN).setCellValue(general.getLitresSpend().doubleValue());
+            if (general.litresSpend() != null) {
+                getOrCreateCell(row23, TOTAL_START_COLUMN).setCellValue(general.litresSpend().doubleValue());
             }
-            getOrCreateCell(row23, TOTAL_END_COLUMN).setCellValue(general.getFueling());
+            getOrCreateCell(row23, TOTAL_END_COLUMN).setCellValue(general.fueling());
 
             workbook.write(out);
             return out.toByteArray();

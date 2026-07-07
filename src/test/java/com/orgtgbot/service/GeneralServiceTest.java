@@ -1,6 +1,6 @@
 package com.orgtgbot.service;
 
-import com.orgtgbot.dto.GeneralUpdateDto;
+import com.orgtgbot.dto.GeneralEntryDto;
 import com.orgtgbot.entity.GeneralEntry;
 import com.orgtgbot.entity.user.UserWorkspace;
 import com.orgtgbot.mapper.GeneralMapper;
@@ -46,15 +46,15 @@ public class GeneralServiceTest {
     void getSingleEntry_returnCorrectResult() {
         when(userWorkspaceRepository.findByUser_TelegramChatId(anyLong())).thenReturn(Optional.of(example));
 
-        GeneralEntry result = generalService.getSingleEntry(anyLong());
+        GeneralEntryDto result = generalService.getSingleDto(anyLong());
 
         verify(userWorkspaceRepository, times(1)).findByUser_TelegramChatId(anyLong());
-        assertThat(result.getName()).isEqualTo(example.getGeneralEntry().getName());
+        assertThat(result.name()).isEqualTo(example.getGeneralEntry().getName());
     }
 
     @Test
     void updateGeneralInfo() {
-        GeneralUpdateDto dto = GeneralUpdateDto.builder().name("Worker").build();
+        GeneralEntryDto dto = GeneralEntryDto.builder().name("Worker").build();
         when(userWorkspaceRepository.findByUser_TelegramChatId(anyLong())).thenReturn(Optional.of(example));
 
         generalService.updateGeneralInfo(anyLong(), dto);

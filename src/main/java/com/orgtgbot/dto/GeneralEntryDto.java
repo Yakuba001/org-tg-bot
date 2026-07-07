@@ -2,19 +2,21 @@ package com.orgtgbot.dto;
 
 import lombok.Builder;
 
+import java.math.BigDecimal;
+
 @Builder
-public record GeneralUpdateDto(
+public record GeneralEntryDto(
         String name,
         String date,
         String carModel,
         String carNumber,
         Integer startWeekProbeg,
         Integer endWeekProbeg,
-        String startBalanceLitres,
-        String endBalanceLitres,
+        BigDecimal startBalanceLitres,
+        BigDecimal endBalanceLitres,
         Integer totalWeekKm,
-        String fuelNorm,
-        String litresSpend,
+        BigDecimal fuelNorm,
+        BigDecimal litresSpend,
         Integer fueling
 ) {
 }

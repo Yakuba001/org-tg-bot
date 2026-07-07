@@ -1,8 +1,10 @@
 package com.orgtgbot.mapper;
 
-import com.orgtgbot.dto.DatesUpdateDto;
+import com.orgtgbot.dto.DatesEntryDto;
 import com.orgtgbot.entity.DatesEntry;
 import org.mapstruct.*;
+
+import java.util.List;
 
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
@@ -11,5 +13,10 @@ import org.mapstruct.*;
 public interface DateMapper {
 
     @Mapping(target = "id", ignore = true)
-    void updateEntityFromDto(DatesUpdateDto dto, @MappingTarget DatesEntry entity);
+    void updateEntityFromDto(DatesEntryDto dto, @MappingTarget DatesEntry entity);
+
+    DatesEntryDto toDto(DatesEntry entity);
+
+    @Mapping(target = "id", ignore = true)
+    List<DatesEntryDto> toDtoList(List<DatesEntry> entities);
 }

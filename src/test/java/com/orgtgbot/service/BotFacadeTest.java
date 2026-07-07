@@ -1,8 +1,7 @@
 package com.orgtgbot.service;
 
 import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
-import com.orgtgbot.dto.ProbegUpdateDto;
-import com.orgtgbot.entity.ReportEntry;
+import com.orgtgbot.dto.ReportEntryDto;
 import com.orgtgbot.service.services.DateService;
 import com.orgtgbot.service.services.GeneralService;
 import com.orgtgbot.service.services.ProbegService;
@@ -29,7 +28,7 @@ public class BotFacadeTest {
     @Mock private ReminderService reminderService;
     @Mock private BookkeeperService bookkeeperService;
 
-    @Mock private ReportEntry reportEntry;
+    @Mock private ReportEntryDto reportEntryDto;
 
     private BotFacade botFacade;
 
@@ -44,8 +43,8 @@ public class BotFacadeTest {
     void getAmount_ShouldReturnMorningKmFromProbegService() {
         int dayNumber = 1;
         int expectedKm = 150;
-        when(probegService.getReportEntry(chatId, dayNumber)).thenReturn(reportEntry);
-        when(reportEntry.getMorningKm()).thenReturn(expectedKm);
+        when(probegService.getReportEntryDto(chatId, dayNumber)).thenReturn(reportEntryDto);
+        when(reportEntryDto.morningKm()).thenReturn(expectedKm);
 
         String result = botFacade.getAmount(GeneralFields.SET_MORNING_MONDAY_KM, chatId);
 
@@ -59,10 +58,10 @@ public class BotFacadeTest {
 
         botFacade.setAmount(GeneralFields.SET_MORNING_MONDAY_KM, amountToSet, chatId);
 
-        ArgumentCaptor<ProbegUpdateDto> dtoCaptor = ArgumentCaptor.forClass(ProbegUpdateDto.class);
+        ArgumentCaptor<ReportEntryDto> dtoCaptor = ArgumentCaptor.forClass(ReportEntryDto.class);
 
         verify(probegService).updateProbegInfo(eq(chatId), eq(dayNumber), dtoCaptor.capture());
-        ProbegUpdateDto capturedDto = dtoCaptor.getValue();
+        ReportEntryDto capturedDto = dtoCaptor.getValue();
         assertEquals(220, capturedDto.morningKm());
     }
 }

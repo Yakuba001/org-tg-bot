@@ -1,6 +1,6 @@
 package com.orgtgbot.service;
 
-import com.orgtgbot.dto.ProbegUpdateDto;
+import com.orgtgbot.dto.ReportEntryDto;
 import com.orgtgbot.entity.ReportEntry;
 import com.orgtgbot.entity.user.UserWorkspace;
 import com.orgtgbot.mapper.ProbegMapper;
@@ -84,7 +84,7 @@ public class ProbegServiceTest {
     void getAll_returnCorrectResult() {
         when(userWorkspaceRepository.findByUser_TelegramChatId(anyLong())).thenReturn(Optional.of(example));
 
-        List<ReportEntry> result = probegService.getAll(anyLong());
+        List<ReportEntryDto> result = probegService.getAllDto(anyLong());
 
         verify(userWorkspaceRepository, times(1)).findByUser_TelegramChatId(anyLong());
         assertThat(result).hasSize(5);
@@ -94,10 +94,13 @@ public class ProbegServiceTest {
     void getReportEntry_returnCorrectResult() {
         when(userWorkspaceRepository.findByUser_TelegramChatId(anyLong())).thenReturn(Optional.of(example));
 
-        ReportEntry result = probegService.getReportEntry(anyLong(), 1);
+        ReportEntryDto result = probegService.getReportEntryDto(anyLong(), 1);
 
         verify(userWorkspaceRepository, times(1)).findByUser_TelegramChatId(anyLong());
-        assertThat(result).isEqualTo(example.getReportEntries().getFirst());
+
+        assertThat(result)
+                .extracting(ReportEntryDto::morningKm, ReportEntryDto::eveningKm, ReportEntryDto::route)
+                .containsExactly(1, 2, "One");
     }
 
     @Test
@@ -114,7 +117,7 @@ public class ProbegServiceTest {
     @Test
     void updateProbegInfo_returnCorrectTotal() {
         when(userWorkspaceRepository.findByUser_TelegramChatId(anyLong())).thenReturn(Optional.of(example));
-        ProbegUpdateDto dto = ProbegUpdateDto.builder().morningKm(10).eveningKm(20).route("DTO").build();
+        ReportEntryDto dto = ReportEntryDto.builder().morningKm(10).eveningKm(20).route("DTO").build();
 
         probegService.updateProbegInfo(anyLong(), 1, dto);
 
