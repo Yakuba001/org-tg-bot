@@ -3,6 +3,7 @@ package com.orgtgbot.service.reminder;
 import com.orgtgbot.dto.reminder.ReminderDto;
 import com.orgtgbot.entity.reminder.ReminderEntity;
 import com.orgtgbot.entity.user.StateManager;
+import com.orgtgbot.mapper.reminder.ReminderMapper;
 import com.orgtgbot.repository.ReminderRepository;
 import com.orgtgbot.service.services.gemini.GeminiParserService;
 import com.orgtgbot.service.services.reminder.ReminderService;
@@ -10,10 +11,8 @@ import com.orgtgbot.service.services.user.UserStateService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mapstruct.factory.Mappers;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -29,20 +28,17 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class ReminderServiceTest {
 
-    @Mock
-    private ReminderRepository reminderRepository;
-
-    @Mock
-    private GeminiParserService geminiParserService;
-
-    @Mock
-    private UserStateService userStateService;
+    @Mock private ReminderRepository reminderRepository;
+    @Mock private GeminiParserService geminiParserService;
+    @Mock private UserStateService userStateService;
 
     @Captor
     private ArgumentCaptor<ReminderEntity> reminderEntityCaptor;
 
-    @InjectMocks
     private ReminderService reminderService;
+
+    @Spy
+    private ReminderMapper reminderMapper = Mappers.getMapper(ReminderMapper.class);
 
     private StateManager exampleState;
     private ReminderDto exampleReminder;
@@ -51,6 +47,7 @@ public class ReminderServiceTest {
 
     @BeforeEach
     void setUp() {
+        reminderService = new ReminderService(reminderRepository, geminiParserService, userStateService, reminderMapper);
         testTime = LocalDateTime.of(2026, 6, 29, 13, 0, 0);
         testText = "Купить молоко";
         exampleState = StateManager.builder()
