@@ -3,7 +3,6 @@ package com.orgtgbot.service.services.user;
 import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
 import com.orgtgbot.entity.user.StateManager;
 import com.orgtgbot.repository.StateManagerRepository;
-import com.orgtgbot.repository.UserEntryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
@@ -20,7 +19,6 @@ import java.time.LocalDateTime;
 public class UserStateService {
 
     private final StateManagerRepository stateManagerRepository;
-    private final UserEntryRepository userEntryRepository;
     private UserStateService self;
 
     @Transactional
@@ -69,9 +67,6 @@ public class UserStateService {
     public StateManager getCurrentState(Long chatId) {
         return stateManagerRepository.findById(chatId).orElseGet(
                 () -> {
-                    userEntryRepository.findByTelegramChatId(chatId).orElseThrow(
-                            () -> new IllegalStateException("User not found for chat: " + chatId));
-
                     StateManager newState = StateManager.builder()
                             .telegramChatId(chatId)
                             .currentField(GeneralFields.NONE)
