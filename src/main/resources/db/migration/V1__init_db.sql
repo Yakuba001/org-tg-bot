@@ -97,6 +97,3 @@ CREATE TABLE workspace_reports
     CONSTRAINT fk_wr_workspace FOREIGN KEY (workspace_id) REFERENCES user_workspaces (id),
     CONSTRAINT fk_wr_report FOREIGN KEY (report_entry_id) REFERENCES report_entry (id)
 );
-
-INSERT INTO invite_codes (code)
-VALUES ('Afina') ON CONFLICT (code) DO NOTHING;
