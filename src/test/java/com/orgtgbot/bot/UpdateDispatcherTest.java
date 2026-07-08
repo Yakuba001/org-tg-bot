@@ -4,6 +4,7 @@ import com.orgtgbot.bot.update.UpdateHandler;
 import com.orgtgbot.exception.exceptions.bot.FailedExtractingException;
 import com.orgtgbot.exception.exceptions.bot.UnknownUpdateHandlerException;
 import com.orgtgbot.repository.UserEntryRepository;
+import com.orgtgbot.service.services.message.MessageLogService;
 import com.orgtgbot.service.services.user.UserStateService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ public class UpdateDispatcherTest {
     @Mock private Update update;
     @Mock private Message message;
     @Mock private CallbackQuery callbackQuery;
+    @Mock private MessageLogService messageLogService;
 
     private UpdateDispatcher updateDispatcher;
 
@@ -41,7 +43,8 @@ public class UpdateDispatcherTest {
         updateDispatcher = new UpdateDispatcher(
                 userEntryRepository,
                 userStateService,
-                List.of(updateHandler)
+                List.of(updateHandler),
+                messageLogService
         );
     }
 
