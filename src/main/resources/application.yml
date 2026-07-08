@@ -7,15 +7,14 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
-  sql:
-    init:
-      mode: always
-
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: false
-    defer-datasource-initialization: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
 
   cache:
     type: caffeine

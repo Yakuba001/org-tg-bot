@@ -6,16 +6,7 @@ spring:
     password:
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
     database-platform: org.hibernate.dialect.H2Dialect
-  sql:
-    init:
-      mode: never  # отключаем выполнение data.sql в тестах
-
-telegram:
-  bot:
-    username: test_bot
-    token: test_token
-
-gemini:
-  api-key: test_key
+  flyway:
+    enabled: true
