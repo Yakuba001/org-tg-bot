@@ -31,6 +31,7 @@ public class MessageLogService {
         return logs;
     }
 
+    @Transactional
     public void deleteMessageByMessageId(Long chatId, Integer messageId) {
         messageLogRepository.deleteByTelegramChatIdAndMessageId(chatId, messageId);
     }
