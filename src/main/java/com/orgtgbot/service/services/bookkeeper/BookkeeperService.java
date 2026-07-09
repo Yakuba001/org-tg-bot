@@ -36,7 +36,6 @@ public class BookkeeperService {
         bookkeeperRepository.saveAll(records);
     }
 
-    @Transactional(readOnly = true)
     public String getWhatWasSpendDuringTheMonth(Long chatId) {
         LocalDate now = LocalDate.now();
         LocalDate startOfMonth = now.withDayOfMonth(1);
