@@ -35,6 +35,7 @@ public class UserWorkspace {
             joinColumns = @JoinColumn(name = "workspace_id", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "date_entry_id", nullable = false, unique = true)
     )
+    @OrderBy("id ASC")
     private List<DatesEntry> datesEntries;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
