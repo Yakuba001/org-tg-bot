@@ -2,7 +2,6 @@ package com.orgtgbot.service.services.reminder;
 
 import com.orgtgbot.dto.reminder.ReminderDto;
 import com.orgtgbot.entity.reminder.ReminderEntity;
-import com.orgtgbot.entity.user.StateManager;
 import com.orgtgbot.mapper.reminder.ReminderMapper;
 import com.orgtgbot.repository.ReminderRepository;
 import com.orgtgbot.service.services.gemini.GeminiParserService;
@@ -12,11 +11,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ReminderService {
 
@@ -41,7 +42,17 @@ public class ReminderService {
         saveReminder(chatId, parsedDto);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
+    public void cleanReminders() {
+        LocalDateTime timeAgo = LocalDateTime.now(ZoneId.of("Europe/Kiev")).minusDays(1);
+        reminderRepository.deleteOldSentReminders(timeAgo);
+    }
+
+    @Transactional
+    public void markAsSent(Long id) {
+        reminderRepository.findById(id).ifPresent(reminder -> reminder.setSent(true));
+    }
+
     public String getAllRemindersFormatted(Long chatId) {
         List<ReminderEntity> reminders = reminderRepository.findAllByTelegramChatId(chatId);
         if (reminders.isEmpty()) {
@@ -52,10 +63,13 @@ public class ReminderService {
                 .collect(Collectors.joining("\n"));
     }
 
+    public List<ReminderEntity> getAllReminders() {
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Kiev"));
+        return reminderRepository.findAllByIsSentFalseAndTargetTimeLessThanEqual(now);
+    }
+
     private LocalDateTime getUserTime(Long chatId) {
-        StateManager stateManager = userStateService.getCurrentState(chatId);
-        return stateManager.getUserLastActivityTime() == null ?
-                LocalDateTime.now() : stateManager.getUserLastActivityTime();
+        return userStateService.getUserLastActivityTime(chatId);
     }
 
     private void saveReminder(Long chatId, ReminderDto parsedDto) {

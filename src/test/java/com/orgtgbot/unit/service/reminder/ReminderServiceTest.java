@@ -2,7 +2,6 @@ package com.orgtgbot.unit.service.reminder;
 
 import com.orgtgbot.dto.reminder.ReminderDto;
 import com.orgtgbot.entity.reminder.ReminderEntity;
-import com.orgtgbot.entity.user.StateManager;
 import com.orgtgbot.mapper.reminder.ReminderMapper;
 import com.orgtgbot.repository.ReminderRepository;
 import com.orgtgbot.service.services.gemini.GeminiParserService;
@@ -40,7 +39,6 @@ public class ReminderServiceTest {
     @Spy
     private ReminderMapper reminderMapper = Mappers.getMapper(ReminderMapper.class);
 
-    private StateManager exampleState;
     private ReminderDto exampleReminder;
     private LocalDateTime testTime;
     private String testText;
@@ -50,15 +48,12 @@ public class ReminderServiceTest {
         reminderService = new ReminderService(reminderRepository, geminiParserService, userStateService, reminderMapper);
         testTime = LocalDateTime.of(2026, 6, 29, 13, 0, 0);
         testText = "Купить молоко";
-        exampleState = StateManager.builder()
-                .userLastActivityTime(testTime)
-                .build();
         exampleReminder = new ReminderDto(testText, testTime);
     }
 
     @Test
     void addRemind() {
-        when(userStateService.getCurrentState(anyLong())).thenReturn(exampleState);
+        when(userStateService.getUserLastActivityTime(anyLong())).thenReturn(testTime);
         when(geminiParserService.parseReminder(any(), any())).thenReturn(exampleReminder);
 
         reminderService.addRemind(1L, testText);
@@ -74,7 +69,7 @@ public class ReminderServiceTest {
 
     @Test
     void addVoiceRemind() {
-        when(userStateService.getCurrentState(anyLong())).thenReturn(exampleState);
+        when(userStateService.getUserLastActivityTime(anyLong())).thenReturn(testTime);
         when(geminiParserService.parseVoiceReminder(any(), any())).thenReturn(exampleReminder);
 
         reminderService.addVoiceRemind(1L, new byte[]{1, 2, 3, 4});

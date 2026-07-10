@@ -9,7 +9,6 @@ import com.orgtgbot.service.services.bookkeeper.BookkeeperService;
 import com.orgtgbot.service.services.reminder.ReminderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,12 +24,10 @@ public class BotFacade {
         return new AppContext(generalService, probegService, dateService, reminderService, bookkeeperService, chatId);
     }
 
-    @Transactional(readOnly = true)
     public String getAmount(GeneralFields field, Long chatId) {
         return field.getValue(getContext(chatId));
     }
 
-    @Transactional
     public void setAmount(GeneralFields field, String amount, Long chatId) {
         field.setValue(getContext(chatId), amount);
     }

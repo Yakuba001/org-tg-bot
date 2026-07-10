@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ExcelService {
 
@@ -42,7 +43,6 @@ public class ExcelService {
     private static final int ROUTE_COLUMN = 3;                 // D
     private static final int DATE_COLUMN = 2;                  // C
 
-    @Transactional(readOnly = true)
     public byte[] generateReport(Long chatId) {
         // 1. Извлекаем изолированные данные конкретного водителя
         List<ReportEntryDto> entries = probegService.getAllDto(chatId);

@@ -2,7 +2,6 @@ package com.orgtgbot.integration.service.reminder;
 
 import com.orgtgbot.dto.reminder.ReminderDto;
 import com.orgtgbot.entity.reminder.ReminderEntity;
-import com.orgtgbot.entity.user.StateManager;
 import com.orgtgbot.integration.BaseIntegrationTest;
 import com.orgtgbot.repository.ReminderRepository;
 import com.orgtgbot.service.services.gemini.GeminiParserService;
@@ -39,7 +38,6 @@ public class ReminderServiceIT extends BaseIntegrationTest {
     private List<ReminderEntity> reminders;
     private ReminderDto exampleReminderDto;
     private final LocalDateTime targetTime = LocalDateTime.now();
-    private StateManager stateManager;
 
     @BeforeEach
     void setUp() {
@@ -58,12 +56,11 @@ public class ReminderServiceIT extends BaseIntegrationTest {
                         .isSent(false)
                         .build());
         exampleReminderDto = new ReminderDto(RAW_TEXT, targetTime);
-        stateManager = StateManager.builder().userLastActivityTime(targetTime).build();
     }
 
     @Test
     void addRemind_correctlySavesReminder() {
-        when(userStateService.getCurrentState(CHAT_ID)).thenReturn(stateManager);
+        when(userStateService.getUserLastActivityTime(CHAT_ID)).thenReturn(targetTime);
         when(geminiParserService.parseReminder(anyString(), eq(targetTime))).thenReturn(exampleReminderDto);
 
         reminderService.addRemind(CHAT_ID, RAW_TEXT);
@@ -76,7 +73,7 @@ public class ReminderServiceIT extends BaseIntegrationTest {
     @Test
     void addVoiceRemind_correctlySavesReminder() {
         byte[] exampleBytes = new byte[]{1, 2, 3, 4};
-        when(userStateService.getCurrentState(CHAT_ID)).thenReturn(stateManager);
+        when(userStateService.getUserLastActivityTime(CHAT_ID)).thenReturn(targetTime);
         when(geminiParserService.parseVoiceReminder(exampleBytes, targetTime)).thenReturn(exampleReminderDto);
 
         reminderService.addVoiceRemind(CHAT_ID, exampleBytes);

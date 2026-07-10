@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class MessageLogService {
 
@@ -24,14 +25,12 @@ public class MessageLogService {
         messageLogRepository.save(entry);
     }
 
-    @Transactional
     public List<MessageLogEntry> deleteMessagesByType(Long chatId, MessageType type) {
         List<MessageLogEntry> logs = messageLogRepository.findByTelegramChatIdAndMessageType(chatId, type);
         messageLogRepository.deleteByTelegramChatIdAndMessageType(chatId, type);
         return logs;
     }
 
-    @Transactional
     public void deleteMessageByMessageId(Long chatId, Integer messageId) {
         messageLogRepository.deleteByTelegramChatIdAndMessageId(chatId, messageId);
     }
