@@ -5,7 +5,6 @@ import com.orgtgbot.integration.BaseIntegrationTest;
 import com.orgtgbot.repository.UserWorkspaceRepository;
 import com.orgtgbot.service.services.DateService;
 import com.orgtgbot.service.services.user.RegistrationService;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +24,6 @@ public class DateServiceIT extends BaseIntegrationTest {
     @Autowired
     private RegistrationService registrationService;
 
-    @Autowired
-    private EntityManager entityManager;
-
     private static final Long CHAT_ID = 123L;
     private static final Integer DAY_NUMBER = 1;
     private DatesEntryDto datesEntryDto;
@@ -39,10 +35,16 @@ public class DateServiceIT extends BaseIntegrationTest {
         datesEntryDto = DatesEntryDto.builder()
                 .date("01.01.2022")
                 .build();
-        entityManager.clear();
     }
 
+    @Test
+    void setDate_shouldSetNewDate() {
+        dateService.setDate(CHAT_ID, DAY_NUMBER, datesEntryDto);
 
+        DatesEntryDto result = dateService.getDatesDto(CHAT_ID, DAY_NUMBER);
+
+        assertEquals(datesEntryDto.date(), result.date());
+    }
 
     @Test
     void getAllDates_shouldReturnListWithFiveElements() {
