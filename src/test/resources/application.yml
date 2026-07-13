@@ -16,3 +16,4 @@ spring:
     enabled: true
 gemini:
   api-key: test_key
+  api-url: http://localhost:8089/v1beta/models/gemini-2.5-flash:generateContent

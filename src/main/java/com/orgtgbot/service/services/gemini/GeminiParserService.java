@@ -34,9 +34,6 @@ public class GeminiParserService {
     private final ObjectMapper objectMapper;
     private final HttpClient geminiHttpClient;
 
-    private static final String GEMINI_API_URL =
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
-
     public ReminderDto parseReminder(String rawText, LocalDateTime userTime) {
         try {
             ObjectNode rootNode = createBaseGeminiRequest(userTime);
@@ -133,7 +130,7 @@ public class GeminiParserService {
     private String sendRawHttpRequestToGemini(String jsonBody) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(GEMINI_API_URL))
+                    .uri(URI.create(geminiProperties.apiUrl()))
                     .header("Content-Type", "application/json")
                     .header("x-goog-api-key", geminiProperties.apiKey())
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody, StandardCharsets.UTF_8))
