@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,7 +77,11 @@ public class BookkeeperService {
                 .map(entry -> {
                     String dateHeader = "📅 Дата: " + entry.getKey();
                     String items = entry.getValue().stream()
-                            .map(el -> String.format("  - %s: %,.2f грн.", el.getItemName(), el.getPrice()))
+                            .map(el -> String.format(
+                                    Locale.GERMANY,
+                                    "  - %s: %,.2f грн.",
+                                    el.getItemName(),
+                                    el.getPrice()))
                             .collect(Collectors.joining("\n"));
                     return dateHeader + "\n" + items;
                 })
