@@ -12,5 +12,6 @@ public record AppContext(
         DateService dateService,
         ReminderService reminderService,
         BookkeeperService bookkeeperService,
-        Long chatId
+        Long chatId,
+        int page
 ) {}

@@ -13,23 +13,35 @@ import java.util.stream.Collectors;
 public class KeyboardFactory {
 
     public static InlineKeyboardMarkup buildMenuForGroup(GeneralFields currentMenu) {
+        return buildMenuForGroupPaged(currentMenu, 0);
+    }
+
+    public static InlineKeyboardMarkup buildMenuForGroupPaged(GeneralFields currentMenu, int currentPage) {
         List<InlineKeyboardRow> rows = Arrays.stream(GeneralFields.values())
                 .filter(field -> field.getGroup() == currentMenu)
-                .map(field -> new InlineKeyboardRow(
-                        InlineKeyboardButton.builder()
-                                .text(field.getDescription())
-                                .callbackData(field.name())
-                                .build()
-                ))
+                .map(field -> {
+                    String callbackValue = field.name();
+                    if (field == GeneralFields.ALL_NEXT_PAGE) {
+                        callbackValue = field.name() + ":" + (currentPage + 1);
+                    } else if (field == GeneralFields.ALL_PREVIOUS_PAGE) {
+                        callbackValue = field.name() + ":" + (currentPage - 1);
+                    } else if (field == GeneralFields.ALL_RECEIPTS) {
+                        callbackValue = field.name() + ":0";
+                    }
+                    return new InlineKeyboardRow(
+                            InlineKeyboardButton.builder()
+                                    .text(field.getDescription())
+                                    .callbackData(callbackValue)
+                                    .build()
+                    );
+                })
                 .collect(Collectors.toCollection(ArrayList::new));
-
         if (currentMenu.getParent() != null) {
             rows.add(new InlineKeyboardRow(InlineKeyboardButton.builder()
                     .text("Назад")
                     .callbackData(currentMenu.getParent().name())
                     .build()));
         }
-
         return InlineKeyboardMarkup.builder()
                 .keyboard(rows)
                 .build();

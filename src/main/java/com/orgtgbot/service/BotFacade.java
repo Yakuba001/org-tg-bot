@@ -21,11 +21,33 @@ public class BotFacade {
     private final BookkeeperService bookkeeperService;
 
     private AppContext getContext(Long chatId) {
-        return new AppContext(generalService, probegService, dateService, reminderService, bookkeeperService, chatId);
+        return new AppContext(
+                generalService,
+                probegService,
+                dateService,
+                reminderService,
+                bookkeeperService,
+                chatId,
+                0);
+    }
+
+    private AppContext getContext(Long chatId, int page) {
+        return new AppContext(
+                generalService,
+                probegService,
+                dateService,
+                reminderService,
+                bookkeeperService,
+                chatId,
+                page);
     }
 
     public String getAmount(GeneralFields field, Long chatId) {
         return field.getValue(getContext(chatId));
+    }
+
+    public String getAmountForPage(GeneralFields field, Long chatId, int page) {
+        return field.getValue(getContext(chatId, page));
     }
 
     public void setAmount(GeneralFields field, String amount, Long chatId) {

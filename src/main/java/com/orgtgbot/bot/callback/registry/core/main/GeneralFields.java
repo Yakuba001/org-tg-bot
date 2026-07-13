@@ -242,7 +242,16 @@ public enum GeneralFields {
 
     MAIN_RECEIPT("Бухгалтер", MAIN_MENU, MAIN_MENU,
             ctx -> ctx.bookkeeperService().getWhatWasSpendDuringTheMonth(ctx.chatId()),
-            (ctx, val) -> ctx.bookkeeperService().addReceipt(ctx.chatId(), val));
+            (ctx, val) -> ctx.bookkeeperService().addReceipt(ctx.chatId(), val)),
+    ALL_RECEIPTS("История", MAIN_RECEIPT, MAIN_RECEIPT,
+            ctx -> ctx.bookkeeperService().getAllHistory(ctx.chatId(), ctx.page()),
+            null),
+    ALL_PREVIOUS_PAGE("Предыдущая", ALL_RECEIPTS, null,
+            ctx -> ctx.bookkeeperService().getAllHistory(ctx.chatId(), ctx.page()),
+            null),
+    ALL_NEXT_PAGE("Следующая", ALL_RECEIPTS, null,
+            ctx -> ctx.bookkeeperService().getAllHistory(ctx.chatId(), ctx.page()),
+            null);
 
     private final String description;
     private final GeneralFields parent;

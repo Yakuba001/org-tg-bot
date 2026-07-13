@@ -21,7 +21,9 @@ public class CallbackUpdateHandler implements UpdateHandler {
     @Override
     public void handle(Update update, Long chatId) {
         CallbackQuery callbackQuery = update.getCallbackQuery();
-        GeneralFields clickedField = GeneralFields.valueOf(callbackQuery.getData());
+        String rawData = callbackQuery.getData();
+        String enumName = rawData.contains(":") ? rawData.split(":")[0] : rawData;
+        GeneralFields clickedField = GeneralFields.valueOf(enumName);
         Integer callbackMessageId = callbackQuery.getMessage().getMessageId();
         callbackRegistry.dispatch(clickedField, callbackQuery, chatId, callbackMessageId);
     }
