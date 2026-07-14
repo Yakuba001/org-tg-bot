@@ -4,7 +4,6 @@ import com.orgtgbot.dto.bookkeeper.ReceiptItemDto;
 import com.orgtgbot.entity.bookkeeper.BookkeeperRecord;
 import com.orgtgbot.integration.BaseIntegrationTest;
 import com.orgtgbot.repository.BookkeeperRepository;
-import com.orgtgbot.service.filehandler.image.ImageChecker;
 import com.orgtgbot.service.services.bookkeeper.BookkeeperService;
 import com.orgtgbot.service.services.gemini.GeminiParserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,10 +25,8 @@ public class BookkeeperServiceIT extends BaseIntegrationTest {
     @Autowired private BookkeeperService bookkeeperService;
     @Autowired private BookkeeperRepository bookkeeperRepository;
     @MockBean private GeminiParserService geminiParserService;
-    @MockBean private ImageChecker imageChecker;
 
     private static final Long CHAT_ID = 123L;
-    private static final String FILE_ID = "test_file_id_123";
 
     @BeforeEach
     void setUp() {
@@ -39,18 +37,16 @@ public class BookkeeperServiceIT extends BaseIntegrationTest {
     void addReceipt_shouldSuccessfullyDownloadParseAndSaveToPostgres() {
         byte[] fakeImageBytes = new byte[]{1, 2, 3, 4};
         String fakeMimeType = "image/jpeg";
-        when(imageChecker.downloadImageBytes(FILE_ID)).thenReturn(fakeImageBytes);
-        when(imageChecker.getMimeType(FILE_ID)).thenReturn(fakeMimeType);
         List<ReceiptItemDto> fakeParsedItems = List.of(
                 new ReceiptItemDto("Молоко Фермерское", new BigDecimal("45.50")),
                 new ReceiptItemDto("Батон Нарезной", new BigDecimal("18.00"))
         );
         when(geminiParserService.parseReceiptImage(fakeImageBytes, fakeMimeType)).thenReturn(fakeParsedItems);
 
-        bookkeeperService.addReceipt(CHAT_ID, FILE_ID);
+        bookkeeperService.addReceipt(CHAT_ID, fakeImageBytes, fakeMimeType);
 
         List<BookkeeperRecord> savedRecords = bookkeeperRepository.findAll();
-        assertEquals(2, savedRecords.size());
+        assertEquals(fakeParsedItems.size(), savedRecords.size());
         BookkeeperRecord record1 = savedRecords.stream()
                 .filter(r -> r.getItemName().equals("Молоко Фермерское"))
                 .findFirst()
@@ -59,6 +55,22 @@ public class BookkeeperServiceIT extends BaseIntegrationTest {
         assertEquals(CHAT_ID, record1.getTelegramChatId());
         assertEquals(new BigDecimal("45.50"), record1.getPrice());
         assertNotNull(record1.getPurchaseDate());
+    }
+
+    @Test
+    void addReceipts_shouldSuccessfullyDownloadParseAndSaveToDb() {
+        List<byte[]> fakeImageBytes = List.of(new byte[]{1, 2, 3, 4}, new byte[]{5, 6, 7, 8});
+        String fakeMimeType = "image/jpeg";
+        List<ReceiptItemDto> fakeParsedItems = List.of(
+                new ReceiptItemDto("Молоко Фермерское", new BigDecimal("45.50")),
+                new ReceiptItemDto("Батон Нарезной", new BigDecimal("18.00"))
+        );
+        when(geminiParserService.parseReceiptImages(fakeImageBytes, fakeMimeType)).thenReturn(fakeParsedItems);
+
+        bookkeeperService.addMultipleReceipts(CHAT_ID, fakeImageBytes, fakeMimeType);
+
+        List<BookkeeperRecord> savedRecords = bookkeeperRepository.findAll();
+        assertEquals(fakeParsedItems.size(), savedRecords.size());
     }
 
     @Test
@@ -85,10 +97,16 @@ public class BookkeeperServiceIT extends BaseIntegrationTest {
                 .createdAt(null)
                 .build();
         bookkeeperRepository.saveAll(List.of(r1, r2));
+        LocalDate now = LocalDate.now();
+        LocalDate startOfMonth = now.withDayOfMonth(1);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        String fromDate = startOfMonth.format(formatter);
+        String toDate = now.format(formatter);
+        BigDecimal total = r1.getPrice().add(r2.getPrice());
+        String expected = String.format("За период с %s по %s вы потратили: %,.2f грн.", fromDate, toDate, total);
 
         String result = bookkeeperService.getWhatWasSpendDuringTheMonth(CHAT_ID);
-        BigDecimal total = r1.getPrice().add(r2.getPrice());
 
-        assertEquals(String.format("За текущий месяц вы потратили: %,.2f грн.", total), result);
+        assertEquals(expected, result);
     }
 }

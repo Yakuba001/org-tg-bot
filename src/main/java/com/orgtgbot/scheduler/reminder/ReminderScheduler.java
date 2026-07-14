@@ -9,6 +9,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Component
 @RequiredArgsConstructor
@@ -17,11 +19,15 @@ public class ReminderScheduler {
     private final ReminderService reminderService;
     private final TelegramSender telegramSender;
 
+    private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+
     @Scheduled(cron = "0 * * * * *")
     public void checkAndSendReminders() {
         List<ReminderEntity> activeReminders = reminderService.getAllReminders();
         if (activeReminders.isEmpty()) return;
-        activeReminders.forEach(reminder -> {
+
+        activeReminders.forEach(reminder ->
+                executor.execute(() -> {
                     try {
                         String messageText = "⏰ **Напоминание!**\n\n" + reminder.getText();
                         telegramSender.sendMessage(reminder.getTelegramChatId(), messageText);
@@ -29,7 +35,7 @@ public class ReminderScheduler {
                     } catch (Exception e) {
                         throw new SendRemindException("Failed send remind with id: " + reminder.getId(), e);
                     }
-                });
+                }));
     }
 
     @Scheduled(cron = "0 0 0 * * *")

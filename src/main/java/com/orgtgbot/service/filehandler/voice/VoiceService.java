@@ -8,7 +8,6 @@ import com.orgtgbot.exception.exceptions.service.voice.FailedHandleVoiceExceptio
 import com.orgtgbot.service.filehandler.TelegramFileDownloader;
 import com.orgtgbot.service.services.reminder.ReminderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.objects.File;
@@ -25,7 +24,6 @@ public class VoiceService {
     private final TelegramSender sender;
     private final TelegramFileDownloader fileDownloader;
 
-    @Async
     public void handleVoiceAsync(Long chatId, Voice voice, Integer botMenuId, GeneralFields currentField) {
         try {
             GetFile getFileMethod = new GetFile(voice.getFileId());

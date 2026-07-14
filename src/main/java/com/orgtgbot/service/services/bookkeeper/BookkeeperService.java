@@ -4,7 +4,6 @@ import com.orgtgbot.dto.bookkeeper.ReceiptItemDto;
 import com.orgtgbot.entity.bookkeeper.BookkeeperRecord;
 import com.orgtgbot.mapper.bookkeeper.BookkeeperMapper;
 import com.orgtgbot.repository.BookkeeperRepository;
-import com.orgtgbot.service.filehandler.image.ImageChecker;
 import com.orgtgbot.service.services.gemini.GeminiParserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,23 +27,21 @@ public class BookkeeperService {
 
     private final BookkeeperRepository bookkeeperRepository;
     private final GeminiParserService geminiParserService;
-    private final ImageChecker imageChecker;
     private final BookkeeperMapper bookkeeperMapper;
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private static final int PAGE_SIZE = 5;
 
     @Transactional
-    public void addReceipt(Long chatId, String fileId) {
-        byte[] imageBytes = imageChecker.downloadImageBytes(fileId);
-        String mimeType = imageChecker.getMimeType(fileId);
+    public void addReceipt(Long chatId, byte[] imageBytes, String mimeType) {
         List<ReceiptItemDto> parsedItems = geminiParserService.parseReceiptImage(imageBytes, mimeType);
-        LocalDate today = LocalDate.now();
+        transformParsedItemsAndSaveInDb(chatId, parsedItems);
+    }
 
-        List<BookkeeperRecord> records = parsedItems.stream()
-                .map(dto -> bookkeeperMapper.toEntity(dto, chatId, today))
-                .toList();
-        bookkeeperRepository.saveAll(records);
+    @Transactional
+    public void addMultipleReceipts(Long chatId, List<byte[]> imagesBytes, String mimeType) {
+        List<ReceiptItemDto> parsedItems = geminiParserService.parseReceiptImages(imagesBytes, mimeType);
+        transformParsedItemsAndSaveInDb(chatId, parsedItems);
     }
 
     public String getWhatWasSpendDuringTheMonth(Long chatId) {
@@ -93,5 +90,15 @@ public class BookkeeperService {
         );
 
         return historyContent + paginationFooter;
+    }
+
+    private void transformParsedItemsAndSaveInDb(Long chatId, List<ReceiptItemDto> parsedItems) {
+        LocalDate today = LocalDate.now();
+
+        List<BookkeeperRecord> records = parsedItems.stream()
+                .map(dto -> bookkeeperMapper.toEntity(dto, chatId, today))
+                .toList();
+
+        bookkeeperRepository.saveAll(records);
     }
 }

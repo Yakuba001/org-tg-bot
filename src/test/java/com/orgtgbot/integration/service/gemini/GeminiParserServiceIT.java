@@ -84,6 +84,35 @@ public class GeminiParserServiceIT extends BaseIntegrationTest {
     }
 
     @Test
+    void parseReceiptImages_shouldReturnCombinedReceiptItemList_whenGeminiResponds200() {
+        List<byte[]> fakeImages = List.of(
+                new byte[]{1, 2, 3},
+                new byte[]{4, 5, 6}
+        );
+        String mimeType = "image/png";
+        String innerJsonArray = "[{\"item\": \"Кофе\", \"price\": 150.0}, " +
+                "{\"item\": \"Пончик\", \"price\": 90.0}, " +
+                "{\"item\": \"Сэндвич\", \"price\": 210.0}]";
+        String mockResponseBody = buildGeminiResponseWrapper(innerJsonArray);
+        stubFor(post(urlEqualTo("/v1beta/models/gemini-2.5-flash:generateContent"))
+                .willReturn(aResponse()
+                        .withStatus(200)
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(mockResponseBody)));
+
+        List<ReceiptItemDto> result = geminiParserService.parseReceiptImages(fakeImages, mimeType);
+
+        assertNotNull(result);
+        assertEquals(3, result.size());
+        assertEquals("Кофе", result.get(0).item());
+        assertEquals(new BigDecimal("150.0"), result.get(0).price());
+        assertEquals("Пончик", result.get(1).item());
+        assertEquals(new BigDecimal("90.0"), result.get(1).price());
+        assertEquals("Сэндвич", result.get(2).item());
+        assertEquals(new BigDecimal("210.0"), result.get(2).price());
+    }
+
+    @Test
     void parseReminder_shouldThrowSendHttpRequestToGeminiException_whenGeminiReturns500() {
         stubFor(post(urlEqualTo("/v1beta/models/gemini-2.5-flash:generateContent"))
                 .willReturn(aResponse()

@@ -242,7 +242,7 @@ public enum GeneralFields {
 
     MAIN_RECEIPT("Бухгалтер", MAIN_MENU, MAIN_MENU,
             ctx -> ctx.bookkeeperService().getWhatWasSpendDuringTheMonth(ctx.chatId()),
-            (ctx, val) -> ctx.bookkeeperService().addReceipt(ctx.chatId(), val)),
+            null),
     ALL_RECEIPTS("История", MAIN_RECEIPT, MAIN_RECEIPT,
             ctx -> ctx.bookkeeperService().getAllHistory(ctx.chatId(), ctx.page()),
             null),

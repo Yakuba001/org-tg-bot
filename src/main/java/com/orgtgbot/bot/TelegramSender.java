@@ -1,5 +1,7 @@
 package com.orgtgbot.bot;
 
+import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
+import com.orgtgbot.bot.keyboard.KeyboardFactory;
 import com.orgtgbot.bot.message.MessageType;
 import com.orgtgbot.exception.exceptions.service.bot.telegram.sender.*;
 import com.orgtgbot.service.services.message.MessageLogService;
@@ -82,5 +84,13 @@ public class TelegramSender {
         } catch (TelegramApiException e) {
             throw new TSAnswerCallbackException("Cant handle this callback: " + callbackQueryId, e);
         }
+    }
+
+    public void successUpdateText(Long chatId, Integer botMenuId, GeneralFields currentField, String text) {
+        this.editMarkup(
+                chatId,
+                botMenuId,
+                text,
+                KeyboardFactory.buildMenuForGroup(currentField));
     }
 }

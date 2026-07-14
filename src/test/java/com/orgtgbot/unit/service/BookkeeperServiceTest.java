@@ -4,7 +4,6 @@ import com.orgtgbot.dto.bookkeeper.ReceiptItemDto;
 import com.orgtgbot.entity.bookkeeper.BookkeeperRecord;
 import com.orgtgbot.mapper.bookkeeper.BookkeeperMapper;
 import com.orgtgbot.repository.BookkeeperRepository;
-import com.orgtgbot.service.filehandler.image.ImageChecker;
 import com.orgtgbot.service.services.bookkeeper.BookkeeperService;
 import com.orgtgbot.service.services.gemini.GeminiParserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,9 +33,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class BookkeeperServiceTest {
 
-    @Mock private BookkeeperRepository bookkeeperRepository;
-    @Mock private GeminiParserService geminiParserService;
-    @Mock private ImageChecker imageChecker;
+    @Mock
+    private BookkeeperRepository bookkeeperRepository;
+    @Mock
+    private GeminiParserService geminiParserService;
 
     @Spy
     private BookkeeperMapper bookkeeperMapper = Mappers.getMapper(BookkeeperMapper.class);
@@ -48,36 +48,69 @@ public class BookkeeperServiceTest {
     @BeforeEach
     void setUp() {
         bookkeeperService =
-                new BookkeeperService(bookkeeperRepository, geminiParserService, imageChecker, bookkeeperMapper);
+                new BookkeeperService(bookkeeperRepository, geminiParserService, bookkeeperMapper);
     }
 
     @Test
     void addReceipt_ShouldSaveReceiptToDb() {
         byte[] testBytes = new byte[]{1, 2, 3};
         String testMimeType = "image/jpeg";
-        String testFileId = "file_0.jpg";
         List<ReceiptItemDto> receiptItemDtoList = List.of(ReceiptItemDto.builder()
                 .item("Milk")
                 .price(new BigDecimal("122.4")).build());
         LocalDate today = LocalDate.now();
-        when(imageChecker.getMimeType(testFileId)).thenReturn(testMimeType);
-        when(imageChecker.downloadImageBytes(testFileId)).thenReturn(testBytes);
         when(geminiParserService.parseReceiptImage(testBytes, testMimeType)).thenReturn(receiptItemDtoList);
 
-        bookkeeperService.addReceipt(CHAT_ID, testFileId);
+        bookkeeperService.addReceipt(CHAT_ID, testBytes, testMimeType);
 
         @SuppressWarnings("unchecked")
         ArgumentCaptor<List<BookkeeperRecord>> listCaptor = ArgumentCaptor.forClass(List.class);
-        verify(bookkeeperRepository, times(1)).saveAll(listCaptor.capture());
+        verify(bookkeeperRepository).saveAll(listCaptor.capture());
         List<BookkeeperRecord> savedRecords = listCaptor.getValue();
         assertNotNull(savedRecords);
-        assertEquals(1, savedRecords.size());
+        assertEquals(receiptItemDtoList.size(), savedRecords.size());
 
         BookkeeperRecord savedRecord = savedRecords.getFirst();
         assertEquals(CHAT_ID, savedRecord.getTelegramChatId());
         assertEquals("Milk", savedRecord.getItemName());
         assertEquals(new BigDecimal("122.4"), savedRecord.getPrice());
         assertEquals(today, savedRecord.getPurchaseDate());
+    }
+
+    @Test
+    void addMultipleReceipts_ShouldSaveMultipleReceipts() {
+        List<byte[]> receipts = List.of(new byte[]{1, 2, 3}, new byte[]{4, 5, 6});
+        String testMimeType = "image/jpeg";
+        List<ReceiptItemDto> receiptItemDtoList = List.of(
+                ReceiptItemDto.builder()
+                        .item("Milk")
+                        .price(new BigDecimal("122.4")).build(),
+                ReceiptItemDto.builder()
+                        .item("Coffee")
+                        .price(new BigDecimal("62.8"))
+                        .build());
+        LocalDate today = LocalDate.now();
+        when(geminiParserService.parseReceiptImages(receipts, testMimeType)).thenReturn(receiptItemDtoList);
+
+        bookkeeperService.addMultipleReceipts(CHAT_ID, receipts, testMimeType);
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<BookkeeperRecord>> listCaptor = ArgumentCaptor.forClass(List.class);
+        verify(bookkeeperRepository).saveAll(listCaptor.capture());
+        List<BookkeeperRecord> savedRecords = listCaptor.getValue();
+        assertNotNull(savedRecords);
+        assertEquals(receiptItemDtoList.size(), savedRecords.size());
+
+        BookkeeperRecord s1 = savedRecords.getFirst();
+        assertEquals(CHAT_ID, s1.getTelegramChatId());
+        assertEquals("Milk", s1.getItemName());
+        assertEquals(new BigDecimal("122.4"), s1.getPrice());
+        assertEquals(today, s1.getPurchaseDate());
+        BookkeeperRecord s2 = savedRecords.get(1);
+        assertEquals(CHAT_ID, s2.getTelegramChatId());
+        assertEquals("Coffee", s2.getItemName());
+        assertEquals(new BigDecimal("62.8"), s2.getPrice());
+        assertEquals(today, s2.getPurchaseDate());
     }
 
     @Test

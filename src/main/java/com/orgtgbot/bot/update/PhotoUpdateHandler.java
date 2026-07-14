@@ -1,7 +1,9 @@
 package com.orgtgbot.bot.update;
 
+import com.orgtgbot.aggregator.MediaGroupAggregator;
 import com.orgtgbot.bot.TelegramSender;
 import com.orgtgbot.bot.callback.registry.core.main.GeneralFields;
+import com.orgtgbot.service.filehandler.image.ImageChecker;
 import com.orgtgbot.service.filehandler.image.ImageService;
 import com.orgtgbot.service.services.user.UserStateService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,8 @@ public class PhotoUpdateHandler implements UpdateHandler {
     private final ImageService imageService;
     private final UserStateService userStateService;
     private final TelegramSender sender;
+    private final ImageChecker imageChecker;
+    private final MediaGroupAggregator aggregator;
 
     @Override
     public boolean canHandle(Update update, boolean isUserRegistered) {
@@ -30,16 +34,24 @@ public class PhotoUpdateHandler implements UpdateHandler {
         Message message = update.getMessage();
         Integer messageId = message.getMessageId();
         GeneralFields currentField = userStateService.getState(chatId);
-
-        if (currentField == GeneralFields.MAIN_RECEIPT) {
-            Integer botMenuId = userStateService.getMessageId(chatId);
-            List<PhotoSize> photoSizes = message.getPhoto();
-            PhotoSize biggestPhoto = photoSizes.getLast();
-
-            imageService.handleImageAsync(chatId, biggestPhoto.getFileId(), botMenuId, currentField);
-        } else {
-            sender.sendMessage(chatId, "❌ В этом разделе отправка изображений не поддерживается.");
-        }
+        Integer botMenuId = userStateService.getMessageId(chatId);
         sender.deleteMessage(chatId, messageId);
+        if (currentField != GeneralFields.MAIN_RECEIPT) {
+            sender.successUpdateText(chatId, botMenuId, currentField,
+                    "❌ В этом разделе отправка изображений не поддерживается.");
+            return;
+        }
+        List<PhotoSize> photoSizes = message.getPhoto();
+        PhotoSize biggestPhoto = photoSizes.getLast();
+        String fileId = biggestPhoto.getFileId();
+        String mediaGroupId = message.getMediaGroupId();
+        byte[] imageBytes = imageChecker.downloadImageBytes(fileId);
+        String mimeType = imageChecker.getMimeType(fileId);
+        if (mediaGroupId == null) {
+            imageService.handleSingleImage(chatId, botMenuId, currentField, imageBytes, mimeType);
+            return;
+        }
+        aggregator.aggregate(mediaGroupId, imageBytes, (collectedImages) ->
+            imageService.handleMediaGroup(chatId, collectedImages, mimeType, botMenuId, currentField));
     }
 }

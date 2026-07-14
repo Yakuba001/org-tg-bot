@@ -10,7 +10,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,15 +32,32 @@ public class ImageServiceTest {
     }
 
     @Test
-    void handleImageAsync_shouldSendMessageToUser_andInvokeBookkeeperServiceAddReceiptMethod() {
+    void handleSingleImage_shouldSendMessageToUser_andInvokeBookkeeperServiceAddReceiptMethod() {
         Long chatId = 12345L;
-        String fileId = "file_0.png";
         Integer botMenuId = 999;
         GeneralFields currentField = GeneralFields.MAIN_RECEIPT;
+        byte[] imageBytes = new byte[]{1, 2, 3};
+        String mimeType = "image/jpeg";
 
-        imageService.handleImageAsync(chatId, fileId, botMenuId, currentField);
+        imageService.handleSingleImage(chatId, botMenuId, currentField, imageBytes, mimeType);
 
-        verify(telegramSender).editMarkup(eq(chatId), eq(botMenuId), anyString(), any());
-        verify(bookkeeperService).addReceipt(chatId, fileId);
+        verify(telegramSender, times(2))
+                .successUpdateText(eq(chatId), eq(botMenuId), eq(currentField), anyString());
+        verify(bookkeeperService).addReceipt(chatId, imageBytes, mimeType);
+    }
+
+    @Test
+    void handleMediaGroup_shouldSendMessageToUser_andInvokeBookkeeperServiceAddMultipleMethod() {
+        Long chatId = 12345L;
+        Integer botMenuId = 999;
+        GeneralFields currentField = GeneralFields.MAIN_RECEIPT;
+        List<byte[]> imageBytes = List.of(new byte[]{1, 2, 3});
+        String mimeType = "image/jpeg";
+
+        imageService.handleMediaGroup(chatId, imageBytes, mimeType, botMenuId, currentField);
+
+        verify(telegramSender, times(2))
+                .successUpdateText(eq(chatId), eq(botMenuId), eq(currentField), anyString());
+        verify(bookkeeperService).addMultipleReceipts(chatId, imageBytes, mimeType);
     }
 }

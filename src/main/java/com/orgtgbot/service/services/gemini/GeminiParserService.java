@@ -71,24 +71,32 @@ public class GeminiParserService {
     }
 
     public List<ReceiptItemDto> parseReceiptImage(byte[] imageBytes, String mimeType) {
+        return parseReceiptImages(List.of(imageBytes), mimeType);
+    }
+
+    public List<ReceiptItemDto> parseReceiptImages(List<byte[]> imagesBytes, String mimeType) {
         try {
             ObjectNode rootNode = createBaseGeminiRequest(null);
             ArrayNode partsArray = (ArrayNode) rootNode.path("contents").path("parts");
-            partsArray.addObject().put("text", "Прочитай этот чек и извлеки товары с ценами.");
-
-            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
-            partsArray.addObject()
-                    .putObject("inlineData")
-                    .put("mimeType", mimeType)
-                    .put("data", base64Image);
-
+            String prompt = imagesBytes.size() == 1
+                    ? "Прочитай этот чек и извлеки товары с ценами."
+                    : "Прочитай эти чеки (здесь загружено сразу несколько штук) и извлеки все товары с ценами в один общий список.";
+            partsArray.addObject().put("text", prompt);
+            for (byte[] imageBytes : imagesBytes) {
+                String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                partsArray.addObject()
+                        .putObject("inlineData")
+                        .put("mimeType", mimeType)
+                        .put("data", base64Image);
+            }
             String jsonBody = objectMapper.writeValueAsString(rootNode);
-
             String rawResponse = sendRawHttpRequestToGemini(jsonBody);
-
             return deserializeReceiptResponse(rawResponse);
         } catch (JsonProcessingException e) {
-            throw new GeminiParseTextException("Failed to build JSON request for GEMINI API from image", e);
+            String errorMsg = imagesBytes.size() == 1
+                    ? "Failed to build JSON request for GEMINI API from image"
+                    : "Failed to build JSON request for GEMINI API from multiple images";
+            throw new GeminiParseTextException(errorMsg, e);
         }
     }
 
